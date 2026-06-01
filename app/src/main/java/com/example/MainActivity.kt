@@ -1088,6 +1088,7 @@ fun InfoTab() {
     }
 }
 
+@Composable
 fun AppSelectorTab(
     prefs: StudyBlockPreferences,
     onAppsUpdated: () -> Unit

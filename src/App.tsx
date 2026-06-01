@@ -392,7 +392,7 @@ export default function App() {
 
             {/* SCREEN 2: STUDYSHIELD APPLICATION SUITE (Main simulated APK contents) */}
             {phoneScreen === 'study_shield_app' && (
-              <div className="flex-1 flex flex-col justify-between bg-[#070b13]">
+              <div className="flex-1 flex flex-col justify-between bg-[#070b13] relative">
                 
                 {/* APK Home Top Header bar with exact requested requirements */}
                 {/* Requirement: time houre or minite me, war (Day of Week), tarikhomonth or year ho TOP par */}
@@ -828,7 +828,7 @@ export default function App() {
                 {/* Simulated Floating Settings/Permissions Button on Right Bottom Corner */}
                 <button 
                   onClick={() => setShowPermissionsDialog(true)}
-                  className="absolute bottom-16 right-4 w-12 h-12 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full flex items-center justify-center shadow-lg transform active:scale-95 transition-all z-35 border border-indigo-400/40 hover:rotate-45"
+                  className="absolute bottom-16 right-4 w-12 h-12 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full flex items-center justify-center shadow-lg transform active:scale-95 transition-all z-30 border border-indigo-400/40 hover:rotate-45"
                   title="अनुमतियाँ चालू करें (App Permissions)"
                 >
                   <Settings size={20} className="animate-spin-slow" />
