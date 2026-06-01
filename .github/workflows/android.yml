@@ -23,11 +23,8 @@ jobs:
         distribution: 'temurin'
         cache: 'gradle'
 
-    - name: Grant Execute permissions to Gradle Wrapper
-      run: chmod +x gradlew
-
     - name: Build Debug APK with Gradle
-      run: ./gradlew assembleDebug --no-daemon
+      run: gradle assembleDebug --no-daemon
 
     - name: Upload Compiled Debug APK Artifact
       uses: actions/upload-artifact@v4
