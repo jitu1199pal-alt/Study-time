@@ -647,17 +647,61 @@ fun AppSelectorTab(
         TextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            placeholder = { Text("ऐप्स खोजें (Search installed apps...)") },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
+            placeholder = { Text("ऐप्स खोजें (Search installed apps...)", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurfaceVariant) },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 8.dp),
             colors = TextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
             shape = RoundedCornerShape(12.dp)
         )
+
+        // Select All / Deselect All Row - Completes the "Select All" function
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(
+                onClick = {
+                    installedApps = installedApps.map { it.copy(isChecked = true) }
+                    // Save all package names as study apps in prefs
+                    installedApps.forEach { prefs.addStudyApp(it.packageName) }
+                    onAppsUpdated()
+                },
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                Icon(Icons.Default.Check, contentDescription = "Select All", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("सभी सिलेक्ट करें", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimaryContainer)
+            }
+            OutlinedButton(
+                onClick = {
+                    installedApps = installedApps.map { it.copy(isChecked = false) }
+                    // Clear all study apps
+                    installedApps.forEach { prefs.removeStudyApp(it.packageName) }
+                    onAppsUpdated()
+                },
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(10.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
+            ) {
+                Icon(Icons.Default.Clear, contentDescription = "Deselect All", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.primary)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text("सभी अनसिलेक्ट करें", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            }
+        }
 
         if (isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -667,15 +711,15 @@ fun AppSelectorTab(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(filteredApps) { app ->
-                    Row(
+                    Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
                                 val newChecked = !app.isChecked
-                                // Update states
                                 installedApps = installedApps.map {
                                     if (it.packageName == app.packageName) it.copy(isChecked = newChecked) else it
                                 }
@@ -685,30 +729,57 @@ fun AppSelectorTab(
                                     prefs.removeStudyApp(app.packageName)
                                 }
                                 onAppsUpdated()
-                            }
-                            .padding(vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                            },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant)
                     ) {
-                        Column(modifier = Modifier.weight(1.0f)) {
-                            Text(text = app.label, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                            Text(text = app.packageName, fontSize = 12.sp, color = Color.Gray, overflow = TextOverflow.Ellipsis, maxLines = 1)
-                        }
-                        Checkbox(
-                            checked = app.isChecked,
-                            onCheckedChange = { isChecked ->
-                                installedApps = installedApps.map {
-                                    if (it.packageName == app.packageName) it.copy(isChecked = isChecked) else it
-                                }
-                                if (isChecked) {
-                                    prefs.addStudyApp(app.packageName)
-                                } else {
-                                    prefs.removeStudyApp(app.packageName)
-                                }
-                                onAppsUpdated()
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1.0f)) {
+                                Text(
+                                    text = app.label, 
+                                    fontWeight = FontWeight.Bold, 
+                                    fontSize = 15.sp,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = app.packageName, 
+                                    fontSize = 11.sp, 
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant, 
+                                    overflow = TextOverflow.Ellipsis, 
+                                    maxLines = 1
+                                )
                             }
-                        )
+                            Checkbox(
+                                checked = app.isChecked,
+                                onCheckedChange = { isChecked ->
+                                    installedApps = installedApps.map {
+                                        if (it.packageName == app.packageName) it.copy(isChecked = isChecked) else it
+                                    }
+                                    if (isChecked) {
+                                        prefs.addStudyApp(app.packageName)
+                                    } else {
+                                        prefs.removeStudyApp(app.packageName)
+                                    }
+                                    onAppsUpdated()
+                                },
+                                colors = CheckboxDefaults.colors(
+                                    checkedColor = MaterialTheme.colorScheme.primary,
+                                    uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                )
+                            )
+                        }
                     }
-                    Divider(color = Color.LightGray.copy(alpha = 0.5f))
+                }
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
