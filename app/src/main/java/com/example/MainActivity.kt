@@ -47,6 +47,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         prefs = StudyBlockPreferences(applicationContext)
 
+        // Ask for runtime notification permissions on Android 13+ (required for stable foreground services)
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+            }
+        }
+
         // Find if navigated directly from Block screen to the Study Tab
         val startInStudyTab = intent.getBooleanExtra("navigate_to_study", false)
 
@@ -355,6 +362,13 @@ fun MainContainerScreen(
                             true
                         })
                     }
+                    var isNotificationOn by remember {
+                        mutableStateOf(if (android.os.Build.VERSION.SDK_INT >= 33) {
+                            context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+                        } else {
+                            true
+                        })
+                    }
 
                     // Poll status periodically while dialog is visible so clicking setting dynamically updates the UI
                     LaunchedEffect(showPermissionsDialog) {
@@ -368,6 +382,11 @@ fun MainContainerScreen(
                             isBatteryOn = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                                 val pm = context.getSystemService(Context.POWER_SERVICE) as? android.os.PowerManager
                                 pm?.isIgnoringBatteryOptimizations(context.packageName) ?: true
+                            } else {
+                                true
+                            }
+                            isNotificationOn = if (android.os.Build.VERSION.SDK_INT >= 33) {
+                                context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
                             } else {
                                 true
                             }
@@ -555,6 +574,70 @@ fun MainContainerScreen(
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
                                 )
+                            }
+                        }
+                    }
+
+                    // Permission 4: Notification Card (Android 13+)
+                    if (android.os.Build.VERSION.SDK_INT >= 33) {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(8.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)
+                            ),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant)
+                        ) {
+                            Column(modifier = Modifier.padding(10.dp)) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "नोटिफिकेशन अनुमति (Notification)",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 13.sp
+                                    )
+                                    Text(
+                                        text = if (isNotificationOn) "मंजूर (ON)" else "अस्वीकृत (OFF)",
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = if (isNotificationOn) Color(0xFF10B981) else Color(0xFFEF4444)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "बैकग्राउंड में टाइमर और शेड्यूल के सही संचालन की जानकारी स्टेटस बार में दिखाने के लिए।",
+                                    fontSize = 11.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Button(
+                                    onClick = {
+                                        try {
+                                            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                            }
+                                            context.startActivity(intent)
+                                        } catch (e: Exception) {
+                                            // Fallback
+                                        }
+                                    },
+                                    modifier = Modifier.fillMaxWidth().height(36.dp),
+                                    contentPadding = PaddingValues(0.dp),
+                                    shape = RoundedCornerShape(6.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = if (isNotificationOn) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
+                                    )
+                                ) {
+                                    Text(
+                                        text = if (isNotificationOn) "सेटिंग्स देखें (View Settings)" else "अनुमति चालू करें (Enable)",
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                }
                             }
                         }
                     }
