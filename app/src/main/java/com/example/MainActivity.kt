@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
+import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -83,6 +84,7 @@ fun MainContainerScreen(
     var selectedTab by remember { mutableStateOf(0) } // Exactly 3 tabs: 0 -> Dashboard/Schedules, 1 -> Apps, 2 -> Help/Info
     var showBreakPopup by remember { mutableStateOf(false) }
     var tempBreakMinutes by remember { mutableStateOf(15f) }
+    var showPermissionsDialog by remember { mutableStateOf(false) }
     
     // Live states
     var isServiceEnabled by remember { mutableStateOf(isAccessibilityServiceEnabled(context, StudyBlockAccessibilityService::class.java)) }
@@ -216,6 +218,19 @@ fun MainContainerScreen(
                     label = { Text("मदद", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
                 )
             }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showPermissionsDialog = true },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.padding(bottom = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Permissions Settings"
+                )
+            }
         }
     ) { innerPadding ->
         Box(
@@ -294,6 +309,262 @@ fun MainContainerScreen(
             dismissButton = {
                 TextButton(onClick = { showBreakPopup = false }) {
                     Text("रद्द करें (Cancel)")
+                }
+            }
+        )
+    }
+
+    if (showPermissionsDialog) {
+        AlertDialog(
+            onDismissRequest = { showPermissionsDialog = false },
+            title = {
+                Text(
+                    text = "ऐप अनुमतियाँ (App Permissions)",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            },
+            text = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "ऐप की सुचारू कार्यप्रणाली के लिए कृपया निम्नलिखित अनुमतियाँ प्रदान करें। ये अनुमतियाँ केवल ऐप्स को ब्लॉक करने के लिए आवश्यक हैं:",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    // Check live status of permissions
+                    var isAccessibilityOn by remember {
+                        mutableStateOf(isAccessibilityServiceEnabled(context, StudyBlockAccessibilityService::class.java))
+                    }
+                    var isOverlayOn by remember {
+                        mutableStateOf(if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                            Settings.canDrawOverlays(context)
+                        } else {
+                            true
+                        })
+                    }
+                    var isBatteryOn by remember {
+                        mutableStateOf(if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                            val pm = context.getSystemService(Context.POWER_SERVICE) as? android.os.PowerManager
+                            pm?.isIgnoringBatteryOptimizations(context.packageName) ?: true
+                        } else {
+                            true
+                        })
+                    }
+
+                    // Poll status periodically while dialog is visible so clicking setting dynamically updates the UI
+                    LaunchedEffect(showPermissionsDialog) {
+                        while (showPermissionsDialog) {
+                            isAccessibilityOn = isAccessibilityServiceEnabled(context, StudyBlockAccessibilityService::class.java)
+                            isOverlayOn = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                                Settings.canDrawOverlays(context)
+                            } else {
+                                true
+                            }
+                            isBatteryOn = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                                val pm = context.getSystemService(Context.POWER_SERVICE) as? android.os.PowerManager
+                                pm?.isIgnoringBatteryOptimizations(context.packageName) ?: true
+                            } else {
+                                true
+                            }
+                            delay(1000)
+                        }
+                    }
+
+                    // Permission 1: Accessibility Service Card
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)
+                        ),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant)
+                    ) {
+                        Column(modifier = Modifier.padding(10.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "एक्सेसिबिलिटी सर्विस (Accessibility)",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp
+                                )
+                                Text(
+                                    text = if (isAccessibilityOn) "चालू (ON)" else "बंद (OFF)",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = if (isAccessibilityOn) Color(0xFF10B981) else Color(0xFFEF4444)
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "मॉनिटर करने के लिए कि आपने कौन सा स्टडी या ब्लॉक ऐप खोला है, ताकि ब्लॉक किया जा सके।",
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Button(
+                                onClick = {
+                                    val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                                    context.startActivity(intent)
+                                },
+                                modifier = Modifier.fillMaxWidth().height(36.dp),
+                                contentPadding = PaddingValues(0.dp),
+                                shape = RoundedCornerShape(6.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (isAccessibilityOn) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
+                                )
+                            ) {
+                                Text(
+                                    text = if (isAccessibilityOn) "सेटिंग्स देखें (View Settings)" else "अनुमति चालू करें (Enable)",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+
+                    // Permission 2: Draw Over Other Apps Overlay Card
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)
+                        ),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant)
+                    ) {
+                        Column(modifier = Modifier.padding(10.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "डिस्प्ले ओवर ऐप्स (Overlay)",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp
+                                )
+                                Text(
+                                    text = if (isOverlayOn) "मंजूर (ON)" else "अस्वीकृत (OFF)",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = if (isOverlayOn) Color(0xFF10B981) else Color(0xFFEF4444)
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "ब्लॉक किए गए ऐप्स को तुरंत कवर करने के लिए ब्लॉक स्क्रीन दिखाने के लिए।",
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Button(
+                                onClick = {
+                                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                                        try {
+                                            val intent = Intent(
+                                                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                                Uri.parse("package:${context.packageName}")
+                                            )
+                                            context.startActivity(intent)
+                                        } catch (e: Exception) {
+                                            val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+                                            context.startActivity(intent)
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth().height(36.dp),
+                                contentPadding = PaddingValues(0.dp),
+                                shape = RoundedCornerShape(6.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (isOverlayOn) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
+                                )
+                            ) {
+                                Text(
+                                    text = if (isOverlayOn) "सेटिंग्स देखें (View Settings)" else "अनुमति चालू करें (Enable)",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+
+                    // Permission 3: Battery Optimization bypass Card
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)
+                        ),
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant)
+                    ) {
+                        Column(modifier = Modifier.padding(10.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "बैटरी ऑप्टिमाइजेशन (Battery Saver)",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 13.sp
+                                )
+                                Text(
+                                    text = if (isBatteryOn) "अनुकूलित (Ignored)" else "सक्रिय (Optimizing)",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = if (isBatteryOn) Color(0xFF10B981) else Color(0xFFEAB308)
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "सिस्टम द्वारा पृष्ठभूमि में आपकी ब्लॉक सेवा को बंद होने से बचाने के लिए। (प्ले स्टोर सुरक्षा नियम कंपैटिबल)",
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Button(
+                                onClick = {
+                                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                                        try {
+                                            val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                                            context.startActivity(intent)
+                                        } catch (e: Exception) {
+                                            // Fallback
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth().height(36.dp),
+                                contentPadding = PaddingValues(0.dp),
+                                shape = RoundedCornerShape(6.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (isBatteryOn) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
+                                )
+                            ) {
+                                Text(
+                                    text = if (isBatteryOn) "सेटिंग्स देखें (View Settings)" else "अनुकूलन बंद करें (Ignore)",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = { showPermissionsDialog = false }
+                ) {
+                    Text("ओके (OK)")
                 }
             }
         )
@@ -572,7 +843,7 @@ fun DashboardTab(
                             color = if (slot.isEnabled && isScheduleEnabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Icon(
-                            imageVector = Icons.Default.Create,
+                            imageVector = Icons.Default.Edit,
                             contentDescription = "Edit Time Slot",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                             modifier = Modifier.size(14.dp)

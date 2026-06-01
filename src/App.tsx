@@ -84,6 +84,12 @@ export default function App() {
   const [customBreakDuration, setCustomBreakDuration] = useState(15);
   const [showCustomBreakSelector, setShowCustomBreakSelector] = useState(false);
 
+  // App Permissions States for simulation
+  const [showPermissionsDialog, setShowPermissionsDialog] = useState(false);
+  const [isSimulatedAccessibilityOn, setIsSimulatedAccessibilityOn] = useState(false);
+  const [isSimulatedOverlayOn, setIsSimulatedOverlayOn] = useState(false);
+  const [isSimulatedBatteryOn, setIsSimulatedBatteryOn] = useState(false);
+
   // Phone internal screen layout
   const [phoneScreen, setPhoneScreen] = useState<'launcher' | 'study_shield_app' | 'blocked_screen'>('study_shield_app');
   const [activeTab, setActiveTab] = useState<'home' | 'apps' | 'info'>('home');
@@ -818,6 +824,126 @@ export default function App() {
                     <span className="text-[8px] mt-0.5">मदद (Instructions)</span>
                   </button>
                 </div>
+
+                {/* Simulated Floating Settings/Permissions Button on Right Bottom Corner */}
+                <button 
+                  onClick={() => setShowPermissionsDialog(true)}
+                  className="absolute bottom-16 right-4 w-12 h-12 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full flex items-center justify-center shadow-lg transform active:scale-95 transition-all z-35 border border-indigo-400/40 hover:rotate-45"
+                  title="अनुमतियाँ चालू करें (App Permissions)"
+                >
+                  <Settings size={20} className="animate-spin-slow" />
+                </button>
+
+                {/* Simulated Permission Dialog Modal matching Android Activity perfectly */}
+                {showPermissionsDialog && (
+                  <div className="absolute inset-0 bg-[#070b13]/98 z-50 p-4 flex flex-col justify-between overflow-y-auto">
+                    
+                    <div className="space-y-4">
+                      {/* Title Bar */}
+                      <div className="flex justify-between items-center pb-2 border-b border-slate-800">
+                        <div className="flex items-center gap-1.5">
+                          <Settings size={16} className="text-indigo-400" />
+                          <span className="text-xs font-black text-indigo-300 uppercase tracking-wider">ऐप अनुमतियाँ (Permissions)</span>
+                        </div>
+                        <button 
+                          onClick={() => setShowPermissionsDialog(false)}
+                          className="p-1 hover:bg-slate-800 rounded-full transition"
+                        >
+                          <XCircle size={18} className="text-rose-500" />
+                        </button>
+                      </div>
+
+                      <p className="text-[10px] text-slate-400 leading-normal">
+                        ऐप की सुचारू कार्यप्रणाली के लिए निम्नलिखित अनुमतियाँ आवश्यक हैं। लाइव ऐप में ये बटन सीधे सिस्टम सेटिंग्स पर रीडायरेक्ट करते हैं:
+                      </p>
+
+                      {/* Permissions List */}
+                      <div className="space-y-3">
+                        
+                        {/* 1. Accessibility Service Card */}
+                        <div className="bg-[#0c1424] border border-slate-805 rounded-xl p-3 space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-[11px] font-black text-slate-200">एक्सेसिबिलिटी (Accessibility)</span>
+                            <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${isSimulatedAccessibilityOn ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/40' : 'bg-rose-950 text-rose-400 border border-rose-800/40'}`}>
+                              {isSimulatedAccessibilityOn ? 'चालू (ON)' : 'बंद (OFF)'}
+                            </span>
+                          </div>
+                          <p className="text-[9px] text-slate-500 leading-tight">
+                            सिलेक्टेड ऐप्स ओपन होने पर स्टडी लॉक एक्टिव करने के लिए आवश्यक है।
+                          </p>
+                          <button
+                            onClick={() => {
+                              setIsSimulatedAccessibilityOn(prev => !prev);
+                              setLaunchNotification("Redirecting to System: Accessibility Settings");
+                              setTimeout(() => setLaunchNotification(null), 2500);
+                            }}
+                            className="w-full py-1.5 bg-slate-900 border border-slate-805 hover:bg-slate-850 text-indigo-400 text-[10px] font-bold rounded-lg transition"
+                          >
+                            {isSimulatedAccessibilityOn ? 'सेट देखें (View Settings)' : 'अनुमति दें (Enable)'}
+                          </button>
+                        </div>
+
+                        {/* 2. Display Over Other Apps Card */}
+                        <div className="bg-[#0c1424] border border-slate-805 rounded-xl p-3 space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-[11px] font-black text-slate-200">डिस्प्ले ओवर ऐप्स (Overlay)</span>
+                            <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${isSimulatedOverlayOn ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/40' : 'bg-rose-950 text-rose-400 border border-rose-800/40'}`}>
+                              {isSimulatedOverlayOn ? 'मंजूर (ON)' : 'अस्वीकृत (OFF)'}
+                            </span>
+                          </div>
+                          <p className="text-[9px] text-slate-500 leading-tight">
+                            ब्लॉक ऐप्स ओपन होने पर उनके ऊपर ब्लॉक स्क्रीन दिखाने के लिए आवश्यक है।
+                          </p>
+                          <button
+                            onClick={() => {
+                              setIsSimulatedOverlayOn(prev => !prev);
+                              setLaunchNotification("Redirecting to System: Overlay Permissions");
+                              setTimeout(() => setLaunchNotification(null), 2500);
+                            }}
+                            className="w-full py-1.5 bg-slate-900 border border-slate-805 hover:bg-slate-850 text-indigo-400 text-[10px] font-bold rounded-lg transition"
+                          >
+                            {isSimulatedOverlayOn ? 'सेट देखें (View Settings)' : 'अनुमति दें (Enable)'}
+                          </button>
+                        </div>
+
+                        {/* 3. Ignore Battery Optimization Card */}
+                        <div className="bg-[#0c1424] border border-slate-805 rounded-xl p-3 space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-[11px] font-black text-slate-200">बैटरी ऑप्टिमाइजेशन (Battery)</span>
+                            <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${isSimulatedBatteryOn ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/40' : 'bg-amber-950 text-amber-400 border border-amber-800/40'}`}>
+                              {isSimulatedBatteryOn ? 'अनुकूलित (Ignored)' : 'सक्रिय (Saver)'}
+                            </span>
+                          </div>
+                          <p className="text-[9px] text-slate-500 leading-tight">
+                            सिस्टम द्वारा बैकग्राउंड सेवा को बंद होने से बचाने के लिए प्ले-स्टोर सुरक्षा नियम कंपैटिबल।
+                          </p>
+                          <button
+                            onClick={() => {
+                              setIsSimulatedBatteryOn(prev => !prev);
+                              setLaunchNotification("Redirecting to System: Battery Optimization Settings");
+                              setTimeout(() => setLaunchNotification(null), 2500);
+                            }}
+                            className="w-full py-1.5 bg-slate-900 border border-slate-805 hover:bg-slate-850 text-indigo-400 text-[10px] font-bold rounded-lg transition"
+                          >
+                            {isSimulatedBatteryOn ? 'सेट देखें (View Settings)' : 'अनुकूलन बंद करें (Ignore)'}
+                          </button>
+                        </div>
+
+                      </div>
+                    </div>
+
+                    {/* OK / Confirm Button */}
+                    <div className="pt-4 border-t border-slate-800">
+                      <button 
+                        onClick={() => setShowPermissionsDialog(false)}
+                        className="w-full py-2 bg-indigo-600 hover:bg-indigo-505 text-white text-xs font-black rounded-xl transition"
+                      >
+                        ओके (OK)
+                      </button>
+                    </div>
+
+                  </div>
+                )}
 
               </div>
             )}
