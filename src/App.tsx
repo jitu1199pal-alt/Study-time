@@ -49,12 +49,12 @@ export default function App() {
     { id: '1', name: 'NCERT Books', packageName: 'com.study.ncert', isStudy: true, category: 'Study', iconColor: 'bg-emerald-500' },
     { id: '2', name: 'Physics Wallah', packageName: 'com.physicswallah', isStudy: true, category: 'Study', iconColor: 'bg-blue-500' },
     { id: '3', name: 'Khan Academy', packageName: 'org.khanacademy', isStudy: true, category: 'Study', iconColor: 'bg-teal-600' },
-    { id: '4', name: 'YouTube', packageName: 'com.google.android.youtube', isStudy: true, category: 'Social', iconColor: 'bg-red-600' },
-    { id: '5', name: 'WhatsApp', packageName: 'com.whatsapp', isStudy: true, category: 'Social', iconColor: 'bg-green-500' },
-    { id: '6', name: 'Instagram', packageName: 'com.instagram.android', isStudy: true, category: 'Social', iconColor: 'bg-pink-600' },
-    { id: '7', name: 'Subway Surfers', packageName: 'com.kiloo.subwaysurf', isStudy: true, category: 'Games', iconColor: 'bg-amber-500' },
-    { id: '8', name: 'Free Fire', packageName: 'com.dts.freefireth', isStudy: true, category: 'Games', iconColor: 'bg-orange-600' },
-    { id: '9', name: 'Chrome Browser', packageName: 'com.android.chrome', isStudy: true, category: 'System', iconColor: 'bg-sky-500' },
+    { id: '4', name: 'YouTube', packageName: 'com.google.android.youtube', isStudy: false, category: 'Social', iconColor: 'bg-red-600' },
+    { id: '5', name: 'WhatsApp', packageName: 'com.whatsapp', isStudy: false, category: 'Social', iconColor: 'bg-green-500' },
+    { id: '6', name: 'Instagram', packageName: 'com.instagram.android', isStudy: false, category: 'Social', iconColor: 'bg-pink-600' },
+    { id: '7', name: 'Subway Surfers', packageName: 'com.kiloo.subwaysurf', isStudy: false, category: 'Games', iconColor: 'bg-amber-500' },
+    { id: '8', name: 'Free Fire', packageName: 'com.dts.freefireth', isStudy: false, category: 'Games', iconColor: 'bg-orange-600' },
+    { id: '9', name: 'Chrome Browser', packageName: 'com.android.chrome', isStudy: false, category: 'System', iconColor: 'bg-sky-500' },
   ]);
 
   // Simulated Time & Calendar synced with system real-time clock
@@ -68,15 +68,15 @@ export default function App() {
   });
   const [simulatedYear, setSimulatedYear] = useState(() => new Date().getFullYear());
 
-  // 7 Time Slots table for student study block schedules (12-hour AM/PM support)
+  // 7 Time Slots table for student study block schedules (12-hour AM/PM support) - 24H gapless coverage enabled by default
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([
     { id: 1, startHour: 8, startMinute: 0, endHour: 10, endMinute: 30, isEnabled: true },
-    { id: 2, startHour: 11, startMinute: 0, endHour: 13, endMinute: 0, isEnabled: false },
-    { id: 3, startHour: 14, startMinute: 0, endHour: 16, endMinute: 0, isEnabled: true },
-    { id: 4, startHour: 17, startMinute: 0, endHour: 18, endMinute: 30, isEnabled: false },
-    { id: 5, startHour: 19, startMinute: 0, endHour: 21, endMinute: 0, isEnabled: true },
-    { id: 6, startHour: 21, startMinute: 30, endHour: 23, endMinute: 0, isEnabled: false },
-    { id: 7, startHour: 23, startMinute: 30, endHour: 1, endMinute: 30, isEnabled: false }
+    { id: 2, startHour: 10, startMinute: 30, endHour: 13, endMinute: 0, isEnabled: true },
+    { id: 3, startHour: 13, startMinute: 0, endHour: 15, endMinute: 30, isEnabled: true },
+    { id: 4, startHour: 15, startMinute: 30, endHour: 18, endMinute: 0, isEnabled: true },
+    { id: 5, startHour: 18, startMinute: 0, endHour: 20, endMinute: 30, isEnabled: true },
+    { id: 6, startHour: 20, startMinute: 30, endHour: 23, endMinute: 0, isEnabled: true },
+    { id: 7, startHour: 23, startMinute: 0, endHour: 8, endMinute: 0, isEnabled: true }
   ]);
 
   // Break state Management

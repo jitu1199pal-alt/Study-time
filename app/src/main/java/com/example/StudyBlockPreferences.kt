@@ -17,6 +17,37 @@ class StudyBlockPreferences(context: Context) {
 
     private val prefs: SharedPreferences = context.getSharedPreferences("study_block_prefs", Context.MODE_PRIVATE)
 
+    init {
+        if (!prefs.getBoolean("initialized_24h_v8", false)) {
+            val editor = prefs.edit()
+            val defaultStarts = arrayOf(8, 10, 13, 15, 18, 20, 23)
+            val defaultStartMins = arrayOf(0, 30, 0, 30, 0, 30, 0)
+            val defaultEnds = arrayOf(10, 13, 15, 18, 20, 23, 8)
+            val defaultEndMins = arrayOf(30, 0, 30, 0, 30, 0, 0)
+            
+            for (i in 1..7) {
+                editor.putInt("slot_${i}_start_hour", defaultStarts[i - 1])
+                editor.putInt("slot_${i}_start_minute", defaultStartMins[i - 1])
+                editor.putInt("slot_${i}_end_hour", defaultEnds[i - 1])
+                editor.putInt("slot_${i}_end_minute", defaultEndMins[i - 1])
+                editor.putBoolean("slot_${i}_enabled", true)
+            }
+            
+            // Pre-seed some default educational app packages
+            editor.putStringSet("study_apps", setOf(
+                "com.study.ncert",
+                "com.physicswallah",
+                "org.khanacademy",
+                "com.duolingo",
+                "com.google.android.apps.classroom"
+            ))
+            
+            editor.putBoolean("schedule_enabled", true)
+            editor.putBoolean("initialized_24h_v8", true)
+            editor.apply()
+        }
+    }
+
     companion object {
         private const val KEY_STUDY_APPS = "study_apps"
         private const val KEY_SCHEDULE_ENABLED = "schedule_enabled"
@@ -53,19 +84,19 @@ class StudyBlockPreferences(context: Context) {
     fun getTimeSlots(): List<TimeSlot> {
         val list = mutableListOf<TimeSlot>()
         
-        // Default times based on student requirements (AM/PM table representation)
-        val defaultStarts = arrayOf(8, 10, 13, 15, 18, 20, 22)
-        val defaultStartMins = arrayOf(0, 30, 0, 30, 0, 30, 30)
-        val defaultEnds = arrayOf(10, 12, 15, 17, 20, 22, 0)
-        val defaultEndMins = arrayOf(0, 0, 0, 0, 0, 0, 0)
+        // Default times based on student requirements (AM/PM table representation) - 24H gapless coverage enabled by default
+        val defaultStarts = arrayOf(8, 10, 13, 15, 18, 20, 23)
+        val defaultStartMins = arrayOf(0, 30, 0, 30, 0, 30, 0)
+        val defaultEnds = arrayOf(10, 13, 15, 18, 20, 23, 8)
+        val defaultEndMins = arrayOf(30, 0, 30, 0, 30, 0, 0)
         
         for (i in 1..7) {
             val startHour = prefs.getInt("slot_${i}_start_hour", defaultStarts[i - 1])
             val startMinute = prefs.getInt("slot_${i}_start_minute", defaultStartMins[i - 1])
             val endHour = prefs.getInt("slot_${i}_end_hour", defaultEnds[i - 1])
             val endMinute = prefs.getInt("slot_${i}_end_minute", defaultEndMins[i - 1])
-            // Default only slot 1 is enabled initially to give student complete safety
-            val isEnabled = prefs.getBoolean("slot_${i}_enabled", i == 1)
+            // Enable all slots by default to ensure continuous block coverage when schedule is ON
+            val isEnabled = prefs.getBoolean("slot_${i}_enabled", true)
             
             list.add(TimeSlot(i, startHour, startMinute, endHour, endMinute, isEnabled))
         }
