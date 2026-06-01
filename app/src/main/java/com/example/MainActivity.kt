@@ -1168,6 +1168,91 @@ fun InfoTab() {
                 }
             }
         }
+
+        item {
+            var isExpanded by remember { mutableStateOf(false) }
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { isExpanded = !isExpanded }
+                    .animateContentSize()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = "Privacy Policy",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "🔒 सुरक्षा एवं गोपनीयता नीति",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Icon(
+                            imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                            contentDescription = "Expand/Collapse",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "यह ऐप पूरी तरह से ऑफलाइन और सुरक्षित है। हम आपका कोई भी पर्सनल या ब्राउज़िंग डेटा किसी बाहरी सर्वर पर नहीं भेजते हैं।",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = 16.sp
+                    )
+                    
+                    if (isExpanded) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Divider(color = MaterialTheme.colorScheme.surfaceVariant)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        
+                        Text(
+                            text = "1. अभिगम्यता सेवा (Accessibility Service):\nयह अनुमति केवल स्क्रीन पर चल रहे ऐप के पैकेज नाम की जाँच करने के लिए ली जाती है। इसका उद्देश्य सिर्फ आपके चुने हुए समय अंतराल पर विचलित करने वाले ऐप्स को ब्लॉक करना है।",
+                            fontSize = 10.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            lineHeight = 15.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = "2. 100% ऑफलाइन गोपनीयता (Data Privacy):\nआपके डिवाइस से कोई पर्सनल डेटा एकत्रित, शेयर या क्लाउड पर स्टोर नहीं किया जाता है। सभी शेड्यूल्स और सेटिंग्स आपके फ़ोन में लोकल तौर पर सुरक्षित रहती हैं।",
+                            fontSize = 10.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            lineHeight = 15.sp
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = "3. Google Play Store Compliance:\nOur product complies with the Google Play Developer Distribution Agreement regarding sensitive user data and accessibility APIs.",
+                            fontSize = 10.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            lineHeight = 15.sp
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "विस्तृत प्रकटीकरण पढ़ने के लिए टैप करें...",
+                            fontSize = 9.sp,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -1180,6 +1265,7 @@ fun AppSelectorTab(
     var installedApps by remember { mutableStateOf<List<AppInfoModel>>(emptyList()) }
     var searchQuery by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(true) }
+    var showOnlySelected by remember { mutableStateOf(false) }
 
     // Query package manager inside a coroutine background thread
     LaunchedEffect(Unit) {
@@ -1208,8 +1294,9 @@ fun AppSelectorTab(
     }
 
     val filteredApps = installedApps.filter {
-        it.label.contains(searchQuery, ignoreCase = true) || 
-        it.packageName.contains(searchQuery, ignoreCase = true)
+        (it.label.contains(searchQuery, ignoreCase = true) || 
+        it.packageName.contains(searchQuery, ignoreCase = true)) &&
+        (!showOnlySelected || it.isChecked)
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -1232,12 +1319,12 @@ fun AppSelectorTab(
             shape = RoundedCornerShape(12.dp)
         )
 
-        // Select All / Deselect All Row - Completes the "Select All" function
+        // Select All / Deselect All / Study App Row
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Button(
                 onClick = {
@@ -1247,11 +1334,12 @@ fun AppSelectorTab(
                 },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-                shape = RoundedCornerShape(10.dp)
+                shape = RoundedCornerShape(10.dp),
+                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
             ) {
-                Icon(Icons.Default.Check, contentDescription = "Select All", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer)
-                Spacer(modifier = Modifier.width(4.dp))
-                Text("सभी सिलेक्ट करें", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                Icon(Icons.Default.Check, contentDescription = "Select All", modifier = Modifier.size(13.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer)
+                Spacer(modifier = Modifier.width(3.dp))
+                Text("सभी सिलेक्ट", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimaryContainer)
             }
             OutlinedButton(
                 onClick = {
@@ -1262,11 +1350,39 @@ fun AppSelectorTab(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(10.dp),
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary)
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
             ) {
-                Icon(Icons.Default.Clear, contentDescription = "Deselect All", modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.primary)
-                Spacer(modifier = Modifier.width(4.dp))
-                Text("सभी अनसिलेक्ट करें", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                Icon(Icons.Default.Clear, contentDescription = "Deselect All", modifier = Modifier.size(13.dp), tint = MaterialTheme.colorScheme.primary)
+                Spacer(modifier = Modifier.width(3.3.dp))
+                Text("सभी हटाएँ", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            }
+            Button(
+                onClick = {
+                    showOnlySelected = !showOnlySelected
+                },
+                modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (showOnlySelected) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.secondaryContainer
+                ),
+                shape = RoundedCornerShape(10.dp),
+                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
+            ) {
+                Icon(
+                    imageVector = if (showOnlySelected) Icons.Default.CheckCircle else Icons.Default.Star,
+                    contentDescription = "Study App Only",
+                    modifier = Modifier.size(13.dp),
+                    tint = if (showOnlySelected) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSecondaryContainer
+                )
+                Spacer(modifier = Modifier.width(3.dp))
+                Text(
+                    text = "स्टडी ऐप्स",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = if (showOnlySelected) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSecondaryContainer,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
 
@@ -1275,13 +1391,33 @@ fun AppSelectorTab(
                 CircularProgressIndicator()
             }
         } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(filteredApps) { app ->
+            if (filteredApps.isEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (showOnlySelected) {
+                            "कोई स्टडी ऐप नहीं चुना गया है!\nऊपर से ऐप सिलेक्ट करें।"
+                        } else {
+                            "कोई ऐप नहीं मिला।"
+                        },
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(filteredApps) { app ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -1365,90 +1501,117 @@ fun TimeSlotEditDialog(
     onDismiss: () -> Unit,
     onSave: (TimeSlot) -> Unit
 ) {
-    var startHour by remember { mutableStateOf(slot.startHour) }
-    var startMinute by remember { mutableStateOf(slot.startMinute) }
-    var endHour by remember { mutableStateOf(slot.endHour) }
-    var endMinute by remember { mutableStateOf(slot.endMinute) }
+    val initialStartH12 = if (slot.startHour % 12 == 0) 12 else slot.startHour % 12
+    val initialStartAmPm = if (slot.startHour >= 12) "PM" else "AM"
+
+    val initialEndH12 = if (slot.endHour % 12 == 0) 12 else slot.endHour % 12
+    val initialEndAmPm = if (slot.endHour >= 12) "PM" else "AM"
+
+    var startH12 by remember { mutableStateOf(initialStartH12) }
+    var startMin by remember { mutableStateOf(slot.startMinute) }
+    var startAmPm by remember { mutableStateOf(initialStartAmPm) }
+
+    var endH12 by remember { mutableStateOf(initialEndH12) }
+    var endMin by remember { mutableStateOf(slot.endMinute) }
+    var endAmPm by remember { mutableStateOf(initialEndAmPm) }
+
+    val hoursList = (1..12).map { String.format("%02d", it) }
+    val minutesList = (0..59).map { String.format("%02d", it) }
+    val amPmList = listOf("AM", "PM")
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("शेड्यूल #${slot.id} समय बदलें") },
+        title = { Text("टाइम शेड्यूल #${slot.id} संपादित करें", fontWeight = FontWeight.Bold) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Column {
-                    Text("स्टार्ट टाइम (Start Time):", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Text("स्टार्ट समय (Start Time):", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
+                    Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        NumberDropdownField(
-                            value = startHour,
-                            range = 0..23,
-                            label = "घंटा (0-23)",
-                            onValueChange = { startHour = it },
-                            modifier = Modifier.weight(1f)
+                        TimePartDropdown(
+                            value = String.format("%02d", startH12),
+                            options = hoursList,
+                            label = "घंटा",
+                            onValueChange = { startH12 = it.toInt() },
+                            modifier = Modifier.weight(1.2f)
                         )
-                        Text(":", fontWeight = FontWeight.Bold)
-                        NumberDropdownField(
-                            value = startMinute,
-                            range = 0..59,
-                            label = "मिनट (0-59)",
-                            onValueChange = { startMinute = it },
+                        Text(":", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        TimePartDropdown(
+                            value = String.format("%02d", startMin),
+                            options = minutesList,
+                            label = "मिनट",
+                            onValueChange = { startMin = it.toInt() },
+                            modifier = Modifier.weight(1.2f)
+                        )
+                        Spacer(modifier = Modifier.width(2.dp))
+                        TimePartDropdown(
+                            value = startAmPm,
+                            options = amPmList,
+                            label = "AM/PM",
+                            onValueChange = { startAmPm = it },
                             modifier = Modifier.weight(1f)
                         )
                     }
-                    Text(
-                        text = "12H Format: " + formatSlotTime12H(startHour, startMinute),
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(top = 4.dp),
-                        fontWeight = FontWeight.Bold
-                    )
                 }
 
                 Column {
-                    Text("एंड टाइम (End Time):", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Text("एंड समय (End Time):", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
+                    Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        NumberDropdownField(
-                            value = endHour,
-                            range = 0..23,
-                            label = "घंटा (0-23)",
-                            onValueChange = { endHour = it },
-                            modifier = Modifier.weight(1f)
+                        TimePartDropdown(
+                            value = String.format("%02d", endH12),
+                            options = hoursList,
+                            label = "घंटा",
+                            onValueChange = { endH12 = it.toInt() },
+                            modifier = Modifier.weight(1.2f)
                         )
-                        Text(":", fontWeight = FontWeight.Bold)
-                        NumberDropdownField(
-                            value = endMinute,
-                            range = 0..59,
-                            label = "मिनट (0-59)",
-                            onValueChange = { endMinute = it },
+                        Text(":", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        TimePartDropdown(
+                            value = String.format("%02d", endMin),
+                            options = minutesList,
+                            label = "मिनट",
+                            onValueChange = { endMin = it.toInt() },
+                            modifier = Modifier.weight(1.2f)
+                        )
+                        Spacer(modifier = Modifier.width(2.dp))
+                        TimePartDropdown(
+                            value = endAmPm,
+                            options = amPmList,
+                            label = "AM/PM",
+                            onValueChange = { endAmPm = it },
                             modifier = Modifier.weight(1f)
                         )
                     }
-                    Text(
-                        text = "12H Format: " + formatSlotTime12H(endHour, endMinute),
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(top = 4.dp),
-                        fontWeight = FontWeight.Bold
-                    )
                 }
             }
         },
         confirmButton = {
             Button(onClick = {
+                val finalStartHour = if (startAmPm == "PM") {
+                    if (startH12 == 12) 12 else startH12 + 12
+                } else {
+                    if (startH12 == 12) 0 else startH12
+                }
+
+                val finalEndHour = if (endAmPm == "PM") {
+                    if (endH12 == 12) 12 else endH12 + 12
+                } else {
+                    if (endH12 == 12) 0 else endH12
+                }
+
                 onSave(slot.copy(
-                    startHour = startHour,
-                    startMinute = startMinute,
-                    endHour = endHour,
-                    endMinute = endMinute
+                    startHour = finalStartHour,
+                    startMinute = startMin,
+                    endHour = finalEndHour,
+                    endMinute = endMin
                 ))
             }) {
                 Text("सुरक्षित करें")
@@ -1460,6 +1623,64 @@ fun TimeSlotEditDialog(
             }
         }
     )
+}
+
+@Composable
+fun TimePartDropdown(
+    value: String,
+    options: List<String>,
+    label: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box(modifier = modifier) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+                .clickable { expanded = true }
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(verticalArrangement = Arrangement.Center) {
+                    Text(label, fontSize = 9.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Spacer(modifier = Modifier.height(1.dp))
+                    Text(value, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                }
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = "Dropdown",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.heightIn(max = 240.dp)
+        ) {
+            options.forEach { option ->
+                DropdownMenuItem(
+                    text = { Text(option, fontSize = 14.sp) },
+                    onClick = {
+                        onValueChange(option)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
 }
 
 @Composable

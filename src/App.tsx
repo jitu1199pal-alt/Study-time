@@ -96,6 +96,7 @@ export default function App() {
   const [selectedBlockedAppName, setSelectedBlockedAppName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [launchNotification, setLaunchNotification] = useState<string | null>(null);
+  const [isPolicyExpanded, setIsPolicyExpanded] = useState(false);
 
   // Editing dialog state for time slot
   const [editingSlotId, setEditingSlotId] = useState<number | null>(null);
@@ -695,6 +696,40 @@ export default function App() {
                       <div className="bg-white/5 border border-white/10 rounded-xl p-3 text-[10px] text-slate-400 space-y-1.5 text-center">
                         <p className="font-bold text-white uppercase">👤 योग्यता मानदंड (Age Criteria)</p>
                         <p>यह सुरक्षा फोकस यूटिलिटी 18 वर्ष से अधिक आयु के छात्रों (18+ Higher Education Students) की एकाग्रता बढ़ाने के लिए है।</p>
+                      </div>
+
+                      {/* Expandable Privacy Policy Widget */}
+                      <div 
+                        className="bg-slate-950/40 border border-indigo-950 rounded-xl p-3 cursor-pointer select-none text-left transition hover:border-indigo-900"
+                        onClick={() => setIsPolicyExpanded(!isPolicyExpanded)}
+                      >
+                        <div className="flex justify-between items-center text-[11px] font-bold text-indigo-400">
+                          <span className="flex items-center gap-1.5">
+                            🔒 सुरक्षा एवं गोपनीयता नीति
+                          </span>
+                          <span className="text-[10px] text-slate-500 font-normal">
+                            {isPolicyExpanded ? 'छुपाएं ▲' : 'देखें ▼'}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-slate-400 mt-1.5 leading-normal">
+                          यह ऐप पूरी तरह से ऑफलाइन और सुरक्षित है। हम आपका कोई भी पर्सनल या ब्राउज़िंग डेटा किसी बाहरी सर्वर पर नहीं भेजते हैं।
+                        </p>
+                        {isPolicyExpanded && (
+                          <div className="mt-2 pt-2 border-t border-indigo-950 space-y-1.5 text-[9px] text-slate-450 leading-relaxed">
+                            <p>
+                              <strong className="text-white block">1. अभिगम्यता सेवा (Accessibility API):</strong>
+                              यह अनुमति केवल सक्रिय ऐप के पैकेज नाम की जाँच करने और विचलित करने वाले ऐप्स को आपके निर्धारित समय पर स्थानीय रूप से ब्लॉक करने के लिए चुनी जाती है।
+                            </p>
+                            <p>
+                              <strong className="text-white block">2. 100% ऑफलाइन सुरक्षा (Data Safety):</strong>
+                              आपके फ़ोन से कोई भी डेटा बाहरी सर्वर, विज्ञापनदाता या तृतीय पक्षों के साथ शेयर नहीं किया जाता है। सभी शेड्यूल्स और प्राथमिकताएं स्थानीय रूप से एन्क्रिप्टेड स्टोरेज में संग्रहीत होती हैं।
+                            </p>
+                            <p>
+                              <strong className="text-indigo-400 block font-semibold">3. Play Store Policy Compliance:</strong>
+                              StudyShield strictly obeys Google Play Policies regarding sensitive user permissions (Accessibility API disclosures).
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

@@ -6,6 +6,31 @@ plugins {
   alias(libs.plugins.secrets)
 }
 
+// Automatically generate release keystore at configuration time if it doesn't exist
+val keystoreFile = file("${rootDir}/my-release-key.jks")
+if (!keystoreFile.exists()) {
+  try {
+    val process = ProcessBuilder(
+      "keytool", "-genkeypair",
+      "-v",
+      "-keystore", keystoreFile.absolutePath,
+      "-alias", "studyshield",
+      "-keyalg", "RSA",
+      "-keysize", "2048",
+      "-validity", "10000",
+      "-storepass", "studyshieldpass",
+      "-keypass", "studyshieldpass",
+      "-dname", "CN=StudyShield, O=StudyShield, C=IN"
+    ).start()
+    val exitCode = process.waitFor()
+    if (exitCode == 0) {
+      println("Keystore created at: ${keystoreFile.absolutePath}")
+    }
+  } catch (e: Exception) {
+    e.printStackTrace()
+  }
+}
+
 android {
   namespace = "com.example"
   compileSdk { version = release(36) { minorApiLevel = 1 } }
@@ -22,11 +47,11 @@ android {
 
   signingConfigs {
     create("release") {
-      val keystorePath = System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-upload-key.jks"
+      val keystorePath = System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-release-key.jks"
       storeFile = file(keystorePath)
-      storePassword = System.getenv("STORE_PASSWORD")
-      keyAlias = "upload"
-      keyPassword = System.getenv("KEY_PASSWORD")
+      storePassword = System.getenv("STORE_PASSWORD") ?: "studyshieldpass"
+      keyAlias = System.getenv("KEY_ALIAS") ?: "studyshield"
+      keyPassword = System.getenv("KEY_PASSWORD") ?: "studyshieldpass"
     }
     create("debugConfig") {
       storeFile = file("${rootDir}/debug.keystore")
@@ -119,3 +144,45 @@ dependencies {
   "ksp"(libs.androidx.room.compiler)
   "ksp"(libs.moshi.kotlin.codegen)
 }
+
+// Automatically trigger release and bundle compilation when building, and copy outputs to release-files
+tasks.configureEach {
+  if (name == "assembleDebug" || name == "assemble" || name == "build") {
+    finalizedBy("copyReleaseBuildsToOutputs")
+  }
+}
+
+tasks.register("copyReleaseBuildsToOutputs") {
+  dependsOn("assembleRelease", "bundleRelease")
+  doLast {
+    val srcApk = file("${project.buildDir}/outputs/apk/release")
+    val srcBundle = file("${project.buildDir}/outputs/bundle/release")
+    val destDir = file("${rootDir}/release-files")
+    destDir.mkdirs()
+    
+    var apkCopied = false
+    if (srcApk.exists()) {
+      srcApk.walkTopDown().forEach { file ->
+        if (file.isFile && file.extension == "apk") {
+          file.copyTo(File(destDir, "app-release-signed.apk"), overwrite = true)
+          apkCopied = true
+        }
+      }
+    }
+    
+    var aabCopied = false
+    if (srcBundle.exists()) {
+      srcBundle.walkTopDown().forEach { file ->
+        if (file.isFile && file.extension == "aab") {
+          file.copyTo(File(destDir, "app-release-signed.aab"), overwrite = true)
+          aabCopied = true
+        }
+      }
+    }
+    
+    // Also create a status.txt to confirm success
+    val statusFile = File(destDir, "status.txt")
+    statusFile.writeText("Build Completed successfully!\nAPK Copied: $apkCopied\nAAB Copied: $aabCopied\nTimestamp: ${System.currentTimeMillis()}\n")
+  }
+}
+
