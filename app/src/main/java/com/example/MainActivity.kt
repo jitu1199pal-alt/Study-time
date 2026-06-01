@@ -1412,13 +1412,17 @@ fun NumberDropdownField(
 // Helper method to detect if accessibility service permission is active
 fun isAccessibilityServiceEnabled(context: Context, service: Class<out AccessibilityService>): Boolean {
     val expectedId = context.packageName + "/" + service.canonicalName
+    val expectedShortId = context.packageName + "/." + service.simpleName
     val string = Settings.Secure.getString(context.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
     if (string.isNullOrEmpty()) return false
     val colonSplitter = TextUtils.SimpleStringSplitter(':')
     colonSplitter.setString(string)
     while (colonSplitter.hasNext()) {
         val componentName = colonSplitter.next()
-        if (componentName.equals(expectedId, ignoreCase = true)) {
+        if (componentName.equals(expectedId, ignoreCase = true) || 
+            componentName.equals(expectedShortId, ignoreCase = true) ||
+            componentName.contains(service.simpleName, ignoreCase = true)
+        ) {
             return true
         }
     }

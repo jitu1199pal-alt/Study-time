@@ -20,7 +20,8 @@ class StudyBlockAccessibilityService : AccessibilityService() {
         "com.android.settings", // allow settings to change accessibility if needed
         "com.example", // our app
         "com.google.android.packageinstaller",
-        "com.android.packageinstaller"
+        "com.android.packageinstaller",
+        "com.google.android.gms" // Google Play Services
     )
 
     override fun onCreate() {
@@ -43,8 +44,12 @@ class StudyBlockAccessibilityService : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null) return
 
-        // We only care about window change events which indicate a new app has come to foreground
-        if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+        // We check window changes, window focus, and view focus to ensure thorough, instant blocking
+        val eventType = event.eventType
+        if (eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED || 
+            eventType == AccessibilityEvent.TYPE_WINDOWS_CHANGED || 
+            eventType == AccessibilityEvent.TYPE_VIEW_FOCUSED
+        ) {
             val packageName = event.packageName?.toString() ?: return
             
             // Check if blocker is currently active (schedule enabled, inside study hours, not on break)
