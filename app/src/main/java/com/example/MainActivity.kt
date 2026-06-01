@@ -248,7 +248,19 @@ fun MainContainerScreen(
                     isBlockActive = prefs.isBlockerActiveRightNow()
                     breakRemainingMinutes = prefs.getBreakRemainingMinutes()
                 }) {
- @Composable
+                    Text("ओके (OK)")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showBreakPopup = false }) {
+                    Text("रद्द करें (Cancel)")
+                }
+            }
+        )
+    }
+}
+
+@Composable
 fun DashboardTab(
     prefs: StudyBlockPreferences,
     isServiceEnabled: Boolean,
