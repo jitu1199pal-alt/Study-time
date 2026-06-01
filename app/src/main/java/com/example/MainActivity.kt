@@ -331,8 +331,8 @@ fun DashboardTab(
         if (!isServiceEnabled) {
             item {
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFFEF2F2)),
-                    border = BorderStroke(1.dp, Color(0xFFFCA5A5)),
+                    colors = CardDefaults.cardColors(containerColor = Color(0x1FFF4444)),
+                    border = BorderStroke(1.dp, Color(0xFFEF4444).copy(alpha = 0.4f)),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -342,14 +342,14 @@ fun DashboardTab(
                             Text(
                                 text = "सर्विस बंद है! (Service Disabled)",
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF991B1B)
+                                color = Color(0xFFFCA5A5)
                             )
                         }
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
                             text = "सच्चे लॉक फीचर के लिए Accessibility सर्विस चालू करना बेहद ज़रूरी है। नीचे बटन दबाकर इसे ओन करें।",
                             fontSize = 13.sp,
-                            color = Color(0xFF7F1D1D),
+                            color = Color(0xFFFCA5A5),
                             lineHeight = 18.sp
                         )
                         Spacer(modifier = Modifier.height(12.dp))
@@ -370,11 +370,11 @@ fun DashboardTab(
             Card(
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = if (isBlockActive) Color(0xFFE8F0FE) else Color(0xFFE6F4EA)
+                    containerColor = if (isBlockActive) Color(0x1F38BDF8) else Color(0x1F10B981)
                 ),
                 border = BorderStroke(
                     width = 1.dp,
-                    color = if (isBlockActive) Color(0xFF1A73E8).copy(alpha = 0.3f) else Color(0xFF137333).copy(alpha = 0.3f)
+                    color = if (isBlockActive) Color(0xFF38BDF8).copy(alpha = 0.4f) else Color(0xFF10B981).copy(alpha = 0.4f)
                 ),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -388,7 +388,7 @@ fun DashboardTab(
                         text = if (isBlockActive) "सुरक्षित पढ़ाई लोक चालू है" else "फ्री मोड (Unlocked)",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Black,
-                        color = if (isBlockActive) Color(0xFF1A73E8) else Color(0xFF137333)
+                        color = if (isBlockActive) Color(0xFF38BDF8) else Color(0xFF10B981)
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
@@ -424,8 +424,8 @@ fun DashboardTab(
         if (breakRemainingMinutes > 0) {
             item {
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFE6F4EA)),
-                    border = BorderStroke(1.dp, Color(0xFF137333).copy(alpha = 0.2f)),
+                    colors = CardDefaults.cardColors(containerColor = Color(0x1F10B981)),
+                    border = BorderStroke(1.dp, Color(0xFF10B981).copy(alpha = 0.4f)),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -437,12 +437,12 @@ fun DashboardTab(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Refresh, contentDescription = "Break Active", tint = Color(0xFF137333))
+                            Icon(Icons.Default.Refresh, contentDescription = "Break Active", tint = Color(0xFF10B981))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 "इमरजेंसी ब्रेक: $breakRemainingMinutes मिनट बाकी",
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF137333),
+                                color = Color(0xFF10B981),
                                 fontSize = 13.sp
                             )
                         }
@@ -531,14 +531,14 @@ fun DashboardTab(
                             if (slot.isEnabled && isScheduleEnabled) {
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Card(
-                                    colors = CardDefaults.cardColors(containerColor = Color(0xFFD1FAE5)),
+                                    colors = CardDefaults.cardColors(containerColor = Color(0xFF064E3B)),
                                     shape = RoundedCornerShape(4.dp)
                                 ) {
                                     Text(
                                         text = "एक्टिव",
                                         fontSize = 9.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF047857),
+                                        color = Color(0xFF10B981),
                                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                                     )
                                 }
