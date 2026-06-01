@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">StudyShield</string>
+    <string name="accessibility_service_description">This service is used by StudyShield to detect and block non-study apps during your scheduled study times.</string>
+</resources>

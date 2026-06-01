@@ -1,0 +1,6 @@
+{
+  "name": "Study App Blocker Simulator",
+  "description": "Android Native SDK 35 Study Blocker interactive simulator. Configure focus schedules, study apps, emergency breaks, and get production-ready Kotlin code.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
