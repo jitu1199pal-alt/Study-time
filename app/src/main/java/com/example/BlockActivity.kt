@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -187,7 +188,7 @@ fun BlockScreen(
                 .fillMaxWidth()
                 .height(56.dp),
             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF10B981)),
-            border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.5.dp),
+            border = BorderStroke(1.5.dp, Color(0xFF10B981)),
             shape = RoundedCornerShape(14.dp)
         ) {
             Icon(Icons.Default.Refresh, contentDescription = "Break")

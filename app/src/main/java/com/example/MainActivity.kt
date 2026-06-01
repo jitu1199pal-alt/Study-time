@@ -572,7 +572,7 @@ fun DashboardTab(
                             color = if (slot.isEnabled && isScheduleEnabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Icon(
-                            imageVector = Icons.Default.Edit,
+                            imageVector = Icons.Default.Create,
                             contentDescription = "Edit Time Slot",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                             modifier = Modifier.size(14.dp)
