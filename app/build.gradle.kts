@@ -6,31 +6,6 @@ plugins {
   alias(libs.plugins.secrets)
 }
 
-// Automatically generate release keystore at configuration time if it doesn't exist
-val keystoreFile = file("${rootDir}/my-release-key.jks")
-if (!keystoreFile.exists()) {
-  try {
-    val process = ProcessBuilder(
-      "keytool", "-genkeypair",
-      "-v",
-      "-keystore", keystoreFile.absolutePath,
-      "-alias", "studyshield",
-      "-keyalg", "RSA",
-      "-keysize", "2048",
-      "-validity", "10000",
-      "-storepass", "studyshieldpass",
-      "-keypass", "studyshieldpass",
-      "-dname", "CN=StudyShield, O=StudyShield, C=IN"
-    ).start()
-    val exitCode = process.waitFor()
-    if (exitCode == 0) {
-      println("Keystore created at: ${keystoreFile.absolutePath}")
-    }
-  } catch (e: Exception) {
-    e.printStackTrace()
-  }
-}
-
 android {
   namespace = "com.example"
   compileSdk { version = release(36) { minorApiLevel = 1 } }
@@ -145,8 +120,44 @@ dependencies {
   "ksp"(libs.moshi.kotlin.codegen)
 }
 
+tasks.register("generateReleaseKeystore") {
+  val keystoreFile = file("${rootDir}/my-release-key.jks")
+  outputs.file(keystoreFile)
+  doLast {
+    if (!keystoreFile.exists()) {
+      try {
+        println("Generating release keystore via keytool...")
+        val process = ProcessBuilder(
+          "keytool", "-genkeypair",
+          "-v",
+          "-keystore", keystoreFile.absolutePath,
+          "-alias", "studyshield",
+          "-keyalg", "RSA",
+          "-keysize", "2048",
+          "-validity", "10000",
+          "-storepass", "studyshieldpass",
+          "-keypass", "studyshieldpass",
+          "-dname", "CN=StudyShield, O=StudyShield, C=IN"
+        ).start()
+        val exitCode = process.waitFor()
+        if (exitCode == 0) {
+          println("Keystore created at: ${keystoreFile.absolutePath}")
+        } else {
+          throw GradleException("Keytool failed with exit code $exitCode")
+        }
+      } catch (e: Exception) {
+        e.printStackTrace()
+        throw GradleException("Failed to run keytool: ${e.message}", e)
+      }
+    }
+  }
+}
+
 // Automatically trigger release and bundle compilation when building, and copy outputs to release-files
 tasks.configureEach {
+  if (name.contains("Release") && name != "generateReleaseKeystore") {
+    dependsOn("generateReleaseKeystore")
+  }
   if (name == "assembleDebug" || name == "assemble" || name == "build") {
     finalizedBy("copyReleaseBuildsToOutputs")
   }
