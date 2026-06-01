@@ -28,6 +28,18 @@ class StudyBlockAccessibilityService : AccessibilityService() {
         prefs = StudyBlockPreferences(applicationContext)
     }
 
+    private fun getLauncherPackageName(): String {
+        return try {
+            val intent = Intent(Intent.ACTION_MAIN).apply {
+                addCategory(Intent.CATEGORY_HOME)
+            }
+            val resolveInfo = packageManager.resolveActivity(intent, 0)
+            resolveInfo?.activityInfo?.packageName ?: ""
+        } catch (e: Exception) {
+            ""
+        }
+    }
+
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null) return
 
@@ -45,7 +57,15 @@ class StudyBlockAccessibilityService : AccessibilityService() {
                 }
 
                 // If it is another launcher or keyboard, we should generally allow them to run
-                if (packageName.contains("launcher") || packageName.contains("keyboard") || packageName.contains("inputmethod")) {
+                val lowerPkg = packageName.lowercase()
+                val currentLauncher = getLauncherPackageName().lowercase()
+                if (lowerPkg.contains("launcher") || 
+                    lowerPkg.contains("home") || 
+                    lowerPkg.contains("keyboard") || 
+                    lowerPkg.contains("inputmethod") ||
+                    lowerPkg == "com.miui.home" ||
+                    (currentLauncher.isNotEmpty() && lowerPkg == currentLauncher)
+                ) {
                     return
                 }
 

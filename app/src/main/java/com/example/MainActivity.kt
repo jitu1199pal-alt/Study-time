@@ -80,7 +80,7 @@ fun MainContainerScreen(
     onOpenSettings: () -> Unit
 ) {
     val context = LocalContext.current
-    var selectedTab by remember { mutableStateOf(if (startInStudyTab) 3 else 0) }
+    var selectedTab by remember { mutableStateOf(0) } // Exactly 3 tabs: 0 -> Dashboard/Schedules, 1 -> Apps, 2 -> Help/Info
     var showBreakPopup by remember { mutableStateOf(false) }
     var tempBreakMinutes by remember { mutableStateOf(15f) }
     
@@ -90,61 +90,110 @@ fun MainContainerScreen(
     var breakRemainingMinutes by remember { mutableStateOf(prefs.getBreakRemainingMinutes()) }
     var studyAppsCount by remember { mutableStateOf(prefs.studyApps.size) }
 
-    // Live countdown effect for countdown breaks
+    var currentTimeString by remember { mutableStateOf("") }
+    var currentDayOfWeekString by remember { mutableStateOf("") }
+    var currentDateString by remember { mutableStateOf("") }
+
+    // Live clock ticking and state polling
     LaunchedEffect(Unit) {
         while (true) {
             isServiceEnabled = isAccessibilityServiceEnabled(context, StudyBlockAccessibilityService::class.java)
             isBlockActive = prefs.isBlockerActiveRightNow()
             breakRemainingMinutes = prefs.getBreakRemainingMinutes()
             studyAppsCount = prefs.studyApps.size
-            delay(5000) // Poll every 5 seconds for status updates
+
+            val cal = Calendar.getInstance()
+            val hour = cal.get(Calendar.HOUR)
+            val minute = cal.get(Calendar.MINUTE)
+            val amPm = if (cal.get(Calendar.AM_PM) == Calendar.PM) "PM" else "AM"
+            val h12 = if (hour == 0) 12 else hour
+            currentTimeString = String.format("%02d:%02d %s", h12, minute, amPm)
+
+            val day = cal.get(Calendar.DAY_OF_MONTH)
+            val year = cal.get(Calendar.YEAR)
+            val months = arrayOf("जनवरी", "फरवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर")
+            val monthName = months[cal.get(Calendar.MONTH)]
+            currentDateString = String.format("%02d %s %d", day, monthName, year)
+
+            val daysOfWeekH = arrayOf("रविवार (Sunday)", "सोमवार (Monday)", "मंगलवार (Tuesday)", "बुधवार (Wednesday)", "गुरुवार (Thursday)", "शुक्रवार (Friday)", "शनिवार (Saturday)")
+            currentDayOfWeekString = daysOfWeekH[cal.get(Calendar.DAY_OF_WEEK) - 1]
+
+            delay(1000)
         }
     }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = "Shield",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(28.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
+            Surface(
+                color = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+                modifier = Modifier.fillMaxWidth().statusBarsPadding()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.Lock,
+                                contentDescription = "Lock",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(15.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = currentTimeString,
+                                fontWeight = FontWeight.Black,
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "StudyShield Pro",
-                            fontWeight = FontWeight.Black,
-                            fontSize = 20.sp
+                            text = "वार: $currentDayOfWeekString",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF10B981) // Matching preview emerald green color
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "तारीख: $currentDateString",
+                            fontSize = 10.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                },
-                actions = {
-                    TextButton(
-                        onClick = { showBreakPopup = true }
+
+                    Button(
+                        onClick = { showBreakPopup = true },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF10B981) // Emerald Green to match the preview Exactly
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                        modifier = Modifier.height(36.dp)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 imageVector = Icons.Default.Refresh,
                                 contentDescription = "Break",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(16.dp)
+                                tint = Color.White,
+                                modifier = Modifier.size(14.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "ब्रेक लें (Break)",
+                                text = "Break लें",
+                                fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 12.sp
+                                color = Color.White
                             )
                         }
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
-                )
-            )
+                }
+            }
         },
         bottomBar = {
             NavigationBar {
@@ -152,25 +201,19 @@ fun MainContainerScreen(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
                     icon = { Icon(Icons.Default.Home, contentDescription = "Dashboard") },
-                    label = { Text("डैशबोर्ड") }
+                    label = { Text("डैशबोर्ड", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
                 )
                 NavigationBarItem(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
                     icon = { Icon(Icons.Default.Add, contentDescription = "Apps") },
-                    label = { Text("ऐप्स जोड़ें") }
+                    label = { Text("ऐप्स जोड़ें", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
                 )
                 NavigationBarItem(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
-                    icon = { Icon(Icons.Default.Settings, contentDescription = "Schedule") },
-                    label = { Text("शेड्यूल") }
-                )
-                NavigationBarItem(
-                    selected = selectedTab == 3,
-                    onClick = { selectedTab = 3 },
-                    icon = { Icon(Icons.Default.Star, contentDescription = "Study Launcher") },
-                    label = { Text("स्टडी टैब") }
+                    icon = { Icon(Icons.Default.Info, contentDescription = "Help") },
+                    label = { Text("मदद", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
                 )
             }
         }
@@ -198,10 +241,7 @@ fun MainContainerScreen(
                     prefs = prefs,
                     onAppsUpdated = { studyAppsCount = prefs.studyApps.size }
                 )
-                2 -> ScheduleTab(prefs = prefs, onScheduleChanged = {
-                    isBlockActive = prefs.isBlockerActiveRightNow()
-                })
-                3 -> StudyAppsLauncherTab(prefs = prefs)
+                2 -> InfoTab()
             }
         }
     }
@@ -273,69 +313,20 @@ fun DashboardTab(
     var showBreakPopupAtDashboard by remember { mutableStateOf(false) }
     var dashboardBreakMinutes by remember { mutableStateOf(15f) }
 
+    var isScheduleEnabled by remember { mutableStateOf(prefs.isScheduleEnabled) }
+    var slots by remember { mutableStateOf(prefs.getTimeSlots()) }
+    var editingSlotId by remember { mutableStateOf<Int?>(null) }
+
+    LaunchedEffect(isScheduleEnabled) {
+        slots = prefs.getTimeSlots()
+    }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Essential Time, Weekday, Date header display card
-        item {
-            var currentTimeString by remember { mutableStateOf("") }
-            var currentDateString by remember { mutableStateOf("") }
-            var currentDayOfWeekString by remember { mutableStateOf("") }
-
-            LaunchedEffect(Unit) {
-                while (true) {
-                    val cal = Calendar.getInstance()
-                    val hour = cal.get(Calendar.HOUR)
-                    val minute = cal.get(Calendar.MINUTE)
-                    val amPm = if (cal.get(Calendar.AM_PM) == Calendar.PM) "PM" else "AM"
-                    val h12 = if (hour == 0) 12 else hour
-                    currentTimeString = String.format("%02d:%02d %s", h12, minute, amPm)
-
-                    val day = cal.get(Calendar.DAY_OF_MONTH)
-                    val year = cal.get(Calendar.YEAR)
-                    val months = arrayOf("जनवरी", "फरवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर")
-                    val monthName = months[cal.get(Calendar.MONTH)]
-                    currentDateString = "$day $monthName $year"
-
-                    val daysOfWeek = arrayOf("रविवार", "सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार")
-                    currentDayOfWeekString = daysOfWeek[cal.get(Calendar.DAY_OF_WEEK) - 1]
-
-                    delay(1000)
-                }
-            }
-
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = currentTimeString,
-                        fontSize = 36.sp,
-                        fontWeight = FontWeight.Black,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        letterSpacing = 1.sp
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "$currentDayOfWeekString • $currentDateString",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
-                    )
-                }
-            }
-        }
-
         // Essential accessibility warning card if permission not granted
         if (!isServiceEnabled) {
             item {
@@ -349,7 +340,7 @@ fun DashboardTab(
                             Icon(Icons.Default.Warning, contentDescription = "Error", tint = Color(0xFFEF4444))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "सर्विसेज बंद है! (Service Disabled)",
+                                text = "सर्विस बंद है! (Service Disabled)",
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF991B1B)
                             )
@@ -379,7 +370,11 @@ fun DashboardTab(
             Card(
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = if (isBlockActive) Color(0xFFEEF2F6) else Color(0xFFF0FDF4)
+                    containerColor = if (isBlockActive) Color(0xFFE8F0FE) else Color(0xFFE6F4EA)
+                ),
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = if (isBlockActive) Color(0xFF1A73E8).copy(alpha = 0.3f) else Color(0xFF137333).copy(alpha = 0.3f)
                 ),
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -391,157 +386,269 @@ fun DashboardTab(
                 ) {
                     Text(
                         text = if (isBlockActive) "सुरक्षित पढ़ाई लोक चालू है" else "फ्री मोड (Unlocked)",
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (isBlockActive) Color(0xFF1E3A8A) else Color(0xFF166534)
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Black,
+                        color = if (isBlockActive) Color(0xFF1A73E8) else Color(0xFF137333)
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = if (isBlockActive) "Block mode is currently active" else "No restrictions active right now",
-                        fontSize = 14.sp,
-                        color = Color.Gray
+                        text = if (isBlockActive) "Block mode is currently active: normal apps are closed" else "No restrictions active right now",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    if (breakRemainingMinutes > 0) {
-                        Card(
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFFD1FAE5)),
-                            shape = RoundedCornerShape(50)
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(Icons.Default.Refresh, contentDescription = "Break Time", tint = Color(0xFF065F46))
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = "इमरजेंसी ब्रेक: $breakRemainingMinutes मिनट बाकी",
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color(0xFF065F5C)
-                                )
-                            }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "$studyAppsCount", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                            Text(text = "स्टडी ऐप्स", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
-                        Spacer(modifier = Modifier.height(12.dp))
-                        OutlinedButton(
-                            onClick = {
-                                prefs.cancelEmergencyBreak()
-                                onStatusRefresh()
-                            },
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Text("ब्रेक खत्म करें (Lock Now)")
-                        }
-                    } else {
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceAround,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(text = "$studyAppsCount", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                                Text(text = "स्टडी ऐप्स", fontSize = 12.sp, color = Color.Gray)
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            val activeSlotsCount = slots.filter { it.isEnabled }.size
+                            val scheduleText = if (isScheduleEnabled) {
+                                "$activeSlotsCount एक्टिव"
+                            } else {
+                                "बंद"
                             }
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                val activeSlotsCount = prefs.getTimeSlots().filter { it.isEnabled }.size
-                                val scheduleText = if (prefs.isScheduleEnabled) {
-                                    "$activeSlotsCount एक्टिव स्लॉट्स"
-                                } else {
-                                    "शेड्यूल बंद"
-                                }
-                                Text(text = scheduleText, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                                Text(text = "शेड्यूल समय", fontSize = 12.sp, color = Color.Gray)
-                            }
+                            Text(text = scheduleText, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                            Text(text = "शेड्यूल समय", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
             }
         }
 
-        // Core Requirement: EMERGENCY BREAK configuration options (1 to 60 Mins Slider selector)
+        // Break active banner
+        if (breakRemainingMinutes > 0) {
+            item {
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFE6F4EA)),
+                    border = BorderStroke(1.dp, Color(0xFF137333).copy(alpha = 0.2f)),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(14.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.Refresh, contentDescription = "Break Active", tint = Color(0xFF137333))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                "इमरजेंसी ब्रेक: $breakRemainingMinutes मिनट बाकी",
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF137333),
+                                fontSize = 13.sp
+                            )
+                        }
+                        
+                        OutlinedButton(
+                            onClick = {
+                                prefs.cancelEmergencyBreak()
+                                onStatusRefresh()
+                            },
+                            border = BorderStroke(1.dp, Color.Red.copy(alpha = 0.5f)),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red),
+                            shape = RoundedCornerShape(8.dp)
+                        ) {
+                            Text("खत्म करें (Lock Now)", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            }
+        }
+
+        // Table master toggle
         item {
             Card(
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text(text = "शेड्यूल लॉक सक्रिय करें", fontSize = 16.sp, fontWeight = FontWeight.Black)
+                        Text(text = "Enable scheduled blocking mode", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                    Switch(
+                        checked = isScheduleEnabled,
+                        onCheckedChange = {
+                            isScheduleEnabled = it
+                            prefs.isScheduleEnabled = it
+                            onStatusRefresh()
+                        }
+                    )
+                }
+            }
+        }
+
+        // Table Header
+        item {
+            Text(
+                text = "7 पढ़ाई शेड्यूल की तालिका (7 Time Slots Table)",
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Black,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+
+        // Time slots list
+        items(slots) { slot ->
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { editingSlotId = slot.id }
+            ) {
+                Column(modifier = Modifier.padding(14.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "शेड्यूल #${slot.id}",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                color = if (slot.isEnabled && isScheduleEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            if (slot.isEnabled && isScheduleEnabled) {
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Card(
+                                    colors = CardDefaults.cardColors(containerColor = Color(0xFFD1FAE5)),
+                                    shape = RoundedCornerShape(4.dp)
+                                ) {
+                                    Text(
+                                        text = "एक्टिव",
+                                        fontSize = 9.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF047857),
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    )
+                                }
+                            }
+                        }
+
+                        Switch(
+                            checked = slot.isEnabled,
+                            onCheckedChange = { checked ->
+                                val updated = slot.copy(isEnabled = checked)
+                                prefs.saveTimeSlot(updated)
+                                slots = prefs.getTimeSlots()
+                                onStatusRefresh()
+                            }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val startStr = formatSlotTime12H(slot.startHour, slot.startMinute)
+                        val endStr = formatSlotTime12H(slot.endHour, slot.endMinute)
+                        Text(
+                            text = "समय: $startStr से $endStr",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = if (slot.isEnabled && isScheduleEnabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit Time Slot",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        // Emergency Break Presets Inside Dashboard Tab
+        item {
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "आपातकालीन ब्रेक (Emergency Break)",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Black,
+                        color = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = "इमरजेंसी होने पर तुरंत 1 से 60 मिनट तक का ब्रेक लें, जिसमें सभी ऐप्स चालू रहेंगे।",
-                        fontSize = 13.sp,
-                        color = Color.Gray,
-                        lineHeight = 18.sp
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = 16.sp
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        val intervals = listOf(5, 10, 30, 60)
+                        val intervals = listOf(5, 15, 30, 60)
                         intervals.forEach { min ->
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
                                     .background(
                                         MaterialTheme.colorScheme.primaryContainer,
-                                        shape = RoundedCornerShape(10.dp)
+                                        shape = RoundedCornerShape(8.dp)
                                     )
                                     .clickable {
                                         prefs.startEmergencyBreak(min)
                                         onStatusRefresh()
                                     }
-                                    .padding(vertical = 12.dp, horizontal = 4.dp),
+                                    .padding(vertical = 10.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     Text(
                                         text = "$min Min",
-                                        fontSize = 16.sp,
+                                        fontSize = 14.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.onPrimaryContainer
                                     )
-                                    Text(text = "ब्रेक", fontSize = 10.sp, color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f))
+                                    Text(text = "ब्रेक", fontSize = 9.sp, color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f))
                                 }
                             }
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
                     Button(
                         onClick = { showBreakPopupAtDashboard = true },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Break Icon")
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("1 से 60 मिनट में चुनें (Custom Break)")
+                        Icon(Icons.Default.Refresh, contentDescription = "Break Icon", modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("1 से 60 मिनट में चुनें (Custom Break)", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
-                }
-            }
-        }
-
-        // Explanation of how the App works
-        item {
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "यह कैसे काम करता है? (How it works)",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    BulletPoint("1. 'ऐप्स जोड़ें' टैब में जाकर अपनी पढ़ाई की ऐप्स (NCERT, NCERT Books, JCERT) को सेलेक्ट करें।")
-                    BulletPoint("2. 'शेड्यूल' टैब में जाकर कुल 7 स्लॉट्स में से अपना पढ़ाई समय सेट करें (12-hour AM/PM Format)।")
-                    BulletPoint("3. निश्चित शेड्यूल समय के दौरान सिलेक्टेड स्टडी ऐप्स के अलावा बाकी सभी मोबाइल ऐप्स ब्लॉक रहेंगी।")
-                    BulletPoint("4. आपातकाल होने पर 1 से 60 मिनट का ब्रेक लेकर मोबाइल ऐप्स को फिर खोलें।")
-                    BulletPoint("5. कोई भी शेड्यूल न होने पर स्टडी टैब (Study Launcher) से आसानी से सिलेक्टेड स्टडी ऐप्स रन करें।")
                 }
             }
         }
@@ -550,7 +657,7 @@ fun DashboardTab(
     if (showBreakPopupAtDashboard) {
         AlertDialog(
             onDismissRequest = { showBreakPopupAtDashboard = false },
-            title = { Text("कस्टम ब्रेक समय (Custom Break Duration)") },
+            title = { Text("कस्टम ब्रेक समय (Custom Break Duration)", fontWeight = FontWeight.Bold, fontSize = 16.sp) },
             text = {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("सभी मोबाइल ऐप्स अनलॉक करने के लिए समय (1 से 60 मिनट) चुनें:")
@@ -585,6 +692,22 @@ fun DashboardTab(
             }
         )
     }
+
+    if (editingSlotId != null) {
+        val slotToEdit = slots.find { it.id == editingSlotId }
+        if (slotToEdit != null) {
+            TimeSlotEditDialog(
+                slot = slotToEdit,
+                onDismiss = { editingSlotId = null },
+                onSave = { updatedSlot ->
+                    prefs.saveTimeSlot(updatedSlot)
+                    slots = prefs.getTimeSlots()
+                    onStatusRefresh()
+                    editingSlotId = null
+                }
+            )
+        }
+    }
 }
 
 @Composable
@@ -600,8 +723,100 @@ fun BulletPoint(text: String) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun InfoTab() {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        item {
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Info,
+                            contentDescription = "Help Info",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "यह कैसे काम करता है? (Instructions)",
+                            fontWeight = FontWeight.Black,
+                            fontSize = 15.sp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    Divider(color = MaterialTheme.colorScheme.surfaceVariant)
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    val bulletPoints = listOf(
+                        "1. **ऐप्स चयन**: 'ऐप्स जोड़ें' टैब में जाकर अपनी पढ़ाई की जरूरत वाली ऐप्स को सिलेक्ट करें (जैसे NCERT, YouTube)।",
+                        "2. **7 टाइम शेड्यूल**: स्टूडेंट अपनी सुविधा के अनुसार 7 टाइम पीरियड सेट कर सकता है।",
+                        "3. **लॉक एक्टिवेशन**: शेड्यूल के समय के दौरान मोबाइल में सिर्फ स्टडी ऐप्स ही खुलेंगी और बाकी सब ब्लॉक रहेंगी।",
+                        "4. **इमरजेंसी ब्रेक**: पढ़ाई के बीच अगर ज़रूरत पड़े, तो ऊपर दाहिने कोने (Top Right) से 1 से 60 मिनट का ब्रेक लेकर सभी सामान्य ऐप्स को इस्तेमाल कर सकते हैं।"
+                    )
+                    
+                    bulletPoints.forEach { point ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            Text("• ", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                            Text(
+                                text = point,
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                lineHeight = 18.sp
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        item {
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "👤 योग्यता मानदंड (Age Criteria)",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "यह सुरक्षा फोकस यूटिलिटी 18 वर्ष से अधिक आयु के छात्रों (18+ Higher Education Students) की एकाग्रता बढ़ाने के लिए है।",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 16.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
 fun AppSelectorTab(
     prefs: StudyBlockPreferences,
     onAppsUpdated: () -> Unit
@@ -614,7 +829,6 @@ fun AppSelectorTab(
     // Query package manager inside a coroutine background thread
     LaunchedEffect(Unit) {
         val pm = context.packageManager
-        // Query applications that have a launch activity
         val mainIntent = Intent(Intent.ACTION_MAIN, null).apply {
             addCategory(Intent.CATEGORY_LAUNCHER)
         }
@@ -673,7 +887,6 @@ fun AppSelectorTab(
             Button(
                 onClick = {
                     installedApps = installedApps.map { it.copy(isChecked = true) }
-                    // Save all package names as study apps in prefs
                     installedApps.forEach { prefs.addStudyApp(it.packageName) }
                     onAppsUpdated()
                 },
@@ -688,7 +901,6 @@ fun AppSelectorTab(
             OutlinedButton(
                 onClick = {
                     installedApps = installedApps.map { it.copy(isChecked = false) }
-                    // Clear all study apps
                     installedApps.forEach { prefs.removeStudyApp(it.packageName) }
                     onAppsUpdated()
                 },
@@ -782,166 +994,6 @@ fun AppSelectorTab(
                     Spacer(modifier = Modifier.height(16.dp))
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun ScheduleTab(
-    prefs: StudyBlockPreferences,
-    onScheduleChanged: () -> Unit
-) {
-    var isEnabled by remember { mutableStateOf(prefs.isScheduleEnabled) }
-    var slots by remember { mutableStateOf(prefs.getTimeSlots()) }
-    var editingSlotId by remember { mutableStateOf<Int?>(null) }
-
-    LaunchedEffect(isEnabled) {
-        slots = prefs.getTimeSlots()
-    }
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        item {
-            Card(
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column {
-                        Text(text = "शेड्यूल लॉक सक्रिय करें", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                        Text(text = "Enable scheduled blocking mode", fontSize = 13.sp, color = Color.Gray)
-                    }
-                    Switch(
-                        checked = isEnabled,
-                        onCheckedChange = {
-                            isEnabled = it
-                            prefs.isScheduleEnabled = it
-                            onScheduleChanged()
-                        }
-                    )
-                }
-            }
-        }
-
-        item {
-            Text(
-                text = "7 पढ़ाई शेड्यूल की तालिका (7 Time Slots Table)",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(vertical = 4.dp)
-            )
-        }
-
-        items(slots) { slot ->
-            Card(
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { editingSlotId = slot.id }
-            ) {
-                Column(modifier = Modifier.padding(14.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "शेड्यूल #${slot.id}",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp,
-                                color = if (slot.isEnabled) MaterialTheme.colorScheme.primary else Color.Gray
-                            )
-                            if (slot.isEnabled) {
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Card(
-                                    colors = CardDefaults.cardColors(containerColor = Color(0xFFD1FAE5)),
-                                    shape = RoundedCornerShape(4.dp)
-                                ) {
-                                    Text(
-                                        text = "एक्टिव",
-                                        fontSize = 10.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF047857),
-                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                    )
-                                }
-                            }
-                        }
-
-                        Switch(
-                            checked = slot.isEnabled,
-                            onCheckedChange = { checked ->
-                                val updated = slot.copy(isEnabled = checked)
-                                prefs.saveTimeSlot(updated)
-                                slots = prefs.getTimeSlots()
-                                onScheduleChanged()
-                            }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        val startStr = formatSlotTime12H(slot.startHour, slot.startMinute)
-                        val endStr = formatSlotTime12H(slot.endHour, slot.endMinute)
-                        Text(
-                            text = "समय: $startStr से $endStr",
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = if (slot.isEnabled) MaterialTheme.colorScheme.onSurface else Color.Gray
-                        )
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit Time Slot",
-                            tint = Color.Gray,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                }
-            }
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "नोट: शेड्यूल समय के दौरान, StudyShield केवल आपके द्वारा सेलेक्ट की गयी 'स्टडी ऐप्स' को रन होने देगा, बाकी सभी ऐप्स ब्लॉक रहेंगी।",
-                fontSize = 12.sp,
-                color = Color.Gray,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-        }
-    }
-
-    if (editingSlotId != null) {
-        val slotToEdit = slots.find { it.id == editingSlotId }
-        if (slotToEdit != null) {
-            TimeSlotEditDialog(
-                slot = slotToEdit,
-                onDismiss = { editingSlotId = null },
-                onSave = { updatedSlot ->
-                    prefs.saveTimeSlot(updatedSlot)
-                    slots = prefs.getTimeSlots()
-                    onScheduleChanged()
-                    editingSlotId = null
-                }
-            )
         }
     }
 }
@@ -1083,144 +1135,6 @@ fun NumberDropdownField(
         singleLine = true,
         modifier = modifier
     )
-}
-
-@Composable
-fun StudyAppsLauncherTab(prefs: StudyBlockPreferences) {
-    val context = LocalContext.current
-    val pm = context.packageManager
-    
-    var studyAppList by remember { mutableStateOf<List<AppInfoModel>>(emptyList()) }
-    var isBlockerActive by remember { mutableStateOf(prefs.isBlockerActiveRightNow()) }
-
-    LaunchedEffect(Unit) {
-        isBlockerActive = prefs.isBlockerActiveRightNow()
-        val studyPackages = prefs.studyApps
-        val list = mutableListOf<AppInfoModel>()
-        
-        for (pkg in studyPackages) {
-            try {
-                val appInfo = pm.getApplicationInfo(pkg, 0)
-                val label = appInfo.loadLabel(pm).toString()
-                list.add(AppInfoModel(label = label, packageName = pkg, isSystem = false, isChecked = true))
-            } catch (e: PackageManager.NameNotFoundException) {
-                // Ignore missing app packages
-            }
-        }
-        studyAppList = list.sortedBy { it.label }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "स्टडी लॉन्चपैड (Study Tab)",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = if (isBlockerActive) "शेड्यूल ऑन है: केवल यही ऐप्स चल रही हैं!" else "शेड्यूल ऑफ है: यहाँ से सीधे स्टडी ऐप्स खोलें",
-            fontSize = 13.sp,
-            color = if (isBlockerActive) Color.Red else Color.Gray,
-            modifier = Modifier.padding(vertical = 4.dp)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        if (studyAppList.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(Icons.Default.Star, contentDescription = "No Study Apps", modifier = Modifier.size(64.dp), tint = Color.LightGray)
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text(
-                        text = "कोई स्टडी ऐप नहीं जोड़ी गयी है।",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Gray
-                    )
-                    Text(
-                        text = "ऐप्स जोड़ने के लिए 'ऐप्स जोड़ें' टैब में जाएँ।",
-                        fontSize = 13.sp,
-                        color = Color.LightGray
-                    )
-                }
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(studyAppList) { app ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                val launchIntent = pm.getLaunchIntentForPackage(app.packageName)
-                                if (launchIntent != null) {
-                                    context.startActivity(launchIntent)
-                                } else {
-                                    // Fallback indicator
-                                }
-                            },
-                        shape = RoundedCornerShape(12.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Card(
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-                                shape = RoundedCornerShape(8.dp),
-                                modifier = Modifier.size(40.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.PlayArrow,
-                                        contentDescription = "Run App",
-                                        tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                    )
-                                }
-                            }
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = app.label,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = app.packageName,
-                                    fontSize = 11.sp,
-                                    color = Color.Gray
-                                )
-                            }
-                            Icon(
-                                imageVector = Icons.Default.PlayArrow,
-                                contentDescription = "Open",
-                                tint = Color.Gray,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
 
 // Helper method to detect if accessibility service permission is active
