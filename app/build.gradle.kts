@@ -1,3 +1,5 @@
+import java.io.File
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.compose)
@@ -147,8 +149,8 @@ tasks.register("generateReleaseKeystore") {
       try {
         val javaHome = System.getProperty("java.home")
         val keytoolBinary = if (!javaHome.isNullOrBlank()) {
-          val binDir = java.io.File(javaHome, "bin")
-          val keytoolFile = java.io.File(binDir, "keytool")
+          val binDir = File(javaHome, "bin")
+          val keytoolFile = File(binDir, "keytool")
           if (keytoolFile.exists()) keytoolFile.absolutePath else "keytool"
         } else {
           "keytool"
