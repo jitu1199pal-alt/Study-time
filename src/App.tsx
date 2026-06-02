@@ -161,6 +161,39 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [launchNotification, setLaunchNotification] = useState<string | null>(null);
   const [isPolicyExpanded, setIsPolicyExpanded] = useState(false);
+  const [isPrivacyView, setIsPrivacyView] = useState(() => {
+    return (
+      window.location.pathname.includes('privacy') ||
+      window.location.search.includes('view=privacy') ||
+      window.location.hash.includes('privacy')
+    );
+  });
+
+  useEffect(() => {
+    const handleUrlChange = () => {
+      setIsPrivacyView(
+        window.location.pathname.includes('privacy') ||
+        window.location.search.includes('view=privacy') ||
+        window.location.hash.includes('privacy')
+      );
+    };
+
+    window.addEventListener('popstate', handleUrlChange);
+    window.addEventListener('hashchange', handleUrlChange);
+    const routeInterval = setInterval(handleUrlChange, 1500);
+
+    return () => {
+      window.removeEventListener('popstate', handleUrlChange);
+      window.removeEventListener('hashchange', handleUrlChange);
+      clearInterval(routeInterval);
+    };
+  }, []);
+
+  const getPublicLink = (pathAndQuery: string) => {
+    const isLocalOrDev = window.location.hostname.includes('dev') || window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1');
+    const base = isLocalOrDev ? "https://ais-pre-yvz7il3zmltaegiiboatvp-142106032593.asia-east1.run.app" : window.location.origin;
+    return base + pathAndQuery;
+  };
 
   // Editing dialog state for time slot
   const [editingSlotId, setEditingSlotId] = useState<number | null>(null);
@@ -349,28 +382,22 @@ export default function App() {
     setShowCustomBreakSelector(false);
   };
 
-  // Ticking for the simulated interstitial Ad
+  // Ticking for the simulated interstitial Ad using ultra-stable timeout schedule
   useEffect(() => {
-    if (activeAd && activeAd.isOpen && activeAd.adSecsRemaining > 0) {
-      const timer = setInterval(() => {
-        setActiveAd(prev => {
-          if (prev && prev.isOpen && prev.adSecsRemaining > 1) {
-            return {
-              ...prev,
-              adSecsRemaining: prev.adSecsRemaining - 1
-            };
-          } else if (prev && prev.isOpen && prev.adSecsRemaining === 1) {
-            return {
-              ...prev,
-              adSecsRemaining: 0
-            };
-          }
-          return prev;
-        });
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [activeAd]);
+    if (!activeAd || !activeAd.isOpen || activeAd.adSecsRemaining <= 0) return;
+
+    const timer = setTimeout(() => {
+      setActiveAd(prev => {
+        if (!prev || !prev.isOpen || prev.adSecsRemaining <= 0) return prev;
+        return {
+          ...prev,
+          adSecsRemaining: prev.adSecsRemaining - 1
+        };
+      });
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [activeAd?.isOpen, activeAd?.adSecsRemaining]);
 
   const handleFinishAdAndStartBreak = () => {
     if (!activeAd) return;
@@ -448,6 +475,109 @@ export default function App() {
       setActiveTab('home');
     }
   };
+
+  if (isPrivacyView) {
+    return (
+      <div className="min-h-screen bg-[#070b13] text-slate-100 py-12 px-6 font-sans">
+        <div className="max-w-3xl mx-auto bg-[#0d1424] border border-slate-800 rounded-2xl p-6 md:p-10 shadow-2xl space-y-6">
+          
+          {/* Top Navbar */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-slate-800">
+            <div>
+              <h1 className="text-xl md:text-2xl font-black tracking-tight text-white flex items-center gap-2">
+                <ShieldCheck className="text-indigo-500" size={24} />
+                गोपनीयता नीति (Privacy Policy) — Study Focus
+              </h1>
+              <p className="text-xs text-slate-400 font-mono mt-1">Last Updated: June 02, 2026 • com.studyshield.studyfocus</p>
+            </div>
+            <button
+              onClick={() => {
+                setIsPrivacyView(false);
+                // Clear query or hash
+                window.history.pushState({}, '', window.location.pathname);
+              }}
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-extrabold text-xs rounded-xl shadow transition duration-150 shrink-0"
+            >
+              ← Back to App (ऐप खोलें)
+            </button>
+          </div>
+
+          <div className="bg-indigo-950/20 border border-indigo-500/10 rounded-xl p-4 text-xs text-slate-300 leading-relaxed">
+            <span className="font-bold text-indigo-400 block text-xs mb-1 uppercase tracking-wider">🔒 Google Play Developer Content Compliance Disclosure</span>
+            'Study Focus' ऐप उपयोगकर्ता की गोपनीयता और डेटा सुरक्षा के प्रति पूरी तरह प्रतिबद्ध है। यह गोपनीयता नीति स्पष्ट करती है कि हमारा ऐप किस प्रकार काम करता है, कौन सी अनुमतियाँ लेता है और आपके डेटा को कैसे सुरक्षित रखता है। हम उपयोगकर्ता का कोई भी व्यक्तिगत, संवेदनशील या ब्राउज़िंग डेटा बाहरी सर्वर पर संग्रहीत या साझा <strong>नहीं</strong> करते हैं। ऐप का सारा कार्य पूरी तरह से आपके डिवाइस पर स्थानीय (Offline Local Processing) रूप से होता है।
+          </div>
+
+          <div className="space-y-4 text-xs leading-relaxed text-slate-350">
+            
+            {/* Section 1 */}
+            <div className="space-y-1.5">
+              <h2 className="text-sm font-extrabold text-white tracking-wide border-l-2 border-indigo-500 pl-2">
+                1. संवेदनशील अनुमतियाँ और उपयोग (Sensitive Permissions & Their Use)
+              </h2>
+              
+              <div className="bg-[#11192e] border border-slate-850 p-3 rounded-xl space-y-2 mt-1">
+                <h3 className="font-bold text-slate-200 text-xs">A. एक्सीसिबिलिटी सर्विस (Accessibility Service API)</h3>
+                <p>हमारा ऐप विचलित करने वाले ऐप्स को ब्लॉक करने के लिए <strong className="text-indigo-400 font-extrabold font-mono">Accessibility Service API</strong> का उपयोग करता है।</p>
+                <ul className="list-disc list-inside space-y-1 pl-1 text-slate-400">
+                  <li><strong>उद्देश्य (Purpose):</strong> यह केवल यह पता लगाने के लिए उपयोग की जाती है कि वर्तमान में आपके स्क्रीन पर कौन सा ऐप खुला हुआ है। यदि वह ऐप आपकी ब्लॉक्ड लिस्ट में शामिल है, तो यह ऐप उसे रोक कर आपको ध्यान केंद्रित (Study Shield Block Screen) करने के लिए प्रेरित करता है।</li>
+                  <li><strong>डेटा संग्रह सीमा (No Data Harvesting):</strong> यह सर्विस किसी भी प्रकार का व्यक्तिगत डेटा, बटन क्लिक, इनपुट टेक्स्ट, पासवर्ड, या व्यक्तिगत जानकारी एकत्र <strong>नहीं</strong> करती है और न ही इसे इंटरनेट पर भेजती है।</li>
+                  <li>यह सेवा उपयोगकर्ता की पूर्ण स्पष्ट सहमति से ही सक्रिय की जाती है और इसे डिवाइस सेटिंग्स से कभी भी आसानी से बंद किया जा सकता है।</li>
+                </ul>
+              </div>
+
+              <div className="bg-[#11192e] border border-slate-850 p-3 rounded-xl space-y-1 mt-2">
+                <h3 className="font-bold text-slate-200 text-xs">B. स्क्रीन ओवरले अनुमति (System Alert Window)</h3>
+                <p>जब आप पढ़ाई के समय कोई ब्लॉक किया गया ऐप (जैसे सोशल मीडिया या गेम्स) खोलने की कोशिश करते हैं, तो यह अनुमति ऐप को उसके ऊपर सुरक्षा स्क्रीन दिखाने में मदद करती है।</p>
+              </div>
+            </div>
+
+            {/* Section 2 */}
+            <div className="space-y-1.5">
+              <h2 className="text-sm font-extrabold text-white tracking-wide border-l-2 border-indigo-500 pl-2">
+                2. डेटा सुरक्षा और गोपनीयता (Data Safety & Privacy)
+              </h2>
+              <ul className="list-disc list-inside space-y-1 pl-2 text-slate-400">
+                <li><strong className="text-slate-200">स्थानीय भंडारण (Local Storage):</strong> आपका समय सारणी (Time Table Schedule) और ब्लॉक्ड ऐप्स की सूची केवल आपके डिवाइस के स्थानीय स्टोरेज में संग्रहीत की जाती है।</li>
+                <li><strong className="text-slate-200">कोई बाहरी सर्वर नहीं (No Cloud Server):</strong> हम किसी भी प्रकार का बैकएंड डेटाबेस या क्लाउड एनालिटिक्स टूल उपयोग नहीं करते जो आपका डेटा एकत्र करे।</li>
+                <li><strong className="text-slate-200">विज्ञापन नीतियां (AdSense Interstitial Ads):</strong> ऐप में ब्रेक अवधि के दौरान Google AdSense इंटरस्टिशियल विज्ञापन प्रदर्शित किए जाते हैं। ये विज्ञापन Google की निर्धारित डेवलपर नीतियों के अनुसार पूरी तरह सुरक्षित हैं और उपयोगकर्ता डेटा लीक नहीं करते हैं।</li>
+              </ul>
+            </div>
+
+            {/* Section 3 */}
+            <div className="space-y-1.5">
+              <h2 className="text-sm font-extrabold text-white tracking-wide border-l-2 border-indigo-500 pl-2">
+                3. बच्चों की गोपनीयता (Children's Privacy Protection)
+              </h2>
+              <p className="text-slate-400">
+                यह ऐप शिक्षा और ध्यान केंद्रित करने के उद्देश्य से बनाया गया है। यह किसी भी बच्चे से संबंधित संवेदनशील जानकारी एकत्र नहीं करता है और COPPA (Children's Online Privacy Protection Act) जैसी नीतियों का पूर्ण रूप से पालन करता है।
+              </p>
+            </div>
+
+            {/* Section 4 */}
+            <div className="space-y-1.5">
+              <h2 className="text-sm font-extrabold text-white tracking-wide border-l-2 border-indigo-500 pl-2">
+                4. डेवलपर संपर्क जानकारी (Developer Contact Info)
+              </h2>
+              <p className="text-slate-400">
+                यदि इस गोपनीयता नीति या ऐप के अधिकारों के बारे में आपका कोई प्रश्न या सुझाव है, तो आप हमें सीधे ईमेल कर सकते हैं:
+              </p>
+              <div className="bg-[#11192e] border border-slate-850 p-2.5 rounded-lg text-slate-200 font-mono mt-1">
+                Developer Support: <a href="mailto:jitu1199pal@gmail.com" className="text-indigo-400 font-bold hover:underline">jitu1199pal@gmail.com</a>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Footer */}
+          <div className="pt-4 border-t border-slate-800 text-center text-[10px] text-slate-500 flex justify-between items-center select-none">
+            <span>&copy; 2026 Study Focus Dev Team.</span>
+            <span className="font-bold text-indigo-400">✔ Google Play Store Compliant Document</span>
+          </div>
+
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans select-none overflow-x-hidden antialiased">
@@ -1359,12 +1489,12 @@ export default function App() {
                           <input 
                             type="text" 
                             readOnly 
-                            value="https://studyfocus-app.com/download/apk"
+                            value={getPublicLink("/")}
                             className="bg-slate-950 border border-slate-800 text-slate-300 font-mono text-[9px] px-2.5 py-1.5 rounded-lg w-full focus:outline-none select-all"
                           />
                           <button 
                             onClick={() => {
-                              navigator.clipboard.writeText("https://studyfocus-app.com/download/apk");
+                              navigator.clipboard.writeText(getPublicLink("/"));
                               setLaunchNotification("APK Link Copied to Clipboard!");
                               setTimeout(() => setLaunchNotification(null), 2500);
                             }}
@@ -1383,7 +1513,7 @@ export default function App() {
                           {/* WhatsApp */}
                           <button 
                             onClick={() => {
-                              const shareText = "Hey! 🚀 Download *Study Focus App* APK to block distracting apps during study hours. It features custom time timetables and emergency break limits with AdSense interstitial ads! Download Here: https://studyfocus-app.com/download/apk";
+                              const shareText = `Hey! 🚀 Download *Study Focus App* APK to block distracting apps during study hours. It features custom time timetables and emergency break limits with AdSense interstitial ads! Download Here: ${getPublicLink("/")}`;
                               window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
                               setLaunchNotification("Opening WhatsApp Share Dialog...");
                               setTimeout(() => setLaunchNotification(null), 2500);
@@ -1397,8 +1527,8 @@ export default function App() {
                           {/* Telegram */}
                           <button 
                             onClick={() => {
-                              const shareText = "Hey! 🚀 Download Study Focus App APK to block distracting apps during study hours. It features custom time timetables and emergency break limits with AdSense ads! Download Here: https://studyfocus-app.com/download/apk";
-                              window.open(`https://t.me/share/url?url=https://studyfocus-app.com/download/apk&text=${encodeURIComponent(shareText)}`, '_blank');
+                              const shareText = `Hey! 🚀 Download Study Focus App APK to block distracting apps during study hours. It features custom time timetables and emergency break limits with AdSense ads! Download Here: ${getPublicLink("/")}`;
+                              window.open(`https://t.me/share/url?url=${encodeURIComponent(getPublicLink("/"))}&text=${encodeURIComponent(shareText)}`, '_blank');
                               setLaunchNotification("Opening Telegram Share...");
                               setTimeout(() => setLaunchNotification(null), 2500);
                             }}
@@ -1415,7 +1545,7 @@ export default function App() {
                             const shareData = {
                               title: 'Study Focus APK Download',
                               text: 'Download Study Focus App APK to secure your study sessions and avoid distractions!',
-                              url: 'https://studyfocus-app.com/download/apk'
+                              url: getPublicLink("/")
                             };
                             try {
                               if (navigator.share) {
@@ -1426,7 +1556,7 @@ export default function App() {
                               }
                             } catch (e) {
                               setLaunchNotification("System Share triggered: Link copied instead!");
-                              navigator.clipboard.writeText("https://studyfocus-app.com/download/apk");
+                              navigator.clipboard.writeText(getPublicLink("/"));
                             }
                             setTimeout(() => setLaunchNotification(null), 2500);
                           }}
@@ -1553,12 +1683,12 @@ export default function App() {
               <input 
                 type="text" 
                 readOnly 
-                value={window.location.origin + "/privacy-policy.html"}
+                value={getPublicLink("/privacy-policy.html")}
                 className="bg-slate-950 border border-slate-805 text-slate-350 font-mono text-[9.5px] px-3 py-1.5 rounded-lg flex-1 select-all focus:outline-none"
               />
               <button 
                 onClick={() => {
-                  navigator.clipboard.writeText(window.location.origin + "/privacy-policy.html");
+                  navigator.clipboard.writeText(getPublicLink("/privacy-policy.html"));
                   setLaunchNotification("Copied Privacy Policy Link to Clipboard!");
                   setTimeout(() => setLaunchNotification(null), 2500);
                 }}

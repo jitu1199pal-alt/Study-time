@@ -118,7 +118,9 @@ class StudyBlockPreferences(context: Context) {
     // Emergency break timestamp in ms
     var breakEndTimeMs: Long
         get() = prefs.getLong(KEY_BREAK_END_TIME, 0L)
-        set(value) = prefs.edit().putLong(KEY_BREAK_END_TIME, value).apply()
+        set(value) {
+            prefs.edit().putLong(KEY_BREAK_END_TIME, value).commit()
+        }
 
     // Start a temporary emergency break
     fun startEmergencyBreak(minutes: Int) {
