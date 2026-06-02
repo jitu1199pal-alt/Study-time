@@ -1488,6 +1488,7 @@ fun AppSelectorTab(
         }
     }
 }
+}
 
 fun formatSlotTime12H(hour: Int, minute: Int): String {
     val amPm = if (hour >= 12) "PM" else "AM"
