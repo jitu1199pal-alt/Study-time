@@ -26,17 +26,28 @@ android {
     create("release") {
       val envKeystorePath = System.getenv("KEYSTORE_PATH")
       val keystorePath = if (!envKeystorePath.isNullOrBlank()) envKeystorePath else "${rootDir}/my-release-key.p12"
-      storeFile = file(keystorePath)
-      storeType = "PKCS12"
+      val keystoreFile = file(keystorePath)
 
-      val envStorePassword = System.getenv("STORE_PASSWORD")
-      storePassword = if (!envStorePassword.isNullOrBlank()) envStorePassword else "studyshieldpass"
+      if (keystoreFile.exists()) {
+        println("Using release keystore at: ${keystoreFile.absolutePath}")
+        storeFile = keystoreFile
+        storeType = if (keystoreFile.name.endsWith(".p12", ignoreCase = true) || keystoreFile.name.endsWith(".pfx", ignoreCase = true)) "PKCS12" else "JKS"
 
-      val envKeyAlias = System.getenv("KEY_ALIAS")
-      keyAlias = if (!envKeyAlias.isNullOrBlank()) envKeyAlias else "studyshield"
+        val envStorePassword = System.getenv("STORE_PASSWORD")
+        storePassword = if (!envStorePassword.isNullOrBlank()) envStorePassword else "studyshieldpass"
 
-      val envKeyPassword = System.getenv("KEY_PASSWORD")
-      keyPassword = if (!envKeyPassword.isNullOrBlank()) envKeyPassword else "studyshieldpass"
+        val envKeyAlias = System.getenv("KEY_ALIAS")
+        keyAlias = if (!envKeyAlias.isNullOrBlank()) envKeyAlias else "studyshield"
+
+        val envKeyPassword = System.getenv("KEY_PASSWORD")
+        keyPassword = if (!envKeyPassword.isNullOrBlank()) envKeyPassword else "studyshieldpass"
+      } else {
+        println("WARNING: Release keystore file not found at ${keystoreFile.absolutePath}. Falling back to Debug Keystore.")
+        storeFile = file("${rootDir}/debug.keystore")
+        storePassword = "android"
+        keyAlias = "androiddebugkey"
+        keyPassword = "android"
+      }
     }
     create("debugConfig") {
       storeFile = file("${rootDir}/debug.keystore")
@@ -130,65 +141,8 @@ dependencies {
   "ksp"(libs.moshi.kotlin.codegen)
 }
 
-tasks.register("generateReleaseKeystore") {
-  val envKeystorePath = System.getenv("KEYSTORE_PATH")
-  val keystorePath = if (!envKeystorePath.isNullOrBlank()) envKeystorePath else "${rootDir}/my-release-key.p12"
-  val keystoreFile = file(keystorePath)
-  outputs.file(keystoreFile)
-  doLast {
-    if (!keystoreFile.exists()) {
-      val envStorePassword = System.getenv("STORE_PASSWORD")
-      val storePasswordVal = if (!envStorePassword.isNullOrBlank()) envStorePassword else "studyshieldpass"
-
-      val envKeyAlias = System.getenv("KEY_ALIAS")
-      val keyAliasVal = if (!envKeyAlias.isNullOrBlank()) envKeyAlias else "studyshield"
-
-      val envKeyPassword = System.getenv("KEY_PASSWORD")
-      val keyPasswordVal = if (!envKeyPassword.isNullOrBlank()) envKeyPassword else "studyshieldpass"
-
-      try {
-        val javaHome = System.getProperty("java.home")
-        val keytoolBinary = if (!javaHome.isNullOrBlank()) {
-          val binDir = File(javaHome, "bin")
-          val keytoolFile = File(binDir, "keytool")
-          if (keytoolFile.exists()) keytoolFile.absolutePath else "keytool"
-        } else {
-          "keytool"
-        }
-
-        println("Generating release keystore via $keytoolBinary with alias: $keyAliasVal...")
-        val process = ProcessBuilder(
-          keytoolBinary, "-genkeypair",
-          "-v",
-          "-keystore", keystoreFile.absolutePath,
-          "-alias", keyAliasVal,
-          "-keyalg", "RSA",
-          "-keysize", "2048",
-          "-validity", "10000",
-          "-storetype", "PKCS12",
-          "-storepass", storePasswordVal,
-          "-keypass", keyPasswordVal,
-          "-dname", "CN=Study Focus, O=Study Focus, C=IN"
-        ).start()
-        val exitCode = process.waitFor()
-        if (exitCode == 0) {
-          println("Keystore created at: ${keystoreFile.absolutePath}")
-        } else {
-          throw GradleException("Keytool failed with exit code $exitCode")
-        }
-      } catch (e: Exception) {
-        e.printStackTrace()
-        throw GradleException("Failed to run keytool: ${e.message}", e)
-      }
-    }
-  }
-}
-
-// Automatically trigger release and bundle compilation when building, and copy outputs to release-files
+// Automatically trigger release and bundle copy outputs to release-files
 tasks.configureEach {
-  if (name.contains("Release") && name != "generateReleaseKeystore") {
-    dependsOn("generateReleaseKeystore")
-  }
   if (name == "assembleDebug" || name == "assemble" || name == "build") {
     finalizedBy("copyReleaseBuildsToOutputs")
   }

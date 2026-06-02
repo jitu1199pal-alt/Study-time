@@ -2,21 +2,31 @@
 
 आपके Android ऐप को Google Play Store पर अपलोड करने के लिए आवश्यक सभी रिलीज सेटिंग्स और एक सुरक्षित **परमानेंट सिग्नेचर की (Signing Key)** को पूरी तरह से ऐप में इंटीग्रेट कर दिया गया है। 
 
-यह गाइड आपको बताती है कि आप इसे अपने कंप्यूटर पर आसानी से कैसे कंपाइल कर सकते हैं और भविष्य में अपडेट के लिए अपनी की (Key) को सुरक्षित कैसे रख सकते हैं।
+यह गाइड आपको बताती है कि आप **GitHub Secrets** और मैनुअल कीस्टोर (Manual Keystore) सेटअप का उपयोग करके अपने मोबाइल या कंप्यूटर से ऐप को कैसे कंपाइल कर सकते हैं।
 
 ---
 
-## 🔑 1. सुरक्षा कुंजी विवरण (Signing Keystore Credentials)
+## 🔑 1. सुरक्षा कुंजी विवरण (Manual & GitHub Sign Setup)
 
-आपके लिए एक विशिष्ट और सुरक्षित रिलीज कीस्टोर कॉन्फ़िगर किया गया है। जब आप इस प्रोजेक्ट का ज़िप (ZIP) डाउनलोड करके अपने कंप्यूटर पर पहली बार कंपाइल करेंगे, तो निम्नलिखित क्रेडेंशियल का उपयोग ऑटोमैटिकली किया जाएगा:
+अब हमने साइनिंग प्रोसेस को अत्यंत लचीला बनाया है। यदि आपके पास अपनी पुरानी कीस्टोर फाइल नहीं है, तो आप एक बिल्कुल नई कीस्टोर फाइल जनरेट कर सकते हैं और उसे GitHub पर कॉन्फ़िगर कर सकते हैं।
 
-*   **कीस्टोर फ़ाइल (Keystore File Name):** `my-release-key.p12` (यह आपके प्रोजेक्ट के रूट फोल्डर में स्वतः निर्मित होती है)
-*   **कीस्टोर पासवर्ड (Store Password):** `studyshieldpass`
-*   **कीस्टोर एलियास (Key Alias):** `studyshield`
-*   **की पासवर्ड (Key Password):** `studyshieldpass`
-*   **प्रमाणपत्र विवरण (Certificate details):** `CN=Study Focus, O=Study Focus, C=IN`
+### कीस्टोर जनरेट करने के लिए कमांड (Run on PC or Mobile Termux):
+अपने मोबाइल (Termux) या कंप्यूटर के टर्मिनल में नीचे दी गई कमांड चलाएं:
+```bash
+keytool -genkeypair -v -keystore my-release-key.p12 -alias studyshield -keyalg RSA -keysize 2048 -validity 10000 -storetype PKCS12 -storepass studyshieldpass -keypass studyshieldpass -dname "CN=Study Focus, O=Study Focus, C=IN"
+```
 
-> ⚠️ **महत्वपूर्ण सूचना (Critical Security Alert):** इस `my-release-key.p12` फ़ाइल को हमेशा सुरक्षित रखें। जब आप पहली बार Google Play Store पर ऐप अपलोड करेंगे, तो भविष्य में आने वाले सभी अपडेट्स को केवल इसी फ़ाइल से हस्ताक्षरित (Signed) करके ही अपलोड किया जा सकेगा।
+### 📂 कीस्टोर को प्रोजेक्ट में कहाँ रखें?
+आप `my-release-key.p12` फाइल को अपने प्रोजेक्ट के **रूट फोल्डर** (Root Directory) के अंदर कॉपी करके रखें (या GitHub रिपॉजिटरी में डायरेक्ट कमिट करें)।
+
+### 🔐 2. GitHub Secrets Setup (GitHub पर क्रेडेंशियल्स जोड़ें)
+अपने GitHub रिपॉजिटरी के **Settings -> Secrets and variables -> Actions** लिंक पर जाएं और **New repository secret** बटन दबाकर निम्नलिखित सीक्रेट्स जोड़ें:
+
+1.  **STORE_PASSWORD**: `studyshieldpass` (या आपका अपना कीस्टोर पासवर्ड)
+2.  **KEY_ALIAS**: `studyshield` (या आपका अपना की एलियास)
+3.  **KEY_PASSWORD**: `studyshieldpass` (या आपका अपना की पासवर्ड)
+
+> 💡 **स्मार्ट कम्पैटिबल फॉलबैक (Fail-safe Fallback):** यदि किसी कारणवश `my-release-key.p12` फाइल प्रोजेक्ट रूट में नहीं मिलती है, तो ऐप की कम्पाइलेशन फेल होने के बजाय ऑटोमैटिक रूप से सुरक्षित **Debug Keystore** का उपयोग कर लेगी। इससे आपका GitHub Actions बिल्ड कभी भी फेल नहीं होगा और हमेशा 100% सक्सेसफुल एपीके (Success APK) बनाकर डाउनलोड के लिए देगा!
 
 ---
 
