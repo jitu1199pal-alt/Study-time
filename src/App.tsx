@@ -314,6 +314,127 @@ export default function App() {
     setEditingSlotId(null);
   };
 
+  // Helper to determine AdSense full-screen ad duration based on break minutes
+  const getAdDurationForMinutes = (minutes: number): number => {
+    if (minutes >= 1 && minutes <= 5) return 5;
+    if (minutes > 5 && minutes <= 10) return 10;
+    if (minutes > 10 && minutes <= 15) return 15;
+    if (minutes > 15 && minutes <= 30) return 30;
+    if (minutes > 30 && minutes <= 45) return 45;
+    if (minutes > 45 && minutes <= 60) return 60;
+    return 5; // fallback
+  };
+
+  // State for active simulated Google Ad
+  const [activeAd, setActiveAd] = useState<{
+    isOpen: boolean;
+    adDuration: number;
+    adSecsRemaining: number;
+    pendingBreakMinutes: number;
+    adKey: number; // to reset/randomize ad content on different runs
+  } | null>(null);
+
+  // Trigger break request by loading full-screen AdSense ad first
+  const requestBreakWithAd = (minutes: number) => {
+    const adSecs = getAdDurationForMinutes(minutes);
+    setActiveAd({
+      isOpen: true,
+      adDuration: adSecs,
+      adSecsRemaining: adSecs,
+      pendingBreakMinutes: minutes,
+      adKey: Math.floor(Math.random() * 3) // 3 ad variations
+    });
+    setShowCustomBreakSelector(false);
+  };
+
+  // Ticking for the simulated interstitial Ad
+  useEffect(() => {
+    if (activeAd && activeAd.isOpen && activeAd.adSecsRemaining > 0) {
+      const timer = setInterval(() => {
+        setActiveAd(prev => {
+          if (prev && prev.isOpen && prev.adSecsRemaining > 1) {
+            return {
+              ...prev,
+              adSecsRemaining: prev.adSecsRemaining - 1
+            };
+          } else if (prev && prev.isOpen && prev.adSecsRemaining === 1) {
+            return {
+              ...prev,
+              adSecsRemaining: 0
+            };
+          }
+          return prev;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [activeAd]);
+
+  const handleFinishAdAndStartBreak = () => {
+    if (!activeAd) return;
+    const minutes = activeAd.pendingBreakMinutes;
+    setActiveAd(null);
+    handleActivateBreak(minutes);
+  };
+
+  // Helper to get simulated Ad banner data
+  const getSimulatedAdContent = (key: number) => {
+    const ads = [
+      {
+        title: "StudySphere Premium",
+        tagline: "Distraction-Free Cloud Learning",
+        desc: "Sync NCERT solutions plus full interactive physics labs directly across all study devices. Over 10M+ Indian students score higher with premium guides!",
+        stats: "4.9 ★ (1.2M Reviews) • 50M+ Installs",
+        badge: "Ad by Google AdSense",
+        actionText: "Install Free Trial",
+        bgColorClass: "from-[#d97706] to-[#b45309]",
+        illustration: (
+          <div className="relative w-full h-24 bg-slate-900 border border-amber-500/20 rounded-xl flex flex-col items-center justify-center overflow-hidden">
+            <span className="absolute top-1 left-2 px-1 py-0.5 bg-amber-600/20 text-amber-400 font-extrabold text-[7.5px] rounded border border-amber-600/30 uppercase tracking-widest leading-none">AI Powered</span>
+            <BookOpen size={28} className="text-amber-500 animate-pulse mt-2" />
+            <span className="text-[11px] font-black text-slate-100 mt-1">StudySphere Premium Sync</span>
+            <span className="text-[8px] text-slate-400">Distraction Blocker Core Active</span>
+          </div>
+        )
+      },
+      {
+        title: "BrainBoost Focus Capsules",
+        tagline: "Natural Memory & Alertness",
+        desc: "Stay energized and ultra-focused through 3-hour long exam revision sessions! Pure vegetarian extracts certified of highest purity.",
+        stats: "4.7 ★ (250K Reviews) • 2M+ Sold",
+        badge: "Sponsored AdHub",
+        actionText: "Order 25% Off Today",
+        bgColorClass: "from-[#2563eb] to-[#1d4ed8]",
+        illustration: (
+          <div className="relative w-full h-24 bg-slate-900 border border-blue-500/20 rounded-xl flex flex-col items-center justify-center overflow-hidden">
+            <span className="absolute top-1 left-2 px-1 py-0.5 bg-blue-600/20 text-blue-400 font-extrabold text-[7.5px] rounded border border-blue-600/30 uppercase tracking-widest leading-none">100% Organic</span>
+            <Sparkles size={28} className="text-blue-400 animate-bounce mt-2" />
+            <span className="text-[11px] font-black text-slate-100 mt-1">BrainBoost Focus Enhancer</span>
+            <span className="text-[8px] text-slate-400">Ideal for exam preparation</span>
+          </div>
+        )
+      },
+      {
+        title: "Coding Juniors Pro",
+        tagline: "Fullstack Engineering in 30 Days",
+        desc: "Build Real Android apps, games, & deploy to AWS. Premium daily mentoring and guaranteed live placements with top tech partners.",
+        stats: "4.8 ★ (85K Reviews) • 500K+ Students",
+        badge: "Ad by Google AdSense",
+        actionText: "Join Live Workshop",
+        bgColorClass: "from-[#9333ea] to-[#7e22ce]",
+        illustration: (
+          <div className="relative w-full h-24 bg-slate-900 border border-purple-500/20 rounded-xl flex flex-col items-center justify-center overflow-hidden">
+            <span className="absolute top-1 left-2 px-1 py-0.5 bg-purple-600/20 text-purple-400 font-extrabold text-[7.5px] rounded border border-purple-600/30 uppercase tracking-widest leading-none">Job Guarantee</span>
+            <GraduationCap size={30} className="text-purple-400 animate-pulse mt-2" />
+            <span className="text-[11px] font-black text-slate-100 mt-1">Coding Juniors Bootcamps</span>
+            <span className="text-[8px] text-slate-400">98.4% Students Hired this Month</span>
+          </div>
+        )
+      }
+    ];
+    return ads[key] || ads[0];
+  };
+
   // Handle emergency break trigger
   const handleActivateBreak = (minutes: number) => {
     setBreakRemainingSecs(minutes * 60);
@@ -367,6 +488,119 @@ export default function App() {
             {launchNotification && (
               <div className="absolute top-12 left-1/2 -translate-x-1/2 z-50 w-[85%] bg-blue-900 text-white text-[10px] px-3 py-2 rounded-xl text-center border border-blue-700 shadow-xl opacity-95 animate-pulse font-semibold">
                 {launchNotification}
+              </div>
+            )}
+
+            {activeAd && activeAd.isOpen && (
+              <div className="absolute inset-0 z-50 bg-[#070b13] flex flex-col justify-between p-4 text-slate-200">
+                {/* 1. Header of the Interstitial Ad */}
+                <div className="flex justify-between items-center bg-[#0d1424] border border-slate-800 -mx-4 -mt-4 p-2.5 px-4 mb-4 select-none">
+                  {/* Left: Info button and Ad attribution */}
+                  <div className="flex items-center gap-1.5">
+                    <span className="bg-amber-500 text-[8.5px] text-black font-extrabold px-1 rounded-sm border border-amber-400/40">Ad</span>
+                    <span className="text-[10px] text-slate-400 font-extrabold tracking-wider font-mono">Google AdSense</span>
+                    <span className="text-[10px] text-indigo-450 font-medium font-mono">ℹ</span>
+                  </div>
+                  
+                  {/* Right: Close or countdown status */}
+                  <div className="flex items-center gap-2">
+                    {activeAd.adSecsRemaining > 0 ? (
+                      <div className="flex items-center gap-1 bg-rose-950/60 border border-rose-800/40 px-2 py-0.5 rounded-full text-[10px] text-rose-300 font-extrabold">
+                        <Clock size={11} className="text-rose-400 animate-spin-slow" />
+                        <span>Ad remains: {activeAd.adSecsRemaining}s</span>
+                      </div>
+                    ) : (
+                      <span className="bg-emerald-950/80 border border-emerald-800 text-emerald-400 px-2 py-0.5 rounded text-[9px] font-black animate-pulse">
+                        ✔ Completed!
+                      </span>
+                    )}
+
+                    {/* Highly responsive closing button */}
+                    <button
+                      onClick={activeAd.adSecsRemaining <= 0 ? handleFinishAdAndStartBreak : undefined}
+                      disabled={activeAd.adSecsRemaining > 0}
+                      className={`flex items-center justify-center p-1.5 rounded-full border transition ${
+                        activeAd.adSecsRemaining <= 0
+                          ? 'bg-rose-600 hover:bg-rose-500 cursor-pointer text-white border-rose-400 shadow-md transform active:scale-90 font-black'
+                          : 'bg-slate-900 border-slate-800 text-slate-600 cursor-not-allowed opacity-40'
+                      }`}
+                      style={{ width: '22px', height: '22px' }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </div>
+
+                {/* 2. Main content area (The Ad Card itself) */}
+                {(() => {
+                  const ad = getSimulatedAdContent(activeAd.adKey);
+                  return (
+                    <div className="flex-1 flex flex-col justify-center items-center gap-2.5 text-center px-1">
+                      {/* Decorative elements representing loading or active play */}
+                      <div className="space-y-0.5">
+                        <h4 className="text-[9px] text-indigo-400 font-black uppercase tracking-widest">Featured Academic Offer</h4>
+                        <p className="text-[9px] text-slate-500 font-medium">For Break of <span className="text-white font-bold">{activeAd.pendingBreakMinutes} Min</span></p>
+                      </div>
+
+                      {/* Display Illustration */}
+                      <div className="w-full">
+                        {ad.illustration}
+                      </div>
+
+                      {/* Info fields */}
+                      <div className="space-y-1 mt-1">
+                        <div className="flex justify-center items-center gap-1 bg-white/5 py-0.5 px-2 border border-white/5 rounded-full w-full max-w-fit mx-auto mt-1">
+                          <span className="text-[8.5px] text-yellow-400 font-extrabold">{ad.stats}</span>
+                        </div>
+                        <h3 className="text-sm font-black text-white tracking-tight leading-tight">{ad.title}</h3>
+                        <p className="text-[10px] font-bold text-indigo-300 leading-tight">{ad.tagline}</p>
+                        <p className="text-[9px] text-slate-450 leading-normal px-2">
+                          {ad.desc}
+                        </p>
+                      </div>
+
+                      {/* Progress bar representing ad timeline ticking */}
+                      <div className="w-full bg-slate-900 h-1.5 rounded-full mt-1.5 overflow-hidden border border-slate-850">
+                        <div 
+                          className="bg-indigo-500 h-full transition-all duration-1000 ease-linear"
+                          style={{ width: `${(activeAd.adSecsRemaining / activeAd.adDuration) * 100}%` }}
+                        ></div>
+                      </div>
+
+                      {/* Bottom action trigger CTA */}
+                      <button
+                        onClick={() => {
+                          setLaunchNotification('Simulating Ad Redirect...');
+                          setTimeout(() => setLaunchNotification(null), 2500);
+                        }}
+                        className={`w-full py-2 rounded-xl border font-black text-xs uppercase tracking-wider text-slate-950 bg-gradient-to-r ${ad.bgColorClass} text-white border-white/10 hover:brightness-110 active:scale-98 transition shadow-lg mt-1`}
+                      >
+                        {ad.actionText}
+                      </button>
+                    </div>
+                  );
+                })()}
+
+                {/* 3. Bottom Close/Start actions to start break once ad ends */}
+                <div className="pt-2 border-t border-slate-900 flex flex-col gap-1.5 mt-2 select-none">
+                  <span className="text-[8.5px] text-center text-slate-500 leading-none">
+                    *Ad completion is required to begin break duration parameter.
+                  </span>
+                  
+                  {activeAd.adSecsRemaining <= 0 ? (
+                    <button
+                      onClick={handleFinishAdAndStartBreak}
+                      className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 active:scale-95 text-slate-950 font-black text-[10.5px] uppercase tracking-wider rounded-xl shadow-lg border border-emerald-400/30 transition flex items-center justify-center gap-1 animate-pulse"
+                    >
+                      <Timer size={12} />
+                      ब्रेक शुरू करें (Start Break)
+                    </button>
+                  ) : (
+                    <div className="w-full py-1.5 bg-slate-900 border border-slate-800 text-[10px] font-extrabold text-slate-500 rounded-xl text-center">
+                      Ad details loading... ({activeAd.adSecsRemaining}s remaining)
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
@@ -535,7 +769,7 @@ export default function App() {
 
                         {/* Confirmation Button */}
                         <button
-                          onClick={() => handleActivateBreak(customBreakDuration)}
+                          onClick={() => requestBreakWithAd(customBreakDuration)}
                           className="w-full py-2 bg-emerald-500 text-slate-950 hover:bg-emerald-400 text-[11px] font-extrabold rounded-lg shadow-lg"
                         >
                           ब्रेक चालू करें (Start Break)
@@ -1067,7 +1301,7 @@ export default function App() {
                   <button
                     onClick={() => {
                       // Trigger emergency break directly from blocked window
-                      handleActivateBreak(15);
+                      requestBreakWithAd(15);
                     }}
                     className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black text-[11px] rounded-xl transition flex items-center justify-center gap-1.5"
                   >
