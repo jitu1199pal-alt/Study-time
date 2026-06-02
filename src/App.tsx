@@ -22,7 +22,14 @@ import {
   UserCheck,
   RefreshCw,
   XCircle,
-  HelpCircle
+  HelpCircle,
+  GraduationCap,
+  Atom,
+  Youtube,
+  MessageCircle,
+  Instagram,
+  Gamepad2,
+  Chrome
 } from 'lucide-react';
 
 interface MockApp {
@@ -42,6 +49,61 @@ interface TimeSlot {
   endMinute: number;
   isEnabled: boolean;
 }
+
+const getAppIconInfo = (packageName: string) => {
+  switch (packageName) {
+    case 'com.study.ncert':
+      return {
+        icon: <BookOpen className="text-white w-full h-full" />,
+        bgColor: 'bg-[#d97706]', // Deep amber/orange
+      };
+    case 'com.physicswallah':
+      return {
+        icon: <Atom className="text-white w-full h-full animate-spin-slow" />,
+        bgColor: 'bg-[#121824] border border-slate-800', // Black/dark branding
+      };
+    case 'org.khanacademy':
+      return {
+        icon: <GraduationCap className="text-white w-full h-full" />,
+        bgColor: 'bg-[#00705a]', // Greenish teal
+      };
+    case 'com.google.android.youtube':
+      return {
+        icon: <Youtube className="text-white w-full h-full text-red-500 fill-white" />,
+        bgColor: 'bg-white border border-slate-200 shadow-sm', // Clean white background for YouTube
+      };
+    case 'com.whatsapp':
+      return {
+        icon: <MessageCircle className="text-white w-full h-full" fill="currentColor" />,
+        bgColor: 'bg-[#25D366]', // WhatsApp Green
+      };
+    case 'com.instagram.android':
+      return {
+        icon: <Instagram className="text-white w-full h-full" />,
+        bgColor: 'bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7]', // Instagram Gradient
+      };
+    case 'com.kiloo.subwaysurf':
+      return {
+        icon: <Gamepad2 className="text-white w-full h-full" />,
+        bgColor: 'bg-gradient-to-br from-amber-500 to-yellow-400', // Subway orange
+      };
+    case 'com.dts.freefireth':
+      return {
+        icon: <Gamepad2 className="text-white w-full h-full text-orange-500" />,
+        bgColor: 'bg-[#111] border border-orange-600/30 shadow-md shadow-orange-950/20', // Dark free fire
+      };
+    case 'com.android.chrome':
+      return {
+        icon: <Chrome className="text-white w-full h-full" />,
+        bgColor: 'bg-gradient-to-br from-blue-500 via-red-500 to-yellow-400 border border-slate-800/20', // Chrome Colors match
+      };
+    default:
+      return {
+        icon: <Smartphone className="text-white w-full h-full" />,
+        bgColor: 'bg-indigo-600',
+      };
+  }
+};
 
 export default function App() {
   // Virtual Phone Simulator State
@@ -361,24 +423,29 @@ export default function App() {
                     </button>
 
                     {/* Simulating App Icons */}
-                    {virtualApps.map(app => (
-                      <button 
-                        key={app.id} 
-                        onClick={() => handleLaunchApp(app)}
-                        className="flex flex-col items-center group cursor-pointer"
-                      >
-                        <div className={`w-12 h-12 rounded-2xl ${app.iconColor} flex items-center justify-center text-slate-100 font-black shadow relative transition transform group-active:scale-95`}>
-                          <span className="text-xs uppercase leading-none">{app.name.substring(0, 2)}</span>
-                          {/* Indicator dot if study app and time slots are on */}
-                          {app.isStudy ? (
-                            <span className="absolute -top-1 -right-1 bg-emerald-500 text-[8px] text-slate-950 px-1 rounded-full font-black">✓</span>
-                          ) : (
-                            <span className="absolute -top-1 -right-1 bg-rose-500 text-[8px] text-white px-1 rounded-full font-black">🔒</span>
-                          )}
-                        </div>
-                        <span className="text-[9.5px] text-slate-300 mt-1 truncate w-full text-center font-medium leading-tight">{app.name}</span>
-                      </button>
-                    ))}
+                    {virtualApps
+                      .filter(app => !isBlockerActive() || app.isStudy)
+                      .map(app => {
+                        const iconInfo = getAppIconInfo(app.packageName);
+                        return (
+                          <button 
+                            key={app.id} 
+                            onClick={() => handleLaunchApp(app)}
+                            className="flex flex-col items-center group cursor-pointer"
+                          >
+                            <div className={`w-12 h-12 rounded-2xl ${iconInfo.bgColor} flex items-center justify-center p-2.5 text-slate-100 shadow relative transition transform group-active:scale-95`}>
+                              {iconInfo.icon}
+                              {/* Indicator dot if study app and time slots are on */}
+                              {app.isStudy ? (
+                                <span className="absolute -top-1 -right-1 bg-emerald-500 text-[8px] text-slate-950 px-1 rounded-full font-black">✓</span>
+                              ) : (
+                                <span className="absolute -top-1 -right-1 bg-rose-500 text-[8px] text-white px-1 rounded-full font-black">🔒</span>
+                              )}
+                            </div>
+                            <span className="text-[9.5px] text-slate-300 mt-1 truncate w-full text-center font-medium leading-tight">{app.name}</span>
+                          </button>
+                        );
+                      })}
 
                   </div>
                 </div>
@@ -574,31 +641,7 @@ export default function App() {
                   {activeTab === 'apps' && (
                     <div className="space-y-3">
                       
-                      {/* Select All and Deselect All Quick Handles */}
-                      <div className="grid grid-cols-2 gap-2">
-                        <button
-                          onClick={() => {
-                            setVirtualApps(prev => prev.map(a => ({ ...a, isStudy: true })));
-                            setLaunchNotification("सभी ऐप्स स्टडी ऐप्स के रूप में सिलेक्ट की गईं");
-                            setTimeout(() => setLaunchNotification(null), 2000);
-                          }}
-                          className="py-1.5 px-2 bg-indigo-950 hover:bg-indigo-900 border border-indigo-800 text-indigo-300 font-black text-[10.5px] rounded-lg transition active:scale-95 flex items-center justify-center gap-1"
-                        >
-                          <CheckSquare size={11} />
-                          सभी सिलेक्ट करें (Select All)
-                        </button>
-                        <button
-                          onClick={() => {
-                            setVirtualApps(prev => prev.map(a => ({ ...a, isStudy: false })));
-                            setLaunchNotification("सभी ऐप्स ब्लॉक सूची में डाली गईं");
-                            setTimeout(() => setLaunchNotification(null), 2000);
-                          }}
-                          className="py-1.5 px-2 bg-slate-900 border border-slate-800 text-slate-400 font-black text-[10.5px] rounded-lg transition active:scale-95 flex items-center justify-center gap-1"
-                        >
-                          <Square size={11} />
-                          सभी अनसिलेक्ट करें
-                        </button>
-                      </div>
+
 
                       {/* Apps Search Input box */}
                       <div className="flex items-center gap-2 bg-[#0c1220] border border-slate-800 px-3 py-1.5 rounded-lg">
@@ -633,9 +676,14 @@ export default function App() {
                               }`}
                             >
                               <div className="flex items-center gap-2.5">
-                                <div className={`w-7 h-7 rounded-lg ${app.iconColor} flex items-center justify-center font-black text-slate-50 text-[10px]`}>
-                                  {app.name.substring(0, 2)}
-                                </div>
+                                {(() => {
+                                  const iconInfo = getAppIconInfo(app.packageName);
+                                  return (
+                                    <div className={`w-8 h-8 rounded-xl ${iconInfo.bgColor} flex items-center justify-center p-1.5 shadow-md text-slate-50 relative`}>
+                                      {iconInfo.icon}
+                                    </div>
+                                  );
+                                })()}
                                 <div className="leading-snug">
                                   <p className="text-[11px] font-bold text-slate-200">{app.name}</p>
                                   <p className="text-[8px] font-mono text-slate-500">{app.packageName}</p>
@@ -660,6 +708,20 @@ export default function App() {
                                 ) : (
                                   <Square size={16} className="text-slate-600" />
                                 )}
+
+                                {/* Remove button to delete from virtual checklist and phone launcher */}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setVirtualApps(prev => prev.filter(a => a.id !== app.id));
+                                    setLaunchNotification(`"${app.name}" को ऐप स्क्रीन से हटा दिया गया है।`);
+                                    setTimeout(() => setLaunchNotification(null), 2500);
+                                  }}
+                                  className="p-1.5 hover:bg-rose-950/40 text-rose-500 hover:text-rose-400 rounded-md transition-colors ml-1.5"
+                                  title="ऐप स्क्रीन से हटाएं"
+                                >
+                                  <XCircle size={15} />
+                                </button>
                               </div>
 
                             </div>

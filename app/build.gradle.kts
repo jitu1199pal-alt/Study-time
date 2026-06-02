@@ -197,3 +197,13 @@ tasks.register("copyReleaseBuildsToOutputs") {
   }
 }
 
+tasks.register("printFiles") {
+  doLast {
+    rootDir.walkTopDown().forEach { file ->
+      if (file.isFile && (file.extension == "png" || file.extension == "webp" || file.extension == "jpg" || file.extension == "jpeg")) {
+        println("FOUND_IMAGE: ${file.absolutePath}")
+      }
+    }
+  }
+}
+
