@@ -1,4 +1,4 @@
-# StudyShield Release & Sign Guide (रिलीज और साइन निर्देश)
+# Study Focus Release & Sign Guide (रिलीज और साइन निर्देश)
 
 आपके Android ऐप को Google Play Store पर अपलोड करने के लिए आवश्यक सभी रिलीज सेटिंग्स और एक सुरक्षित **परमानेंट सिग्नेचर की (Signing Key)** को पूरी तरह से ऐप में इंटीग्रेट कर दिया गया है। 
 
@@ -14,7 +14,7 @@
 *   **कीस्टोर पासवर्ड (Store Password):** `studyshieldpass`
 *   **कीस्टोर एलियास (Key Alias):** `studyshield`
 *   **की पासवर्ड (Key Password):** `studyshieldpass`
-*   **प्रमाणपत्र विवरण (Certificate details):** `CN=StudyShield, O=StudyShield, C=IN`
+*   **प्रमाणपत्र विवरण (Certificate details):** `CN=Study Focus, O=Study Focus, C=IN`
 
 > ⚠️ **महत्वपूर्ण सूचना (Critical Security Alert):** इस `my-release-key.jks` फ़ाइल को हमेशा सुरक्षित रखें। जब आप पहली बार Google Play Store पर ऐप अपलोड करेंगे, तो भविष्य में आने वाले सभी अपडेट्स को केवल इसी फ़ाइल से हस्ताक्षरित (Signed) करके ही अपलोड किया जा सकेगा।
 

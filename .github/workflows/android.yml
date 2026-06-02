@@ -42,7 +42,7 @@ jobs:
     - name: Upload Signed Release APK
       uses: actions/upload-artifact@v4
       with:
-        name: StudyShield-Release-APK
+        name: StudyFocus-Release-APK
         path: release-files/app-release-signed.apk
         if-no-files-found: error
         retention-days: 14
@@ -50,7 +50,7 @@ jobs:
     - name: Upload Play Store Bundle (AAB)
       uses: actions/upload-artifact@v4
       with:
-        name: StudyShield-PlayStore-Bundle-AAB
+        name: StudyFocus-PlayStore-Bundle-AAB
         path: release-files/app-release-signed.aab
         if-no-files-found: error
         retention-days: 14

@@ -155,7 +155,7 @@ tasks.register("generateReleaseKeystore") {
           "-validity", "10000",
           "-storepass", storePasswordVal,
           "-keypass", keyPasswordVal,
-          "-dname", "CN=StudyShield, O=StudyShield, C=IN"
+          "-dname", "CN=Study Focus, O=Study Focus, C=IN"
         ).start()
         val exitCode = process.waitFor()
         if (exitCode == 0) {

@@ -408,7 +408,7 @@ export default function App() {
                   <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">APPLICATIONS GRID (लॉन्च करें):</p>
                   <div className="grid grid-cols-4 gap-y-4 gap-x-2">
                     
-                    {/* Core StudyShield Icon */}
+                    {/* Core Study Focus Icon */}
                     <button 
                       onClick={() => {
                         setPhoneScreen('study_shield_app');
@@ -419,7 +419,7 @@ export default function App() {
                       <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg transition transform group-active:scale-95 border border-blue-400/30">
                         <ShieldCheck size={26} />
                       </div>
-                      <span className="text-[9.5px] text-indigo-200 font-extrabold mt-1 truncate w-full text-center">StudyShield</span>
+                      <span className="text-[9.5px] text-indigo-200 font-extrabold mt-1 truncate w-full text-center">Study Focus</span>
                     </button>
 
                     {/* Simulating App Icons */}
@@ -458,7 +458,7 @@ export default function App() {
               </div>
             )}
 
-            {/* SCREEN 2: STUDYSHIELD APPLICATION SUITE (Main simulated APK contents) */}
+            {/* SCREEN 2: STUDY FOCUS APPLICATION SUITE (Main simulated APK contents) */}
             {phoneScreen === 'study_shield_app' && (
               <div className="flex-1 flex flex-col justify-between bg-[#070b13] relative">
                 
@@ -783,7 +783,7 @@ export default function App() {
                             </p>
                             <p>
                               <strong className="text-indigo-400 block font-semibold">3. Play Store Policy Compliance:</strong>
-                              StudyShield strictly obeys Google Play Policies regarding sensitive user permissions (Accessibility API disclosures).
+                              Study Focus strictly obeys Google Play Policies regarding sensitive user permissions (Accessibility API disclosures).
                             </p>
                           </div>
                         )}
@@ -1120,7 +1120,7 @@ export default function App() {
 
       {/* Styled Footer */}
       <footer className="border-t border-slate-900 bg-[#060a12] py-4 text-center text-[11px] text-slate-600">
-        <p>© 2026 StudyShield Pro. For 18+ Student Focus and Time Safety.</p>
+        <p>© 2026 Study Focus Pro. For 18+ Student Focus and Time Safety.</p>
         <p className="mt-0.5 text-slate-750">Designed exclusively to bypass distraction channels elegantly.</p>
       </footer>
     </div>
