@@ -22,11 +22,18 @@ android {
 
   signingConfigs {
     create("release") {
-      val keystorePath = System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-release-key.jks"
+      val envKeystorePath = System.getenv("KEYSTORE_PATH")
+      val keystorePath = if (!envKeystorePath.isNullOrBlank()) envKeystorePath else "${rootDir}/my-release-key.jks"
       storeFile = file(keystorePath)
-      storePassword = System.getenv("STORE_PASSWORD") ?: "studyshieldpass"
-      keyAlias = System.getenv("KEY_ALIAS") ?: "studyshield"
-      keyPassword = System.getenv("KEY_PASSWORD") ?: "studyshieldpass"
+
+      val envStorePassword = System.getenv("STORE_PASSWORD")
+      storePassword = if (!envStorePassword.isNullOrBlank()) envStorePassword else "studyshieldpass"
+
+      val envKeyAlias = System.getenv("KEY_ALIAS")
+      keyAlias = if (!envKeyAlias.isNullOrBlank()) envKeyAlias else "studyshield"
+
+      val envKeyPassword = System.getenv("KEY_PASSWORD")
+      keyPassword = if (!envKeyPassword.isNullOrBlank()) envKeyPassword else "studyshieldpass"
     }
     create("debugConfig") {
       storeFile = file("${rootDir}/debug.keystore")
@@ -121,22 +128,33 @@ dependencies {
 }
 
 tasks.register("generateReleaseKeystore") {
-  val keystoreFile = file("${rootDir}/my-release-key.jks")
+  val envKeystorePath = System.getenv("KEYSTORE_PATH")
+  val keystorePath = if (!envKeystorePath.isNullOrBlank()) envKeystorePath else "${rootDir}/my-release-key.jks"
+  val keystoreFile = file(keystorePath)
   outputs.file(keystoreFile)
   doLast {
     if (!keystoreFile.exists()) {
+      val envStorePassword = System.getenv("STORE_PASSWORD")
+      val storePasswordVal = if (!envStorePassword.isNullOrBlank()) envStorePassword else "studyshieldpass"
+
+      val envKeyAlias = System.getenv("KEY_ALIAS")
+      val keyAliasVal = if (!envKeyAlias.isNullOrBlank()) envKeyAlias else "studyshield"
+
+      val envKeyPassword = System.getenv("KEY_PASSWORD")
+      val keyPasswordVal = if (!envKeyPassword.isNullOrBlank()) envKeyPassword else "studyshieldpass"
+
       try {
-        println("Generating release keystore via keytool...")
+        println("Generating release keystore via keytool with alias: $keyAliasVal...")
         val process = ProcessBuilder(
           "keytool", "-genkeypair",
           "-v",
           "-keystore", keystoreFile.absolutePath,
-          "-alias", "studyshield",
+          "-alias", keyAliasVal,
           "-keyalg", "RSA",
           "-keysize", "2048",
           "-validity", "10000",
-          "-storepass", "studyshieldpass",
-          "-keypass", "studyshieldpass",
+          "-storepass", storePasswordVal,
+          "-keypass", keyPasswordVal,
           "-dname", "CN=StudyShield, O=StudyShield, C=IN"
         ).start()
         val exitCode = process.waitFor()
