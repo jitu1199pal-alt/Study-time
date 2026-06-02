@@ -34,6 +34,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.core.graphics.drawable.toBitmap
 import com.example.ui.theme.MyApplicationTheme
 import kotlinx.coroutines.delay
 import java.util.Calendar
@@ -77,7 +80,8 @@ data class AppInfoModel(
     val label: String,
     val packageName: String,
     val isSystem: Boolean,
-    val isChecked: Boolean = false
+    val isChecked: Boolean = false,
+    val icon: android.graphics.drawable.Drawable? = null
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,7 +101,7 @@ fun MainContainerScreen(
     var isServiceEnabled by remember { mutableStateOf(isAccessibilityServiceEnabled(context, StudyBlockAccessibilityService::class.java)) }
     var isBlockActive by remember { mutableStateOf(prefs.isBlockerActiveRightNow()) }
     var breakRemainingMinutes by remember { mutableStateOf(prefs.getBreakRemainingMinutes()) }
-    var studyAppsCount by remember { mutableStateOf(prefs.studyApps.size) }
+    var studyAppsCount by remember { mutableStateOf(getInstalledStudyAppsCount(context, prefs)) }
 
     var currentTimeString by remember { mutableStateOf("") }
     var currentDayOfWeekString by remember { mutableStateOf("") }
@@ -109,7 +113,7 @@ fun MainContainerScreen(
             isServiceEnabled = isAccessibilityServiceEnabled(context, StudyBlockAccessibilityService::class.java)
             isBlockActive = prefs.isBlockerActiveRightNow()
             breakRemainingMinutes = prefs.getBreakRemainingMinutes()
-            studyAppsCount = prefs.studyApps.size
+            studyAppsCount = getInstalledStudyAppsCount(context, prefs)
 
             val cal = Calendar.getInstance()
             val hour = cal.get(Calendar.HOUR)
@@ -261,7 +265,7 @@ fun MainContainerScreen(
                 )
                 1 -> AppSelectorTab(
                     prefs = prefs,
-                    onAppsUpdated = { studyAppsCount = prefs.studyApps.size }
+                    onAppsUpdated = { studyAppsCount = getInstalledStudyAppsCount(context, prefs) }
                 )
                 2 -> InfoTab()
             }
@@ -1142,34 +1146,6 @@ fun InfoTab() {
         }
 
         item {
-            Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "👤 योग्यता मानदंड (Age Criteria)",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text(
-                        text = "यह सुरक्षा फोकस यूटिलिटी 18 वर्ष से अधिक आयु के छात्रों (18+ Higher Education Students) की एकाग्रता बढ़ाने के लिए है।",
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 16.sp
-                    )
-                }
-            }
-        }
-
-        item {
             var isExpanded by remember { mutableStateOf(false) }
             Card(
                 shape = RoundedCornerShape(16.dp),
@@ -1280,12 +1256,18 @@ fun AppSelectorTab(
             val label = appInfo.loadLabel(pm).toString()
             val packageName = appInfo.packageName
             val isSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+            val icon = try {
+                appInfo.loadIcon(pm)
+            } catch (e: Exception) {
+                null
+            }
             
             AppInfoModel(
                 label = label,
                 packageName = packageName,
                 isSystem = isSystem,
-                isChecked = prefs.isStudyApp(packageName)
+                isChecked = prefs.isStudyApp(packageName),
+                icon = icon
             )
         }.distinctBy { it.packageName }.sortedBy { it.label }
 
@@ -1445,6 +1427,62 @@ fun AppSelectorTab(
                                 .padding(12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            if (app.icon != null) {
+                                val bitmap = remember(app.packageName) {
+                                    try {
+                                        app.icon.toBitmap(
+                                            width = 120,
+                                            height = 120,
+                                            config = android.graphics.Bitmap.Config.ARGB_8888
+                                        ).asImageBitmap()
+                                    } catch (e: Exception) {
+                                        null
+                                    }
+                                }
+                                if (bitmap != null) {
+                                    Image(
+                                        bitmap = bitmap,
+                                        contentDescription = "${app.label} Icon",
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .clip(RoundedCornerShape(8.dp))
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                } else {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.PlayArrow,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(20.dp),
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                }
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.PlayArrow,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                            }
+
                             Column(modifier = Modifier.weight(1.0f)) {
                                 Text(
                                     text = app.label, 
@@ -1733,3 +1771,18 @@ fun isAccessibilityServiceEnabled(context: Context, service: Class<out Accessibi
     }
     return false
 }
+
+fun getInstalledStudyAppsCount(context: Context, prefs: StudyBlockPreferences): Int {
+    val pm = context.packageManager
+    var count = 0
+    for (pkg in prefs.studyApps) {
+        try {
+            pm.getPackageInfo(pkg, 0)
+            count++
+        } catch (e: Exception) {
+            // Not installed
+        }
+    }
+    return count
+}
+

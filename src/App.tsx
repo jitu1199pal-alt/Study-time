@@ -755,11 +755,6 @@ export default function App() {
                         </ol>
                       </div>
 
-                      <div className="bg-white/5 border border-white/10 rounded-xl p-3 text-[10px] text-slate-400 space-y-1.5 text-center">
-                        <p className="font-bold text-white uppercase">👤 योग्यता मानदंड (Age Criteria)</p>
-                        <p>यह सुरक्षा फोकस यूटिलिटी 18 वर्ष से अधिक आयु के छात्रों (18+ Higher Education Students) की एकाग्रता बढ़ाने के लिए है।</p>
-                      </div>
-
                       {/* Expandable Privacy Policy Widget */}
                       <div 
                         className="bg-slate-950/40 border border-indigo-950 rounded-xl p-3 cursor-pointer select-none text-left transition hover:border-indigo-900"
