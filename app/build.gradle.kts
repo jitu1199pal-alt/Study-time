@@ -23,8 +23,9 @@ android {
   signingConfigs {
     create("release") {
       val envKeystorePath = System.getenv("KEYSTORE_PATH")
-      val keystorePath = if (!envKeystorePath.isNullOrBlank()) envKeystorePath else "${rootDir}/my-release-key.jks"
+      val keystorePath = if (!envKeystorePath.isNullOrBlank()) envKeystorePath else "${rootDir}/my-release-key.p12"
       storeFile = file(keystorePath)
+      storeType = "PKCS12"
 
       val envStorePassword = System.getenv("STORE_PASSWORD")
       storePassword = if (!envStorePassword.isNullOrBlank()) envStorePassword else "studyshieldpass"
@@ -129,7 +130,7 @@ dependencies {
 
 tasks.register("generateReleaseKeystore") {
   val envKeystorePath = System.getenv("KEYSTORE_PATH")
-  val keystorePath = if (!envKeystorePath.isNullOrBlank()) envKeystorePath else "${rootDir}/my-release-key.jks"
+  val keystorePath = if (!envKeystorePath.isNullOrBlank()) envKeystorePath else "${rootDir}/my-release-key.p12"
   val keystoreFile = file(keystorePath)
   outputs.file(keystoreFile)
   doLast {
@@ -144,15 +145,25 @@ tasks.register("generateReleaseKeystore") {
       val keyPasswordVal = if (!envKeyPassword.isNullOrBlank()) envKeyPassword else "studyshieldpass"
 
       try {
-        println("Generating release keystore via keytool with alias: $keyAliasVal...")
+        val javaHome = System.getProperty("java.home")
+        val keytoolBinary = if (!javaHome.isNullOrBlank()) {
+          val binDir = java.io.File(javaHome, "bin")
+          val keytoolFile = java.io.File(binDir, "keytool")
+          if (keytoolFile.exists()) keytoolFile.absolutePath else "keytool"
+        } else {
+          "keytool"
+        }
+
+        println("Generating release keystore via $keytoolBinary with alias: $keyAliasVal...")
         val process = ProcessBuilder(
-          "keytool", "-genkeypair",
+          keytoolBinary, "-genkeypair",
           "-v",
           "-keystore", keystoreFile.absolutePath,
           "-alias", keyAliasVal,
           "-keyalg", "RSA",
           "-keysize", "2048",
           "-validity", "10000",
+          "-storetype", "PKCS12",
           "-storepass", storePasswordVal,
           "-keypass", keyPasswordVal,
           "-dname", "CN=Study Focus, O=Study Focus, C=IN"
