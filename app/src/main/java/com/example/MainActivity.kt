@@ -15,6 +15,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -277,7 +279,8 @@ fun MainContainerScreen(
                         breakRemainingMinutes = prefs.getBreakRemainingMinutes()
                     },
                     onTriggerAd = { minutes ->
-                        val adSecs = if (minutes <= 5) 5 else if (minutes <= 15) 8 else 10
+                        // 5 to 20 mins -> 10 sec, 21 to 30 mins -> 15 sec, 31 to 60 mins -> 45 sec
+                        val adSecs = if (minutes <= 20) 10 else if (minutes <= 30) 15 else 45
                         activeAdState = ActiveAdData(
                             adDuration = adSecs,
                             adSecsRemaining = adSecs,
@@ -324,9 +327,9 @@ fun MainContainerScreen(
 
                     Slider(
                         value = tempBreakMinutes,
-                        valueRange = 1f..60f,
-                        steps = 58,
-                        onValueChange = { tempBreakMinutes = it }
+                        valueRange = 5f..60f,
+                        steps = 10,
+                        onValueChange = { tempBreakMinutes = (Math.round(it / 5.0) * 5).toFloat() }
                     )
                 }
             },
@@ -334,7 +337,8 @@ fun MainContainerScreen(
                 Button(onClick = {
                     showBreakPopup = false
                     val minutes = tempBreakMinutes.toInt()
-                    val adSecs = if (minutes <= 5) 5 else if (minutes <= 15) 8 else 10
+                    // 5 to 20 mins -> 10 sec, 21 to 30 mins -> 15 sec, 31 to 60 mins -> 45 sec
+                    val adSecs = if (minutes <= 20) 10 else if (minutes <= 30) 15 else 45
                     activeAdState = ActiveAdData(
                         adDuration = adSecs,
                         adSecsRemaining = adSecs,
@@ -1009,14 +1013,15 @@ fun DashboardTab(
                     Spacer(modifier = Modifier.height(14.dp))
 
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .horizontalScroll(rememberScrollState()),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        val intervals = listOf(5, 15, 30, 60)
+                        val intervals = listOf(5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60)
                         intervals.forEach { min ->
                             Box(
                                 modifier = Modifier
-                                    .weight(1f)
                                     .background(
                                         MaterialTheme.colorScheme.primaryContainer,
                                         shape = RoundedCornerShape(8.dp)
@@ -1024,7 +1029,7 @@ fun DashboardTab(
                                     .clickable {
                                         onTriggerAd(min)
                                     }
-                                    .padding(vertical = 10.dp),
+                                    .padding(horizontal = 14.dp, vertical = 10.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -1048,7 +1053,7 @@ fun DashboardTab(
                     ) {
                         Icon(Icons.Default.Refresh, contentDescription = "Break Icon", modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("1 से 60 मिनट में चुनें (Custom Break)", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text("5 से 60 मिनट में चुनें (Custom Break)", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -1061,7 +1066,7 @@ fun DashboardTab(
             title = { Text("कस्टम ब्रेक समय (Custom Break Duration)", fontWeight = FontWeight.Bold, fontSize = 16.sp) },
             text = {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("सभी मोबाइल ऐप्स अनलॉक करने के लिए समय (1 से 60 मिनट) चुनें:")
+                    Text("सभी मोबाइल ऐप्स अनलॉक करने के लिए समय (5 से 60 मिनट) चुनें:")
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         text = "${dashboardBreakMinutes.toInt()} मिनट (Minutes)",
@@ -1071,9 +1076,9 @@ fun DashboardTab(
                     )
                     Slider(
                         value = dashboardBreakMinutes,
-                        valueRange = 1f..60f,
-                        steps = 58,
-                        onValueChange = { dashboardBreakMinutes = it }
+                        valueRange = 5f..60f,
+                        steps = 10,
+                        onValueChange = { dashboardBreakMinutes = (Math.round(it / 5.0) * 5).toFloat() }
                     )
                 }
             },

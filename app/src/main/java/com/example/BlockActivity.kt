@@ -251,32 +251,42 @@ fun BlockScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     
-                    val breakIntervals = listOf(
-                        5 to "5 मिनट",
-                        10 to "10 मिनट",
-                        30 to "30 मिनट",
-                        60 to "60 मिनट (1 घंटा)"
-                    )
+                    val breakIntervals = listOf(5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60)
                     
-                    breakIntervals.forEach { (minutes, label) ->
-                        Button(
-                            onClick = {
-                                val adSecs = if (minutes <= 5) 5 else if (minutes <= 15) 8 else 10
-                                activeAdState = ActiveAdData(
-                                    adDuration = adSecs,
-                                    adSecsRemaining = adSecs,
-                                    pendingBreakMinutes = minutes,
-                                    adKey = (0..2).random()
-                                )
-                                showBreakDialog = false
-                            },
+                    breakIntervals.chunked(3).forEach { rowMinutes ->
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 4.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer, contentColor = MaterialTheme.colorScheme.onSecondaryContainer),
-                            shape = RoundedCornerShape(10.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Text(text = "$label ($minutes Mins)", fontWeight = FontWeight.Bold)
+                            rowMinutes.forEach { minutes ->
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(10.dp))
+                                        .clickable {
+                                            // 5 to 20 mins -> 10 sec, 21 to 30 mins -> 15 sec, 31 to 60 mins -> 45 sec
+                                            val adSecs = if (minutes <= 20) 10 else if (minutes <= 30) 15 else 45
+                                            activeAdState = ActiveAdData(
+                                                adDuration = adSecs,
+                                                adSecsRemaining = adSecs,
+                                                pendingBreakMinutes = minutes,
+                                                adKey = (0..2).random()
+                                            )
+                                            showBreakDialog = false
+                                        }
+                                        .padding(vertical = 12.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "$minutes Min",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 13.sp,
+                                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                }
+                            }
                         }
                     }
                 }
