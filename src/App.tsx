@@ -29,7 +29,8 @@ import {
   MessageCircle,
   Instagram,
   Gamepad2,
-  Chrome
+  Chrome,
+  Share2
 } from 'lucide-react';
 
 interface MockApp {
@@ -145,6 +146,7 @@ export default function App() {
   const [breakRemainingSecs, setBreakRemainingSecs] = useState<number | null>(null);
   const [customBreakDuration, setCustomBreakDuration] = useState(15);
   const [showCustomBreakSelector, setShowCustomBreakSelector] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   // App Permissions States for simulation
   const [showPermissionsDialog, setShowPermissionsDialog] = useState(false);
@@ -719,13 +721,23 @@ export default function App() {
                     </div>
 
                     {/* Requirement: TOP RIGHT corner: Break کا option likha hua */}
-                    <button
-                      onClick={() => setShowCustomBreakSelector(true)}
-                      className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-slate-950 font-extrabold text-[11px] rounded-lg shadow-md flex items-center gap-1 transition"
-                    >
-                      <Timer size={12} />
-                      Break लें
-                    </button>
+                    <div className="flex gap-1.5">
+                      <button
+                        onClick={() => setShowShareModal(true)}
+                        className="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-extrabold text-[10px] rounded-lg shadow-md flex items-center gap-1 transition border border-indigo-400/20"
+                      >
+                        <Share2 size={10} />
+                        Share APK
+                      </button>
+
+                      <button
+                        onClick={() => setShowCustomBreakSelector(true)}
+                        className="px-2 py-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-slate-950 font-extrabold text-[10px] rounded-lg shadow-md flex items-center gap-1 transition"
+                      >
+                        <Timer size={10} />
+                        Break लें
+                      </button>
+                    </div>
                   </div>
 
 
@@ -989,36 +1001,66 @@ export default function App() {
                         </ol>
                       </div>
 
-                      {/* Expandable Privacy Policy Widget */}
+                      {/* Premium Share APK Card */}
+                      <div className="bg-gradient-to-r from-indigo-950 to-[#0d1425] border border-indigo-500/20 rounded-xl p-3 space-y-2 text-slate-200 shadow-md">
+                        <div className="flex items-center gap-1.5 text-indigo-400">
+                          <Share2 size={12} className="animate-pulse" />
+                          <h4 className="font-extrabold text-[11px] uppercase tracking-wider">दोस्तों के साथ शेयर करें (Share App)</h4>
+                        </div>
+                        <p className="text-[10px] text-slate-400 leading-tight">
+                          Study Focus ऐप को अपने दोस्तों और सहपाठियों के साथ शेयर करें ताकि वे भी अपनी पढ़ाई के दौरान ध्यान लगा सकें!
+                        </p>
+                        <button
+                          onClick={() => setShowShareModal(true)}
+                          className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-[10.5px] rounded-lg shadow transition flex items-center justify-center gap-1 active:scale-95 border border-indigo-400/20 animate-pulse"
+                        >
+                          <Share2 size={11} />
+                          शेयर लिंक प्राप्त करें (Share App Link)
+                        </button>
+                      </div>
+
+                      {/* Expandable Privacy Policy Widget - Compliance with Play Policy & Disclosures */}
                       <div 
-                        className="bg-slate-950/40 border border-indigo-950 rounded-xl p-3 cursor-pointer select-none text-left transition hover:border-indigo-900"
+                        className="bg-slate-950/45 border border-indigo-900/60 rounded-xl p-3 cursor-pointer select-none text-left transition hover:border-indigo-600/50"
                         onClick={() => setIsPolicyExpanded(!isPolicyExpanded)}
                       >
-                        <div className="flex justify-between items-center text-[11px] font-bold text-indigo-400">
-                          <span className="flex items-center gap-1.5">
-                            🔒 सुरक्षा एवं गोपनीयता नीति
+                        <div className="flex justify-between items-center text-[11px] font-black text-indigo-400">
+                          <span className="flex items-center gap-1.5 uppercase tracking-wide">
+                            🔒 Play Store Policy & Privacy
                           </span>
-                          <span className="text-[10px] text-slate-500 font-normal">
-                            {isPolicyExpanded ? 'छुपाएं ▲' : 'देखें ▼'}
+                          <span className="text-[10px] text-indigo-400 font-extrabold font-mono">
+                            {isPolicyExpanded ? 'CLOSE ▲' : 'VIEW DETAILS ▼'}
                           </span>
                         </div>
-                        <p className="text-[10px] text-slate-400 mt-1.5 leading-normal">
-                          यह ऐप पूरी तरह से ऑफलाइन और सुरक्षित है। हम आपका कोई भी पर्सनल या ब्राउज़िंग डेटा किसी बाहरी सर्वर पर नहीं भेजते हैं।
+                        <p className="text-[10px] text-slate-300 mt-1.5 leading-normal">
+                          यह ऐप पूर्णतः <strong>सुरक्षित और ऑफलाइन</strong> है। हम Google Play नीतियों का पालन करने के लिए बाध्य हैं।
                         </p>
                         {isPolicyExpanded && (
-                          <div className="mt-2 pt-2 border-t border-indigo-950 space-y-1.5 text-[9px] text-slate-450 leading-relaxed">
-                            <p>
-                              <strong className="text-white block">1. अभिगम्यता सेवा (Accessibility API):</strong>
-                              यह अनुमति केवल सक्रिय ऐप के पैकेज नाम की जाँच करने और विचलित करने वाले ऐप्स को आपके निर्धारित समय पर स्थानीय रूप से ब्लॉक करने के लिए चुनी जाती है।
-                            </p>
-                            <p>
-                              <strong className="text-white block">2. 100% ऑफलाइन सुरक्षा (Data Safety):</strong>
-                              आपके फ़ोन से कोई भी डेटा बाहरी सर्वर, विज्ञापनदाता या तृतीय पक्षों के साथ शेयर नहीं किया जाता है। सभी शेड्यूल्स और प्राथमिकताएं स्थानीय रूप से एन्क्रिप्टेड स्टोरेज में संग्रहीत होती हैं।
-                            </p>
-                            <p>
-                              <strong className="text-indigo-400 block font-semibold">3. Play Store Policy Compliance:</strong>
-                              Study Focus strictly obeys Google Play Policies regarding sensitive user permissions (Accessibility API disclosures).
-                            </p>
+                          <div className="mt-2 pt-2.5 border-t border-indigo-950/80 space-y-2 text-[9.5px] text-slate-400 leading-relaxed">
+                            <div>
+                              <strong className="text-white block uppercase text-[9px] tracking-wide text-indigo-300">1. Prominent Disclosure (एक्सीसिबिलिटी सर्विस):</strong>
+                              <p className="mt-0.5">
+                                Study Focus, विचलित करने वाले ऐप्स (Blocked Apps List) को स्क्रीन पर ब्लॉक करने के लिए <strong>Accessibility Service API</strong> का उपयोग करता है। यह सेवा केवल इस पहचान के लिए उपयोग होती है कि वर्तमान में स्क्रीन पर कौन सा ऐप खुला हुआ है।
+                              </p>
+                            </div>
+                            <div>
+                              <strong className="text-white block uppercase text-[9px] tracking-wide text-indigo-300">2. zero data collection:</strong>
+                              <p className="mt-0.5">
+                                एक्सीसिबिलिटी सर्विस द्वारा किसी भी प्रकार का व्यक्तिगत डेटा, इनपुट टेक्स्ट, पासवर्ड, या व्यक्तिगत जानकारी को <strong>कभी भी न तो रिकॉर्ड किया जाता है और न ही कहीं भेजा जाता है।</strong> यह पूरी तरह ऑफलाइन और डिवाइस की सीमा में काम करता है।
+                              </p>
+                            </div>
+                            <div>
+                              <strong className="text-white block uppercase text-[9px] tracking-wide text-indigo-300">3. ad & adsense compliance:</strong>
+                              <p className="mt-0.5">
+                                ऐप में दिए गए ब्रेक समय पर Google AdSense के नियमानुसार सुरक्षित विज्ञापन दिखाए जाते हैं, जो विज्ञापनदाताओं के नियमों और Play Store विज्ञापन नीतियों का 100% अनुपालन करते हैं।
+                              </p>
+                            </div>
+                            <div>
+                              <strong className="text-white block uppercase text-[9px] tracking-wide text-indigo-300">4. developer contact:</strong>
+                              <p className="mt-0.5 font-mono">
+                                queries/support: <span className="text-indigo-400 font-bold underline">jitu1199pal@gmail.com</span>
+                              </p>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -1232,26 +1274,26 @@ export default function App() {
                           </button>
                         </div>
 
-                        {/* 3. Ignore Battery Optimization Card */}
+                        {/* 3. Ignore Battery Restriction Card */}
                         <div className="bg-[#0c1424] border border-slate-805 rounded-xl p-3 space-y-2">
                           <div className="flex justify-between items-center">
-                            <span className="text-[11px] font-black text-slate-200">बैटरी ऑप्टिमाइजेशन (Battery)</span>
+                            <span className="text-[11px] font-black text-slate-200">बैटरी रिस्ट्रिक्शन (Battery Restriction)</span>
                             <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${isSimulatedBatteryOn ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/40' : 'bg-amber-950 text-amber-400 border border-amber-800/40'}`}>
-                              {isSimulatedBatteryOn ? 'अनुकूलित (Ignored)' : 'सक्रिय (Saver)'}
+                              {isSimulatedBatteryOn ? 'अप्रतिबंधित (Unrestricted)' : 'प्रतिबंधित (Restricted)'}
                             </span>
                           </div>
                           <p className="text-[9px] text-slate-500 leading-tight">
-                            सिस्टम द्वारा बैकग्राउंड सेवा को बंद होने से बचाने के लिए प्ले-स्टोर सुरक्षा नियम कंपैटिबल।
+                            सिस्टम द्वारा बैकग्राउंड सेवा को बंद होने से बचाने के लिए ऐप को 'अप्रतिबंधित' (No Restriction) पर सेट करें।
                           </p>
                           <button
                             onClick={() => {
                               setIsSimulatedBatteryOn(prev => !prev);
-                              setLaunchNotification("Redirecting to System: Battery Optimization Settings");
+                              setLaunchNotification("Redirecting to System: Battery Restriction Settings");
                               setTimeout(() => setLaunchNotification(null), 2500);
                             }}
                             className="w-full py-1.5 bg-slate-900 border border-slate-805 hover:bg-slate-850 text-indigo-400 text-[10px] font-bold rounded-lg transition"
                           >
-                            {isSimulatedBatteryOn ? 'सेट देखें (View Settings)' : 'अनुकूलन बंद करें (Ignore)'}
+                            {isSimulatedBatteryOn ? 'सेट देखें (View Settings)' : 'प्रतिबंध हटाएं (Remove Restriction)'}
                           </button>
                         </div>
 
@@ -1265,6 +1307,145 @@ export default function App() {
                         className="w-full py-2 bg-indigo-600 hover:bg-indigo-505 text-white text-xs font-black rounded-xl transition"
                       >
                         ओके (OK)
+                      </button>
+                    </div>
+
+                  </div>
+                )}
+
+                {/* Simulated Share App / APK Link Modal */}
+                {showShareModal && (
+                  <div className="absolute inset-0 bg-[#070b13]/98 z-50 p-4 flex flex-col justify-between overflow-y-auto">
+                    
+                    <div className="space-y-4">
+                      {/* Title Header */}
+                      <div className="flex justify-between items-center pb-2 border-b border-slate-800">
+                        <div className="flex items-center gap-1.5">
+                          <Share2 size={16} className="text-indigo-400 animate-pulse" />
+                          <span className="text-xs font-black text-indigo-300 uppercase tracking-wider">ऐप शेयर करें (Share APK Link)</span>
+                        </div>
+                        <button 
+                          onClick={() => setShowShareModal(false)}
+                          className="p-1 hover:bg-slate-800 rounded-full transition"
+                        >
+                          <XCircle size={18} className="text-rose-500" />
+                        </button>
+                      </div>
+
+                      {/* Information text */}
+                      <p className="text-[10px] text-slate-400 leading-normal">
+                        अपने दोस्तों को Study Focus ऐप की डाउनलोड लिंक भेजें और उन्हें एक साथ बिना किसी डिस्ट्रेक्शन के ध्यान केंद्रित करने में मदद करें!
+                      </p>
+
+                      {/* Cool App Info Box inside popup */}
+                      <div className="bg-[#0c1424] border border-indigo-950 rounded-xl p-3 flex gap-3 items-center">
+                        <div className="w-12 h-12 bg-indigo-600/20 border border-indigo-500/30 rounded-xl flex items-center justify-center shrink-0">
+                          <ShieldCheck className="text-indigo-400 animate-pulse" size={24} />
+                        </div>
+                        <div>
+                          <h4 className="text-[11px] font-black text-slate-100">Study Focus • Study Companion APK</h4>
+                          <p className="text-[8.5px] text-slate-500 font-mono">Package: com.studyshield.studyfocus</p>
+                          <div className="flex gap-1.5 mt-1 font-mono text-[8px]">
+                            <span className="bg-blue-950 text-blue-400 px-1 py-0.5 rounded">v2.1 Stable</span>
+                            <span className="bg-emerald-950 text-emerald-400 px-1 py-0.5 rounded">12.5 MB APK</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Copy Link Section */}
+                      <div className="space-y-1.5">
+                        <label className="text-[9.5px] font-black text-slate-400 block">APK डाउनलोड लिंक (Download Link):</label>
+                        <div className="flex gap-1.5">
+                          <input 
+                            type="text" 
+                            readOnly 
+                            value="https://studyfocus-app.com/download/apk"
+                            className="bg-slate-950 border border-slate-800 text-slate-300 font-mono text-[9px] px-2.5 py-1.5 rounded-lg w-full focus:outline-none select-all"
+                          />
+                          <button 
+                            onClick={() => {
+                              navigator.clipboard.writeText("https://studyfocus-app.com/download/apk");
+                              setLaunchNotification("APK Link Copied to Clipboard!");
+                              setTimeout(() => setLaunchNotification(null), 2500);
+                            }}
+                            className="bg-indigo-600 hover:bg-indigo-505 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-md active:scale-95 transition"
+                          >
+                            Copy
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Real / Simulated Share Channels list with quick share text */}
+                      <div className="space-y-2">
+                        <span className="text-[9.5px] font-black text-slate-400 block">सोशल चैनल्स पर शेयर करें (Share via Social):</span>
+                        
+                        <div className="grid grid-cols-2 gap-2">
+                          {/* WhatsApp */}
+                          <button 
+                            onClick={() => {
+                              const shareText = "Hey! 🚀 Download *Study Focus App* APK to block distracting apps during study hours. It features custom time timetables and emergency break limits with AdSense interstitial ads! Download Here: https://studyfocus-app.com/download/apk";
+                              window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
+                              setLaunchNotification("Opening WhatsApp Share Dialog...");
+                              setTimeout(() => setLaunchNotification(null), 2500);
+                            }}
+                            className="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-[10px] py-2 rounded-xl flex items-center justify-center gap-1.5 active:scale-95 transition"
+                          >
+                            <MessageCircle size={12} />
+                            WhatsApp
+                          </button>
+
+                          {/* Telegram */}
+                          <button 
+                            onClick={() => {
+                              const shareText = "Hey! 🚀 Download Study Focus App APK to block distracting apps during study hours. It features custom time timetables and emergency break limits with AdSense ads! Download Here: https://studyfocus-app.com/download/apk";
+                              window.open(`https://t.me/share/url?url=https://studyfocus-app.com/download/apk&text=${encodeURIComponent(shareText)}`, '_blank');
+                              setLaunchNotification("Opening Telegram Share...");
+                              setTimeout(() => setLaunchNotification(null), 2500);
+                            }}
+                            className="bg-sky-600 hover:bg-sky-500 text-white font-black text-[10px] py-2 rounded-xl flex items-center justify-center gap-1.5 active:scale-95 transition"
+                          >
+                            <Atom size={12} />
+                            Telegram
+                          </button>
+                        </div>
+
+                        {/* System Native Share Button fallback */}
+                        <button 
+                          onClick={async () => {
+                            const shareData = {
+                              title: 'Study Focus APK Download',
+                              text: 'Download Study Focus App APK to secure your study sessions and avoid distractions!',
+                              url: 'https://studyfocus-app.com/download/apk'
+                            };
+                            try {
+                              if (navigator.share) {
+                                await navigator.share(shareData);
+                                setLaunchNotification("Native share completed!");
+                              } else {
+                                throw new Error();
+                              }
+                            } catch (e) {
+                              setLaunchNotification("System Share triggered: Link copied instead!");
+                              navigator.clipboard.writeText("https://studyfocus-app.com/download/apk");
+                            }
+                            setTimeout(() => setLaunchNotification(null), 2500);
+                          }}
+                          className="w-full bg-slate-900 hover:bg-slate-850 text-indigo-400 font-bold text-[10.5px] py-2 rounded-xl flex items-center justify-center gap-1.5 border border-slate-800 active:scale-95 transition mt-1"
+                        >
+                          <Share2 size={12} />
+                          सिस्टम शेयर करें (System Native Share)
+                        </button>
+                      </div>
+
+                    </div>
+
+                    {/* Return back button */}
+                    <div className="pt-4 border-t border-slate-900 mt-4">
+                      <button 
+                        onClick={() => setShowShareModal(false)}
+                        className="w-full py-2 bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-black rounded-xl transition"
+                      >
+                        वापस जाएँ (Back)
                       </button>
                     </div>
 
@@ -1348,6 +1529,92 @@ export default function App() {
             ></button>
           </div>
 
+        </div>
+
+        {/* Play Store Developer Dashboard & Privacy Policy Link Helper Guide */}
+        <div className="w-full max-w-lg bg-[#0a101d] rounded-2xl border border-indigo-950 p-5 space-y-4 shadow-xl">
+          <div className="flex items-center gap-2 pb-2.5 border-b border-indigo-950/60 select-none">
+            <div className="w-7 h-7 bg-indigo-650/15 rounded-lg flex items-center justify-center">
+              <ShieldCheck size={16} className="text-indigo-400" />
+            </div>
+            <div>
+              <h3 className="text-xs font-black text-slate-100 uppercase tracking-widest">Google Play Store Developer Console Kit</h3>
+              <p className="text-[9px] text-[#6b7280]">Study Focus / Build Release Configuration Checklist</p>
+            </div>
+          </div>
+
+          {/* Dynamic Link Generation for Play Console Privacy URL field */}
+          <div className="space-y-1.5">
+            <div className="flex justify-between items-center">
+              <label className="text-[10px] font-black text-slate-400">प्ले स्टोर प्राइवेसी पालिसी लिंक (Privacy Policy URL):</label>
+              <span className="text-[8.5px] text-indigo-400 font-bold bg-indigo-950/40 px-1.5 py-0.5 rounded border border-indigo-900/35">100% Google Compliant</span>
+            </div>
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                readOnly 
+                value={window.location.origin + "/privacy-policy.html"}
+                className="bg-slate-950 border border-slate-805 text-slate-350 font-mono text-[9.5px] px-3 py-1.5 rounded-lg flex-1 select-all focus:outline-none"
+              />
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.origin + "/privacy-policy.html");
+                  setLaunchNotification("Copied Privacy Policy Link to Clipboard!");
+                  setTimeout(() => setLaunchNotification(null), 2500);
+                }}
+                className="bg-indigo-600 hover:bg-indigo-550 active:scale-95 text-white text-[10px] font-black px-4 py-1.5 rounded-lg shadow-md transition"
+              >
+                Copy URL
+              </button>
+            </div>
+            <p className="text-[8.5px] text-slate-500 leading-tight">
+              * अपनी Google Play Console में <strong>"App Content &gt; Privacy Policy"</strong> वाले विकल्प में ऊपर दिए गए लिंक को पेस्ट करें। यह पेज रीयल-टाइम में उपलब्ध है।
+            </p>
+          </div>
+
+          {/* Guidelines Section organized with visual hierarchy */}
+          <div className="space-y-3 pt-1">
+            <h4 className="text-[10px] font-black text-slate-300 uppercase tracking-wider">प्ले स्टोर पर पब्लिश करने की रणनीति (Publishing Tips):</h4>
+            
+            <div className="space-y-2 text-[10px] text-slate-400 leading-normal">
+              
+              <div className="bg-[#0e172a] border border-blue-950 p-2.5 rounded-xl space-y-1">
+                <span className="font-bold text-blue-400 block text-[9.5px]">⚠️ एक्सीसिबिलिटी डिक्लेरेशन (Accessibility Disclosures):</span>
+                <p className="text-[9px] leading-relaxed">
+                  जब प्ले स्टोर आपसे एक्सीसिबिलिटी सर्विस के उद्देश्य के बारे में पूछे, तो घोषित करें कि:
+                  "यह ऐप केवल पढ़ाई के दौरान विचलित करने वाली ऐप्स के पैकेज नामों को पहचानने के लिए Accessibility Service API की अनुमति मांगता है। यह पूरी प्रक्रिया ऑफलाइन होती है और ऐप किसी भी प्रकार का उपयोगकर्ता डेटा एकत्र या लीक नहीं करता है।"
+                </p>
+              </div>
+
+              <div className="bg-[#0e172a] border border-emerald-950 p-2.5 rounded-xl space-y-1">
+                <span className="font-bold text-emerald-400 block text-[9.5px]">🛡️ डेटा सुरक्षा फार्म (Data Safety Declaration):</span>
+                <p className="text-[9px] leading-relaxed">
+                  Google Play Console में डेटा सेफ्टी फ़ॉर्म भरते समय चुनें:
+                  <strong>"No user data is collected or shared with third parties"</strong>। यह ऐप शून्य डेटा संग्रह नीति का पालन करता है क्योंकि इसका उपयोग पूरी तरह ऑफलाइन है।
+                </p>
+              </div>
+
+              <div className="bg-[#0e172a] border border-amber-950 p-2.5 rounded-xl space-y-1">
+                <span className="font-bold text-amber-405 block text-[9.5px]">👥 लक्षित दर्शक (Target Audience Rating):</span>
+                <p className="text-[9px] leading-relaxed">
+                  हम सुझाव देते हैं की आप अपनी ऐप के लिए लक्षित दर्शक आयु <strong>13+ ya 18+ (Teens and Above)</strong> चुनें। इससे बच्चों से संबंधित कड़े प्रतिबंधों और कॉप्टा (COPPA Notification) नियमों की वजह से ऐप रिजेक्ट होने का जोखिम खत्म हो जाएगा।
+                </p>
+              </div>
+
+              <div className="bg-[#0e172a] border border-indigo-950 p-2.5 rounded-xl space-y-1">
+                <span className="font-bold text-indigo-400 block text-[9.5px]">📢 विज्ञापनों का सेटअप (Google AdSense Setup):</span>
+                <p className="text-[9px] leading-relaxed">
+                  चूंकि ऐप में ब्रेक के समय फुल-स्क्रीन एड आते हैं, इसी प्रकार के इंटरस्टिशियल विज्ञापनों को प्ले स्टोर की <strong>"Ads &gt; App Contains Ads"</strong> सेटिंग्स में हां (Yes) पर सेट करें।
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-indigo-950/60 flex justify-between items-center text-[9px] text-[#4b5563]">
+            <span>APK Target: Android API 34 (Android 14)</span>
+            <span className="font-bold text-emerald-400">✔ Ready for Play Store Submission</span>
+          </div>
         </div>
 
       </main>
