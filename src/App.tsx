@@ -942,7 +942,46 @@ export default function App() {
                   {activeTab === 'home' && (
                     <div className="space-y-4">
                       
+                      {/* Premium UI block for App Permissions triggering */}
+                      <div className="bg-[#0c1424] border border-slate-800 rounded-2xl p-3 flex flex-col gap-2 shadow-lg relative overflow-hidden bg-gradient-to-r from-[#0d1424] to-[#111c34]">
+                        <div className="absolute top-0 right-0 -mr-6 -mt-6 w-20 h-20 bg-indigo-500/10 rounded-full blur-xl pointer-events-none"></div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <ShieldCheck className="text-indigo-450" size={16} />
+                            <div className="leading-none">
+                              <h4 className="text-xs font-black text-slate-200">ऐप अनुमतियाँ (App Permissions)</h4>
+                              <p className="text-[9px] text-slate-400 mt-1">सिस्टम सुरक्षा और ऐप ब्लॉक सेटिंग्स</p>
+                            </div>
+                          </div>
+                          
+                          {/* Visual Status Indicator Badge */}
+                          {(() => {
+                            const activeCount = (isSimulatedAccessibilityOn ? 1 : 0) + (isSimulatedOverlayOn ? 1 : 0) + (isSimulatedBatteryOn ? 1 : 0);
+                            const allActive = activeCount === 3;
+                            return (
+                              <span className={`text-[8.5px] font-black px-1.5 py-0.5 rounded-full border ${
+                                allActive 
+                                  ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800/60' 
+                                  : 'bg-rose-950/80 text-rose-400 border-rose-800/60 animate-pulse'
+                              }`}>
+                                {activeCount}/3 सक्रिय (Active)
+                              </span>
+                            );
+                          })()}
+                        </div>
 
+                        <p className="text-[9.5px] text-slate-300 leading-relaxed">
+                          स्टडी मोड लॉक को ठीक से चलाने के लिए एक्सेसिबिलिटी, ओवरले और बैकग्राउंड अनुमतियाँ अत्यंत आवश्यक हैं।
+                        </p>
+
+                        <button
+                          onClick={() => setShowPermissionsDialog(true)}
+                          className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 active:scale-98 transition text-white text-[10px] font-black rounded-lg flex items-center justify-center gap-1 shadow border border-indigo-400/30"
+                        >
+                          <Settings size={12} className="animate-spin-slow" />
+                          अनुमतियाँ प्रबंधित करें (Manage Permissions)
+                        </button>
+                      </div>
 
                       {/* 7 Time slot schedule table */}
                       {/* Requirement: Total 7 time ki table ho jisme student start se end time dalega */}
@@ -1322,16 +1361,6 @@ export default function App() {
                     <span className="text-[8px] mt-0.5">मदद (Instructions)</span>
                   </button>
                 </div>
-
-                {/* Simulated Floating Settings/Permissions Button on Right Bottom Corner */}
-                <button 
-                  onClick={() => setShowPermissionsDialog(true)}
-                  className="absolute bottom-16 right-4 w-12 h-12 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full flex items-center justify-center shadow-lg transform active:scale-95 transition-all z-30 border border-indigo-400/40 hover:rotate-45"
-                  title="अनुमतियाँ चालू करें (App Permissions)"
-                >
-                  <Settings size={20} className="animate-spin-slow" />
-                </button>
-
                 {/* Simulated Permission Dialog Modal matching Android Activity perfectly */}
                 {showPermissionsDialog && (
                   <div className="absolute inset-0 bg-[#070b13]/98 z-50 p-4 flex flex-col justify-between overflow-y-auto">
