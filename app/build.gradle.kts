@@ -1,4 +1,6 @@
 import java.io.File
+import java.security.KeyStore
+import java.io.FileInputStream
 
 plugins {
   alias(libs.plugins.android.application)
@@ -42,8 +44,8 @@ android {
       var isKeystoreValid = false
       if (keystoreFile.exists()) {
         try {
-          val keyStore = java.security.KeyStore.getInstance(sType)
-          java.io.FileInputStream(keystoreFile).use { fis ->
+          val keyStore = KeyStore.getInstance(sType)
+          FileInputStream(keystoreFile).use { fis ->
             keyStore.load(fis, sPassword.toCharArray())
           }
           if (keyStore.containsAlias(sAlias)) {
