@@ -150,6 +150,7 @@ export default function App() {
 
   // App Permissions States for simulation
   const [showPermissionsDialog, setShowPermissionsDialog] = useState(false);
+  const [isSimulatedRestrictedOn, setIsSimulatedRestrictedOn] = useState(false);
   const [isSimulatedAccessibilityOn, setIsSimulatedAccessibilityOn] = useState(false);
   const [isSimulatedOverlayOn, setIsSimulatedOverlayOn] = useState(false);
   const [isSimulatedBatteryOn, setIsSimulatedBatteryOn] = useState(false);
@@ -1392,6 +1393,30 @@ export default function App() {
 
                       {/* Permissions List */}
                       <div className="space-y-3">
+
+                        {/* 0. App Info / Allow Restricted Settings Card */}
+                        <div className="bg-[#0f1b35] border border-indigo-500/40 rounded-xl p-3 space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-[11px] font-black text-indigo-300">1. ऐप जानकारी (App Details Settings)</span>
+                            <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${isSimulatedRestrictedOn ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/40' : 'bg-rose-950 text-rose-400 border border-rose-800/40 animate-pulse'}`}>
+                              {isSimulatedRestrictedOn ? 'मंजूर (ON)' : 'आवश्यक (Check)'}
+                            </span>
+                          </div>
+                          <p className="text-[9px] text-slate-300 leading-normal">
+                            यदि एक्सेसिबिलिटी सर्विस (Accessibility) चालू नहीं हो रही है या <strong>'Restricted Settings'</strong> एरर आ रहा है, तो नीचे बटन दबाकर <strong>App Info</strong> खोलें, फिर सबसे ऊपर <strong>3-dots (⋮)</strong> दबाकर <strong>'Allow restricted settings'</strong> को चालू करें।
+                          </p>
+                          <button
+                            onClick={() => {
+                              setIsSimulatedRestrictedOn(true);
+                              setLaunchNotification("Redirecting to System: App Info (Details) Settings");
+                              setTimeout(() => setLaunchNotification(null), 2500);
+                            }}
+                            className="w-full py-1.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:brightness-110 text-white text-[10px] font-black rounded-lg transition shadow-md shadow-indigo-950/50 flex items-center justify-center gap-1"
+                          >
+                            <Info size={11} className="stroke-[3]" />
+                            ऐप जानकारी (App Info) खोलें
+                          </button>
+                        </div>
                         
                         {/* 1. Accessibility Service Card */}
                         <div className="bg-[#0c1424] border border-slate-805 rounded-xl p-3 space-y-2">
