@@ -61,7 +61,7 @@ class StudyBlockAccessibilityService : AccessibilityService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "Study Focus Guard Service",
+                "Study Mode App Lock & Timer Guard Service",
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
                 description = "Keeps the blocker resilient and active in the background"
@@ -94,14 +94,14 @@ class StudyBlockAccessibilityService : AccessibilityService() {
         val text: String
 
         if (active) {
-            title = "स्टडी फोकस लॉक सक्रिय है (Study Focus Lock Active) 🔒"
+            title = "स्टडी मोड ऐप लॉक सक्रिय है (Study Mode Lock Active) 🔒"
             text = "आपकी पढ़ाई का समय चल रहा है। आवश्यक ऐप्स को छोड़कर बाकी बंद हैं।"
         } else if (isBreak) {
             val minsLeft = prefs.getBreakRemainingMinutes()
-            title = "स्टडी फोकस: ब्रेक समय सक्रीय (On Emergency Break) ☕"
+            title = "स्टडी मोड: ब्रेक समय सक्रीय (On Emergency Break) ☕"
             text = "आपातकालीन ब्रेक: $minsLeft मिनट बाकी। सभी ऐप्स चलाने की अनुमति है।"
         } else {
-            title = "स्टडी फोकस बैकग्राउंड में सक्रिय है (Study Focus Ready) 🛡️"
+            title = "स्टडी मोड ऐप लॉक बैकग्राउंड में सक्रिय है (Study Mode Ready) 🛡️"
             text = "शेड्यूल शुरू होते ही ऐप्स को ब्लॉक किया जाएगा।"
         }
 

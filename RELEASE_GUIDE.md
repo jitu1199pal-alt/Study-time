@@ -1,4 +1,4 @@
-# Study Focus Release & Sign Guide (रिलीज और साइन निर्देश)
+# Study Mode App Lock & Timer Release & Sign Guide (रिलीज और साइन निर्देश)
 
 आपके Android ऐप को Google Play Store पर अपलोड करने के लिए आवश्यक सभी रिलीज सेटिंग्स और एक सुरक्षित **परमानेंट सिग्नेचर की (Signing Key)** को पूरी तरह से ऐप में इंटीग्रेट कर दिया गया है। 
 
@@ -13,7 +13,7 @@
 ### कीस्टोर जनरेट करने के लिए कमांड (Run on PC or Mobile Termux):
 अपने मोबाइल (Termux) या कंप्यूटर के टर्मिनल में नीचे दी गई कमांड चलाएं:
 ```bash
-keytool -genkeypair -v -keystore my-release-key.p12 -alias studyshield -keyalg RSA -keysize 2048 -validity 10000 -storetype PKCS12 -storepass studyshieldpass -keypass studyshieldpass -dname "CN=Study Focus, O=Study Focus, C=IN"
+keytool -genkeypair -v -keystore my-release-key.p12 -alias studyshield -keyalg RSA -keysize 2048 -validity 10000 -storetype PKCS12 -storepass studyshieldpass -keypass studyshieldpass -dname "CN=Study Mode App Lock & Timer, O=Study Mode App Lock & Timer, C=IN"
 ```
 
 ### 📂 कीस्टोर को प्रोजेक्ट में कहाँ रखें?

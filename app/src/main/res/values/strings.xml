@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">Study Focus</string>
-    <string name="accessibility_service_description">This service is used by Study Focus to detect and block non-study apps during your scheduled study times.</string>
+    <string name="app_name">Study Mode App Lock & Timer</string>
+    <string name="accessibility_service_description">This service is used by Study Mode App Lock & Timer to detect and block non-study apps during your scheduled study times.</string>
 </resources>

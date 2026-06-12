@@ -486,7 +486,7 @@ export default function App() {
             <div>
               <h1 className="text-xl md:text-2xl font-black tracking-tight text-white flex items-center gap-2">
                 <ShieldCheck className="text-indigo-500" size={24} />
-                गोपनीयता नीति (Privacy Policy) — Study Focus
+                गोपनीयता नीति (Privacy Policy) — Study Mode App Lock & Timer
               </h1>
               <p className="text-xs text-slate-400 font-mono mt-1">Last Updated: June 02, 2026 • com.studyshield.studyfocus</p>
             </div>
@@ -504,7 +504,7 @@ export default function App() {
 
           <div className="bg-indigo-950/20 border border-indigo-500/10 rounded-xl p-4 text-xs text-slate-300 leading-relaxed">
             <span className="font-bold text-indigo-400 block text-xs mb-1 uppercase tracking-wider">🔒 Google Play Developer Content Compliance Disclosure</span>
-            'Study Focus' ऐप उपयोगकर्ता की गोपनीयता और डेटा सुरक्षा के प्रति पूरी तरह प्रतिबद्ध है। यह गोपनीयता नीति स्पष्ट करती है कि हमारा ऐप किस प्रकार काम करता है, कौन सी अनुमतियाँ लेता है और आपके डेटा को कैसे सुरक्षित रखता है। हम उपयोगकर्ता का कोई भी व्यक्तिगत, संवेदनशील या ब्राउज़िंग डेटा बाहरी सर्वर पर संग्रहीत या साझा <strong>नहीं</strong> करते हैं। ऐप का सारा कार्य पूरी तरह से आपके डिवाइस पर स्थानीय (Offline Local Processing) रूप से होता है।
+            'Study Mode App Lock & Timer' ऐप उपयोगकर्ता की गोपनीयता और डेटा सुरक्षा के प्रति पूरी तरह प्रतिबद्ध है। यह गोपनीयता नीति स्पष्ट करती है कि हमारा ऐप किस प्रकार काम करता है, कौन सी अनुमतियाँ लेता है और आपके डेटा को कैसे सुरक्षित रखता है। हम उपयोगकर्ता का कोई भी व्यक्तिगत, संवेदनशील या ब्राउज़िंग डेटा बाहरी सर्वर पर संग्रहीत या साझा <strong>नहीं</strong> करते हैं। ऐप का सारा कार्य पूरी तरह से आपके डिवाइस पर स्थानीय (Offline Local Processing) रूप से होता है।
           </div>
 
           <div className="space-y-4 text-xs leading-relaxed text-slate-350">
@@ -570,7 +570,7 @@ export default function App() {
 
           {/* Footer */}
           <div className="pt-4 border-t border-slate-800 text-center text-[10px] text-slate-500 flex justify-between items-center select-none">
-            <span>&copy; 2026 Study Focus Dev Team.</span>
+            <span>&copy; 2026 Study Mode App Lock & Timer Dev Team.</span>
             <span className="font-bold text-indigo-400">✔ Google Play Store Compliant Document</span>
           </div>
 
@@ -774,7 +774,7 @@ export default function App() {
                   <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">APPLICATIONS GRID (लॉन्च करें):</p>
                   <div className="grid grid-cols-4 gap-y-4 gap-x-2">
                     
-                    {/* Core Study Focus Icon */}
+                    {/* Core Study Mode App Lock & Timer Icon */}
                     <button 
                       onClick={() => {
                         setPhoneScreen('study_shield_app');
@@ -785,7 +785,7 @@ export default function App() {
                       <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg transition transform group-active:scale-95 border border-blue-400/30">
                         <ShieldCheck size={26} />
                       </div>
-                      <span className="text-[9.5px] text-indigo-200 font-extrabold mt-1 truncate w-full text-center">Study Focus</span>
+                      <span className="text-[9.5px] text-indigo-200 font-extrabold mt-1 truncate w-full text-center">Study Mode App Lock & Timer</span>
                     </button>
 
                     {/* Simulating App Icons */}
@@ -1138,7 +1138,7 @@ export default function App() {
                           <h4 className="font-extrabold text-[11px] uppercase tracking-wider">दोस्तों के साथ शेयर करें (Share App)</h4>
                         </div>
                         <p className="text-[10px] text-slate-400 leading-tight">
-                          Study Focus ऐप को अपने दोस्तों और सहपाठियों के साथ शेयर करें ताकि वे भी अपनी पढ़ाई के दौरान ध्यान लगा सकें!
+                          Study Mode App Lock & Timer ऐप को अपने दोस्तों और सहपाठियों के साथ शेयर करें ताकि वे भी अपनी पढ़ाई के दौरान ध्यान लगा सकें!
                         </p>
                         <button
                           onClick={() => setShowShareModal(true)}
@@ -1170,7 +1170,7 @@ export default function App() {
                             <div>
                               <strong className="text-white block uppercase text-[9px] tracking-wide text-indigo-300">1. Prominent Disclosure (एक्सीसिबिलिटी सर्विस):</strong>
                               <p className="mt-0.5">
-                                Study Focus, विचलित करने वाले ऐप्स (Blocked Apps List) को स्क्रीन पर ब्लॉक करने के लिए <strong>Accessibility Service API</strong> का उपयोग करता है। यह सेवा केवल इस पहचान के लिए उपयोग होती है कि वर्तमान में स्क्रीन पर कौन सा ऐप खुला हुआ है।
+                                Study Mode App Lock & Timer, विचलित करने वाले ऐप्स (Blocked Apps List) को स्क्रीन पर ब्लॉक करने के लिए <strong>Accessibility Service API</strong> का उपयोग करता है। यह सेवा केवल इस पहचान के लिए उपयोग होती है कि वर्तमान में स्क्रीन पर कौन सा ऐप खुला हुआ है।
                               </p>
                             </div>
                             <div>
@@ -1464,7 +1464,7 @@ export default function App() {
 
                       {/* Information text */}
                       <p className="text-[10px] text-slate-400 leading-normal">
-                        अपने दोस्तों को Study Focus ऐप की डाउनलोड लिंक भेजें और उन्हें एक साथ बिना किसी डिस्ट्रेक्शन के ध्यान केंद्रित करने में मदद करें!
+                        अपने दोस्तों को Study Mode App Lock & Timer ऐप की डाउनलोड लिंक भेजें और उन्हें एक साथ बिना किसी डिस्ट्रेक्शन के ध्यान केंद्रित करने में मदद करें!
                       </p>
 
                       {/* Cool App Info Box inside popup */}
@@ -1473,7 +1473,7 @@ export default function App() {
                           <ShieldCheck className="text-indigo-400 animate-pulse" size={24} />
                         </div>
                         <div>
-                          <h4 className="text-[11px] font-black text-slate-100">Study Focus • Study Companion APK</h4>
+                          <h4 className="text-[11px] font-black text-slate-100">Study Mode App Lock & Timer • Study Companion APK</h4>
                           <p className="text-[8.5px] text-slate-500 font-mono">Package: com.studyshield.studyfocus</p>
                           <div className="flex gap-1.5 mt-1 font-mono text-[8px]">
                             <span className="bg-blue-950 text-blue-400 px-1 py-0.5 rounded">v2.1 Stable</span>
@@ -1513,7 +1513,7 @@ export default function App() {
                           {/* WhatsApp */}
                           <button 
                             onClick={() => {
-                              const shareText = `Hey! 🚀 Download *Study Focus App* APK to block distracting apps during study hours. It features custom time timetables and emergency break limits with AdSense interstitial ads! Download Here: ${getPublicLink("/")}`;
+                              const shareText = `Hey! 🚀 Download *Study Mode App Lock & Timer* APK to block distracting apps during study hours. It features custom time timetables and emergency break limits with AdSense interstitial ads! Download Here: ${getPublicLink("/")}`;
                               window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
                               setLaunchNotification("Opening WhatsApp Share Dialog...");
                               setTimeout(() => setLaunchNotification(null), 2500);
@@ -1527,7 +1527,7 @@ export default function App() {
                           {/* Telegram */}
                           <button 
                             onClick={() => {
-                              const shareText = `Hey! 🚀 Download Study Focus App APK to block distracting apps during study hours. It features custom time timetables and emergency break limits with AdSense ads! Download Here: ${getPublicLink("/")}`;
+                              const shareText = `Hey! 🚀 Download Study Mode App Lock & Timer APK to block distracting apps during study hours. It features custom time timetables and emergency break limits with AdSense ads! Download Here: ${getPublicLink("/")}`;
                               window.open(`https://t.me/share/url?url=${encodeURIComponent(getPublicLink("/"))}&text=${encodeURIComponent(shareText)}`, '_blank');
                               setLaunchNotification("Opening Telegram Share...");
                               setTimeout(() => setLaunchNotification(null), 2500);
@@ -1543,8 +1543,8 @@ export default function App() {
                         <button 
                           onClick={async () => {
                             const shareData = {
-                              title: 'Study Focus APK Download',
-                              text: 'Download Study Focus App APK to secure your study sessions and avoid distractions!',
+                              title: 'Study Mode App Lock & Timer APK Download',
+                              text: 'Download Study Mode App Lock & Timer App APK to secure your study sessions and avoid distractions!',
                               url: getPublicLink("/")
                             };
                             try {
@@ -1669,7 +1669,7 @@ export default function App() {
             </div>
             <div>
               <h3 className="text-xs font-black text-slate-100 uppercase tracking-widest">Google Play Store Developer Console Kit</h3>
-              <p className="text-[9px] text-[#6b7280]">Study Focus / Build Release Configuration Checklist</p>
+              <p className="text-[9px] text-[#6b7280]">Study Mode App Lock & Timer / Build Release Configuration Checklist</p>
             </div>
           </div>
 
@@ -1751,7 +1751,7 @@ export default function App() {
 
       {/* Styled Footer */}
       <footer className="border-t border-slate-900 bg-[#060a12] py-4 text-center text-[11px] text-slate-600">
-        <p>© 2026 Study Focus Pro. For 18+ Student Focus and Time Safety.</p>
+        <p>© 2026 Study Mode App Lock & Timer Pro. For 18+ Student Focus and Time Safety.</p>
         <p className="mt-0.5 text-slate-750">Designed exclusively to bypass distraction channels elegantly.</p>
       </footer>
     </div>
