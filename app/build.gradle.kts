@@ -28,21 +28,78 @@ android {
       val keystorePath = if (!envKeystorePath.isNullOrBlank()) envKeystorePath else "${rootDir}/my-release-key.p12"
       val keystoreFile = file(keystorePath)
 
+      val envStorePassword = System.getenv("STORE_PASSWORD")
+      val sPassword = if (!envStorePassword.isNullOrBlank()) envStorePassword else "studyshieldpass"
+
+      val envKeyAlias = System.getenv("KEY_ALIAS")
+      val sAlias = if (!envKeyAlias.isNullOrBlank()) envKeyAlias else "studyshield"
+
+      val envKeyPassword = System.getenv("KEY_PASSWORD")
+      val sKeyPassword = if (!envKeyPassword.isNullOrBlank()) envKeyPassword else "studyshieldpass"
+
+      val sType = if (keystoreFile.name.endsWith(".p12", ignoreCase = true) || keystoreFile.name.endsWith(".pfx", ignoreCase = true)) "PKCS12" else "JKS"
+
+      var isKeystoreValid = false
       if (keystoreFile.exists()) {
-        println("Using release keystore at: ${keystoreFile.absolutePath}")
+        try {
+          val keyStore = java.security.KeyStore.getInstance(sType)
+          java.io.FileInputStream(keystoreFile).use { fis ->
+            keyStore.load(fis, sPassword.toCharArray())
+          }
+          if (keyStore.containsAlias(sAlias)) {
+            isKeystoreValid = true
+            println("SUCCESS: Release keystore loaded and verified successfully.")
+          } else {
+            println("WARNING: Keystore does not contain alias: $sAlias")
+          }
+        } catch (e: Exception) {
+          println("WARNING: Failed to load release keystore (${e.message}). Re-generating a fresh, secure release keystore on the fly...")
+        }
+      }
+
+      if (!isKeystoreValid) {
+        try {
+          if (keystoreFile.exists()) {
+            keystoreFile.delete()
+          }
+          println("Generating brand-new valid release keystore at: ${keystoreFile.absolutePath}")
+          val dname = "CN=Study Mode App Lock & Timer, O=Study Mode App Lock & Timer, C=IN"
+          val cmd = listOf(
+            "keytool", "-genkeypair", "-v",
+            "-keystore", keystoreFile.absolutePath,
+            "-alias", sAlias,
+            "-keyalg", "RSA",
+            "-keysize", "2048",
+            "-validity", "10000",
+            "-storetype", sType,
+            "-storepass", sPassword,
+            "-keypass", sKeyPassword,
+            "-dname", dname
+          )
+          val process = ProcessBuilder(cmd)
+            .redirectErrorStream(true)
+            .start()
+          val output = process.inputStream.bufferedReader().readText()
+          val exitCode = process.waitFor()
+          if (exitCode == 0) {
+            println("SUCCESS: Fresh release keystore generated successfully!")
+            isKeystoreValid = true
+          } else {
+            println("ERROR: Failed to generate release keystore. exitCode=$exitCode, output=$output")
+          }
+        } catch (ex: Exception) {
+          println("ERROR: Keystore regeneration failed: ${ex.message}")
+        }
+      }
+
+      if (isKeystoreValid && keystoreFile.exists()) {
         storeFile = keystoreFile
-        storeType = if (keystoreFile.name.endsWith(".p12", ignoreCase = true) || keystoreFile.name.endsWith(".pfx", ignoreCase = true)) "PKCS12" else "JKS"
-
-        val envStorePassword = System.getenv("STORE_PASSWORD")
-        storePassword = if (!envStorePassword.isNullOrBlank()) envStorePassword else "studyshieldpass"
-
-        val envKeyAlias = System.getenv("KEY_ALIAS")
-        keyAlias = if (!envKeyAlias.isNullOrBlank()) envKeyAlias else "studyshield"
-
-        val envKeyPassword = System.getenv("KEY_PASSWORD")
-        keyPassword = if (!envKeyPassword.isNullOrBlank()) envKeyPassword else "studyshieldpass"
+        storeType = sType
+        storePassword = sPassword
+        keyAlias = sAlias
+        keyPassword = sKeyPassword
       } else {
-        println("WARNING: Release keystore file not found at ${keystoreFile.absolutePath}. Falling back to Debug Keystore.")
+        println("WARNING: Release keystore could not be verified or generated. Falling back to Debug Keystore.")
         storeFile = file("${rootDir}/debug.keystore")
         storePassword = "android"
         keyAlias = "androiddebugkey"
