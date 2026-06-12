@@ -4,14 +4,14 @@ import {
   ShieldCheck, 
   Lock, 
   Unlock, 
-  Settings, 
+  Power, 
   Plus, 
   Check, 
   Timer, 
   Sparkles, 
   Play, 
   CheckSquare, 
-  Square, 
+  Square,  
   Search, 
   AlertTriangle,
   BookOpen,
@@ -942,15 +942,15 @@ export default function App() {
                   {activeTab === 'home' && (
                     <div className="space-y-4">
                       
-                      {/* Premium UI block for App Permissions triggering */}
-                      <div className="bg-[#0c1424] border border-slate-800 rounded-2xl p-3 flex flex-col gap-2 shadow-lg relative overflow-hidden bg-gradient-to-r from-[#0d1424] to-[#111c34]">
+                      {/* Premium UI block for starting the service and setting permissions */}
+                      <div className="bg-[#0c1424] border border-slate-800 rounded-2xl p-3.5 flex flex-col gap-2.5 shadow-lg relative overflow-hidden bg-gradient-to-r from-[#0d1424] to-[#111c34]">
                         <div className="absolute top-0 right-0 -mr-6 -mt-6 w-20 h-20 bg-indigo-500/10 rounded-full blur-xl pointer-events-none"></div>
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between font-sans">
                           <div className="flex items-center gap-2">
-                            <ShieldCheck className="text-indigo-450" size={16} />
+                            <ShieldCheck className="text-indigo-400" size={17} />
                             <div className="leading-none">
-                              <h4 className="text-xs font-black text-slate-200">ऐप अनुमतियाँ (App Permissions)</h4>
-                              <p className="text-[9px] text-slate-400 mt-1">सिस्टम सुरक्षा और ऐप ब्लॉक सेटिंग्स</p>
+                              <h4 className="text-xs font-black text-slate-100 uppercase tracking-wide">स्टडी मोड लॉक सर्विस (Study Lock Service)</h4>
+                              <p className="text-[9px] text-slate-400 mt-1">सुरक्षा गार्ड एवं विचलित ऐप्स अवरोधक इंजन</p>
                             </div>
                           </div>
                           
@@ -959,27 +959,33 @@ export default function App() {
                             const activeCount = (isSimulatedAccessibilityOn ? 1 : 0) + (isSimulatedOverlayOn ? 1 : 0) + (isSimulatedBatteryOn ? 1 : 0);
                             const allActive = activeCount === 3;
                             return (
-                              <span className={`text-[8.5px] font-black px-1.5 py-0.5 rounded-full border ${
+                              <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-full border ${
                                 allActive 
                                   ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800/60' 
                                   : 'bg-rose-950/80 text-rose-400 border-rose-800/60 animate-pulse'
                               }`}>
-                                {activeCount}/3 सक्रिय (Active)
+                                {allActive ? 'सक्रिय (Service ON)' : 'बंद (Service OFF)'}
                               </span>
                             );
                           })()}
                         </div>
 
-                        <p className="text-[9.5px] text-slate-300 leading-relaxed">
-                          स्टडी मोड लॉक को ठीक से चलाने के लिए एक्सेसिबिलिटी, ओवरले और बैकग्राउंड अनुमतियाँ अत्यंत आवश्यक हैं।
+                        <p className="text-[10px] text-slate-300 leading-relaxed font-sans">
+                          ऐप लॉक सर्विस और विचलित ऐप्स को स्क्रीन पर ब्लॉक करने के लिए एक्सीसिबिलिटी, ओवरले और बैकग्राउंड अनुमतियाँ अनिवार्य हैं।
                         </p>
 
                         <button
                           onClick={() => setShowPermissionsDialog(true)}
-                          className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 active:scale-98 transition text-white text-[10px] font-black rounded-lg flex items-center justify-center gap-1 shadow border border-indigo-400/30"
+                          className={`w-full py-2 bg-gradient-to-r active:scale-98 transition text-[10.5px] font-black rounded-lg flex items-center justify-center gap-1.5 shadow border ${
+                            ((isSimulatedAccessibilityOn ? 1 : 0) + (isSimulatedOverlayOn ? 1 : 0) + (isSimulatedBatteryOn ? 1 : 0)) === 3
+                              ? 'from-emerald-600 to-green-600 hover:brightness-110 text-white border-emerald-400/30'
+                              : 'from-blue-600 to-indigo-600 hover:brightness-110 text-white border-blue-400/30 animate-pulse'
+                          }`}
                         >
-                          <Settings size={12} className="animate-spin-slow" />
-                          अनुमतियाँ प्रबंधित करें (Manage Permissions)
+                          <Power size={13} className="stroke-[3.5]" />
+                          {((isSimulatedAccessibilityOn ? 1 : 0) + (isSimulatedOverlayOn ? 1 : 0) + (isSimulatedBatteryOn ? 1 : 0)) === 3
+                            ? 'सर्विस चालू है (Service is ON - Settings)'
+                            : 'सर्विस चालू करें (Start Study Service)'}
                         </button>
                       </div>
 
@@ -1369,7 +1375,7 @@ export default function App() {
                       {/* Title Bar */}
                       <div className="flex justify-between items-center pb-2 border-b border-slate-800">
                         <div className="flex items-center gap-1.5">
-                          <Settings size={16} className="text-indigo-400" />
+                          <ShieldCheck size={16} className="text-indigo-400" />
                           <span className="text-xs font-black text-indigo-300 uppercase tracking-wider">ऐप अनुमतियाँ (Permissions)</span>
                         </div>
                         <button 
