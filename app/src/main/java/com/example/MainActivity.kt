@@ -245,19 +245,6 @@ fun MainContainerScreen(
                     label = { Text("मदद", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
                 )
             }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { showPermissionsDialog = true },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Permissions Settings"
-                )
-            }
         }
     ) { innerPadding ->
         Box(
@@ -272,7 +259,7 @@ fun MainContainerScreen(
                     isBlockActive = isBlockActive,
                     breakRemainingMinutes = breakRemainingMinutes,
                     studyAppsCount = studyAppsCount,
-                    onOpenSettings = onOpenSettings,
+                    onOpenSettings = { showPermissionsDialog = true },
                     onStatusRefresh = {
                         isServiceEnabled = isAccessibilityServiceEnabled(context, StudyBlockAccessibilityService::class.java)
                         isBlockActive = prefs.isBlockerActiveRightNow()

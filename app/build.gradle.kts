@@ -18,8 +18,8 @@ android {
     applicationId = "com.example"
     minSdk = 24
     targetSdk = 36
-    versionCode = 1
-    versionName = "1.0"
+    versionCode = 2
+    versionName = "1.1"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -27,7 +27,7 @@ android {
   signingConfigs {
     create("release") {
       val envKeystorePath = System.getenv("KEYSTORE_PATH")
-      val keystorePath = if (!envKeystorePath.isNullOrBlank()) envKeystorePath else "${rootDir}/my-release-key.p12"
+      val keystorePath = if (!envKeystorePath.isNullOrBlank()) envKeystorePath else "${rootDir}/my-release-key.jks"
       val keystoreFile = file(keystorePath)
 
       val envStorePassword = System.getenv("STORE_PASSWORD")
@@ -65,14 +65,14 @@ android {
             keystoreFile.delete()
           }
           println("Generating brand-new valid release keystore at: ${keystoreFile.absolutePath}")
-          val dname = "CN=Study Mode App Lock & Timer, O=Study Mode App Lock & Timer, C=IN"
+          val dname = "CN=Study Focus, O=Study Focus, C=IN"
           val cmd = listOf(
             "keytool", "-genkeypair", "-v",
             "-keystore", keystoreFile.absolutePath,
             "-alias", sAlias,
             "-keyalg", "RSA",
             "-keysize", "2048",
-            "-validity", "10000",
+            "-validity", "10950",
             "-storetype", sType,
             "-storepass", sPassword,
             "-keypass", sKeyPassword,
