@@ -132,7 +132,7 @@ fun BlockScreen(
 
         // Large Hindi/English Warning Text
         Text(
-            text = "पढ़ाई का समय सक्रिय है!",
+            text = "Study Time is Active!",
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
@@ -160,7 +160,7 @@ fun BlockScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "यह ऐप अभी बंद है क्योंकि यह स्टडी ऐप नहीं है:",
+                    text = "This app is currently blocked because it is not in your study list:",
                     fontSize = 14.sp,
                     color = Color(0xFFCBD5E1),
                     textAlign = TextAlign.Center
@@ -190,7 +190,7 @@ fun BlockScreen(
             Icon(Icons.Default.PlayArrow, contentDescription = "Play")
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "स्टडी ऐप्स खोलें (Open Study Tab)",
+                text = "Open Study Apps",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -212,7 +212,7 @@ fun BlockScreen(
             Icon(Icons.Default.Refresh, contentDescription = "Break")
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "इमरजेंसी ब्रेक लें (Emergency Break)",
+                text = "Take Emergency Break",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF10B981)
@@ -223,7 +223,7 @@ fun BlockScreen(
 
         // Motivational Quote
         Text(
-            text = "“शिक्षा सबसे शक्तिशाली हथियार है जिसका उपयोग आप दुनिया को बदलने के लिए कर सकते हैं।”",
+            text = "“Education is the most powerful weapon which you can use to change the world.”",
             fontSize = 13.sp,
             color = Color(0xFF64748B),
             textAlign = TextAlign.Center,
@@ -237,7 +237,7 @@ fun BlockScreen(
             onDismissRequest = { showBreakDialog = false },
             title = {
                 Text(
-                    text = "इमरजेंसी ब्रेक चुनें (Choose Break)",
+                    text = "Choose Emergency Break",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
@@ -245,7 +245,7 @@ fun BlockScreen(
             text = {
                 Column {
                     Text(
-                        text = "इमरजेंसी के दौरान सभी मोबाइल ऐप्स चालू हो जाएंगे। कृपया उपयुक्त समय चुनें:",
+                        text = "All mobile apps will be temporary unlocked during this emergency break. Please choose a duration:",
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -293,7 +293,7 @@ fun BlockScreen(
             },
             confirmButton = {
                 TextButton(onClick = { showBreakDialog = false }) {
-                    Text(text = "रद्द करें (Cancel)")
+                    Text(text = "Cancel")
                 }
             }
         )

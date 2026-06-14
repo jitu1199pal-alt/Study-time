@@ -60,38 +60,6 @@
             margin-bottom: 20px;
         }
 
-        /* Language Toggle Pill Buttons */
-        .language-toggle {
-            display: inline-flex;
-            gap: 8px;
-            background-color: rgba(255, 255, 255, 0.05);
-            padding: 4px;
-            border-radius: 9999px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .lang-btn {
-            background: none;
-            border: none;
-            color: #94a3b8;
-            font-size: 12px;
-            font-weight: 600;
-            padding: 6px 16px;
-            border-radius: 9999px;
-            cursor: pointer;
-            transition: all 0.20s ease-in-out;
-            text-decoration: none;
-        }
-
-        .lang-btn.active, .lang-btn:hover {
-            color: #ffffff;
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .lang-btn.active {
-            background-color: var(--accent);
-        }
-
         /* Main Container layout */
         main {
             max-width: 850px;
@@ -287,11 +255,6 @@
     <header>
         <h1>Study Mode App Lock & Timer</h1>
         <p class="subtitle">Effective Date: June 12, 2026 • Version 2.1 Compliant</p>
-        
-        <div class="language-toggle">
-            <a href="#english" class="lang-btn active" id="btn-en" onclick="switchLanguage('en')">English Version</a>
-            <a href="#hindi" class="lang-btn" id="btn-hi" onclick="switchLanguage('hi')">हिंदी संस्करण (Hindi)</a>
-        </div>
     </header>
 
     <main>
@@ -299,7 +262,7 @@
         <!-- ENGLISH VERSION SECTION -->
         <div id="english-container" class="policy-card">
             <section id="english">
-                <h2 class="section-title">1. English Version</h2>
+                <h2 class="section-title">Privacy Policy</h2>
                 <p>Welcome to <strong>Study Mode App Lock & Timer</strong>. We respect your privacy and are fully committed to protecting your personal data. This Privacy Policy describes how we collect, use, and handle information within our application in strict compliance with the Google Play Store developer guidelines.</p>
                 <p>Our application is a fully functional offline-first utility designed to help students, professionals, and users avoid social media, gaming, and app distractions during scheduled focus times. Below we outline our direct compliance with sensitive permissions.</p>
 
@@ -327,7 +290,7 @@
                             <tr>
                                 <td><strong>Accessibility Service (BIND_ACCESSIBILITY_SERVICE)</strong></td>
                                 <td><span class="badge critical">Critical</span></td>
-                                <td>Used strictly to detect when a blacklisted application package is launched into the active foreground. If a blocked app is detected during a scheduled study focus period, the accessibility event triggers our high-utility blocker overlay screen. Absolutely no personal inputs, password fields, or background content are recorded.</td>
+                                <td>Used strictly to detect when a blacklisted application package is launched into the active foreground. If a blocked app is detected during a scheduled study focus period, the accessibility event triggers our high-utility blocker overlay screen. Absolutely no personal input, password fields, or background content are recorded.</td>
                             </tr>
                             <tr>
                                 <td><strong>QUERY_ALL_PACKAGES</strong></td>
@@ -370,81 +333,6 @@
             </section>
         </div>
 
-
-        <!-- HINDI VERSION SECTION -->
-        <div id="hindi-container" class="policy-card">
-            <section id="hindi">
-                <h2 class="section-title">1. हिंदी संस्करण (Hindi Version)</h2>
-                <p><strong>Study Mode App Lock & Timer</strong> में आपका स्वागत है। हम आपकी गोपनीयता का पूर्णतः सम्मान करते हैं और आपके डेटा को सुरक्षित रखने के लिए पूरी तरह प्रतिबद्ध हैं। यह गोपनीयता नीति स्पष्ट करती है कि हमारा ऐप किस प्रकार काम करता है, कौन सी अनुमतियाँ लेता है और आपके डेटा को कैसे सुरक्षित रखता है (Google Play Console नीतियों के अनुसार)।</p>
-                <p>हमारा ऐप एक पूरी तरह से ऑफलाइन-ओनली यूटिलिटी है जो छात्रों और कामकाजी लोगों को पढ़ाई या महत्वपूर्ण काम के समय सोशल मीडिया, गेम्स और ध्यान भटकाने वाले ऐप्स से दूर रहने और समय प्रबंधित करने में सुरक्षित रूप से मदद करता है।</p>
-
-                <h2 class="section-title">2. डेटा का संग्रह और उपयोग</h2>
-                <p>हम न्यूनतम डेटा संग्रह सिद्धांत पर कार्य करते हैं। आपकी अधिकतम गोपनीयता सुनिश्चित करने के लिए, हमारा ऐप कोई डेटा एकत्र नहीं करता:</p>
-                <ul>
-                    <li><strong>कोई व्यक्तिगत जानकारी नहीं (No PII):</strong> हम आपका नाम, ईमेल आईडी, फ़ोन नंबर, कांटेक्ट, कांटेक्ट लिस्ट या ब्राउज़र हिस्ट्री जैसी किसी भी प्रकार की व्यक्तिगत और संवेदनशील जानकारी कभी भी एकत्र, संचरित या किसी बाहरी सर्वर पर साँषा नहीं करते हैं।</li>
-                    <li><strong>स्थानीय डिवाइस स्टोरेज (Local Storage):</strong> आपकी अध्ययन समय सारणी (Study Timetables), ब्लॉक किए गए ऐप्स की सूची, और ब्रेक टाइमिंग सेटिंग्स पूरी तरह से आपके डिवाइस के सुरक्षित लोकल डेटाबेस में ऑफलाइन सुरक्षित रहती हैं।</li>
-                    <li><strong>कोई क्लाउड सिंक या ट्रैकिंग नहीं:</strong> ऐप के अंदर कोई बैकएंड सर्वर, क्लाउड सिंक, या अनधिकृत विश्लेषण उपकरण (Telemetry Analytics) एकीकृत नहीं हैं। ऐप पूरी तरह सुरक्षित एवं निजी तौर पर आपके फोन पर ही काम करता है।</li>
-                </ul>
-
-                <h2 class="section-title">3. डिवाइस की संवेदनशील अनुमतियाँ (Device Permissions)</h2>
-                <p>अध्ययन चक्र के सफल संचालन तथा ध्यान भटकाने वाले ऐप्स पर सशक्त प्रतिबंध के लिए एंड्रॉइड आर्किटेक्चर के अनुसार नीचे लिखे संवेदनशील अधिकारों की आवश्यकता होती है:</p>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>अनुमति (Permission)</th>
-                                <th>प्रकार (Type)</th>
-                                <th>उद्देश्य और कार्यप्रणाली (Purpose & Flow)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Accessibility Service (BIND_ACCESSIBILITY_SERVICE)</strong></td>
-                                <td><span class="badge critical">महत्वपूर्ण</span></td>
-                                <td>इस सेवा का उद्देश्य केवल यह पता लगाना है कि वर्तमान में आपके मोबाइल स्क्रीन पर कौन सा ऐप लोड हुआ है। यदि वर्तमान में खुला ऐप आपकी अवरोधित (Blocked) सूची में आता है, तो शेड्यूल शुरू होने पर यह ऐप तुरंत उस ऐप को अवरुद्ध करके स्टडी प्रोटेक्शन स्क्रीन प्रदर्शित कर देता है। यह किसी भी प्रकार की टाइपिंग, मैसेज या पासवर्ड नहीं पढ़ता।</td>
-                            </tr>
-                            <tr>
-                                <td><strong>QUERY_ALL_PACKAGES</strong></td>
-                                <td><span class="badge critical">महत्वपूर्ण</span></td>
-                                <td>इस अनुमति का उपयोग आपके फोन में इंस्टॉल सभी ऐप्स की सूची देखने के लिए किया जाता है, ताकि आप आसानी से अपनी पसंद के अनुसार डिस्टर्बिंग ऐप्स को चुनकर उन्हें ब्लॉक लिस्ट में जोड़ सकें।</td>
-                            </tr>
-                            <tr>
-                                <td><strong>SYSTEM_ALERT_WINDOW (Display over other apps)</strong></td>
-                                <td><span class="badge critical">महत्वपूर्ण</span></td>
-                                <td>इसका कार्य ब्लॉक किए गए ऐप के ऊपर 'स्टडी मोड प्रोटेक्शन लॉक ओवरले' स्क्रीन दिखाना है, ताकि उपयोगकर्ता अध्ययन के निर्धारित समय में अन्य दूसरे ऐप्स का उपयोग न कर सके और एकाग्रता बनी रहे।</td>
-                            </tr>
-                            <tr>
-                                <td><strong>FOREGROUND_SERVICE & FOREGROUND_SERVICE_SPECIAL_USE</strong></td>
-                                <td><span class="badge critical">महत्वपूर्ण</span></td>
-                                <td>यह सर्विस ब्लॉक काउंटडाउन टाइमर तथा शेड्यूल को बैकग्राउंड में कुशलतापूर्वक सक्रिय रखती है, ताकि लगातार बैकग्राउंड रीबूट या स्वाइप करने पर भी स्टडी शेड्यूल सुरक्षा बंद न हो सके।</td>
-                            </tr>
-                            <tr>
-                                <td><strong>POST_NOTIFICATIONS</strong></td>
-                                <td><span class="badge normal">सामान्य</span></td>
-                                <td>इसके माध्यम से आपको स्टेटस बार में लगातार सूचनाएं (Notifications) मिलती हैं कि आपका स्क्रीन लॉक मोड सक्रिय है या अमरजेंसी ब्रेक का समय कितना बचा है।</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="disclosure-box" style="background-color: #fef3c7; border-left-color: #f59e0b; color: #78350f;">
-                    <strong>विशेष प्रकटीकरण (एक्सीसिबिलिटी सर्विस API):</strong>
-                    Study Mode App Lock & Timer ऐप विचलित करने वाले ऐप्स को पहचानने के लिए Accessibility Service API अनुमतियों का मर्यादित उपयोग करता है। यह सेवा आपके किसी भी गुप्त पासवर्ड, व्यक्तिगत गतिविधियों, निजी चैट या संवेदनशील डेटा को रिकॉर्ड/एकत्र नहीं करती है और पूरी तरह सुरक्षित है। आप इसे सेटिंग्स से कभी भी अपनी मर्जी से बंद कर सकते हैं।
-                </div>
-
-                <h2 class="section-title">4. विज्ञापन और तृतीय-पक्ष सेवाएँ (Ads Integration)</h2>
-                <p>इस अध्ययन टूल को मुफ्त रखने के लिए, हम Google AdSense / AdMob विज्ञापनों का उपयोग करते हैं। जब आप अपनी पढ़ाई के दौरान एक 'इमरजेंसी ब्रेक' लेते हैं, तो यह एड्स प्रदर्शित करता है। ये इंटरस्टिशियल ऐड्स पूरी तरह से गूगल की सुरक्षित नीतियों के नियमों के अधीन काम करते हैं और आपके फोन से कोई व्यक्तिगत जानकारी चुरा या लीक नहीं करते हैं।</p>
-
-                <h2 class="section-title">5. बच्चों की गोपनीयता (Children's Privacy)</h2>
-                <p>यह एप्लीकेशन बच्चों के सुरक्षित अध्ययन हित में बनाया गया है। हम 13 वर्ष से कम उम्र के बच्चों से कोई व्यक्तिगत जानकारी एकत्र नहीं करते हैं। हमारी नीतियां COPPA जैसे वैश्विक गोपनीयता कानूनों का पूर्णतः और सुरक्षापूर्वक अनुपालन करती हैं।</p>
-
-                <h2 class="section-title">6. संपर्क करें</h2>
-                <p>यदि आपके पास Study Mode App Lock & Timer ऐप की प्राइवेसी पॉलिसी, अनुमतियाँ, या सुरक्षित कार्यों को लेकर कोई सुझाव, शिकायत या प्रश्न हैं, तो आप बेझिझक हमसे ईमेल के जरिए संपर्क कर सकते हैं:</p>
-                <p><strong>डेवलपर ईमेल समर्थन:</strong> <a href="mailto:jitu1199pal@gmail.com" style="color: var(--accent); font-weight: 600;">jitu1199pal@gmail.com</a></p>
-            </section>
-        </div>
-
         <!-- Styled Footer -->
         <footer>
             <p>© 2026 <strong>Study Mode App Lock & Timer</strong> Developer Team. All Rights Reserved.</p>
@@ -452,34 +340,5 @@
         </footer>
 
     </main>
-
-    <!-- Simple, light, stateless client JavaScript to smooth scroll or toggle active state of buttons -->
-    <script>
-        function switchLanguage(lang) {
-            const btnEn = document.getElementById('btn-en');
-            const btnHi = document.getElementById('btn-hi');
-            
-            if (lang === 'en') {
-                btnEn.classList.add('active');
-                btnHi.classList.remove('active');
-                document.getElementById('english-container').scrollIntoView({ behavior: 'smooth' });
-            } else {
-                btnHi.classList.add('active');
-                btnEn.classList.remove('active');
-                document.getElementById('hindi-container').scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-        
-        // Listen to hash change event to update active state automatically
-        window.addEventListener('hashchange', function() {
-            if (window.location.hash === '#hindi') {
-                document.getElementById('btn-hi').classList.add('active');
-                document.getElementById('btn-en').classList.remove('active');
-            } else if (window.location.hash === '#english') {
-                document.getElementById('btn-en').classList.add('active');
-                document.getElementById('btn-hi').classList.remove('active');
-            }
-        });
-    </script>
 </body>
 </html>

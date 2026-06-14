@@ -16,6 +16,7 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -140,11 +141,11 @@ fun MainContainerScreen(
 
             val day = cal.get(Calendar.DAY_OF_MONTH)
             val year = cal.get(Calendar.YEAR)
-            val months = arrayOf("जनवरी", "फरवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर")
+            val months = arrayOf("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")
             val monthName = months[cal.get(Calendar.MONTH)]
             currentDateString = String.format("%02d %s %d", day, monthName, year)
 
-            val daysOfWeekH = arrayOf("रविवार (Sunday)", "सोमवार (Monday)", "मंगलवार (Tuesday)", "बुधवार (Wednesday)", "गुरुवार (Thursday)", "शुक्रवार (Friday)", "शनिवार (Saturday)")
+            val daysOfWeekH = arrayOf("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
             currentDayOfWeekString = daysOfWeekH[cal.get(Calendar.DAY_OF_WEEK) - 1]
 
             delay(1000)
@@ -183,14 +184,14 @@ fun MainContainerScreen(
                         }
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "वार: $currentDayOfWeekString",
+                            text = "Day: $currentDayOfWeekString",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF10B981) // Matching preview emerald green color
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "तारीख: $currentDateString",
+                            text = "Date: $currentDateString",
                             fontSize = 10.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -214,7 +215,7 @@ fun MainContainerScreen(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "Break लें",
+                                text = "Take Break",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
@@ -230,19 +231,19 @@ fun MainContainerScreen(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
                     icon = { Icon(Icons.Default.Home, contentDescription = "Dashboard") },
-                    label = { Text("डैशबोर्ड", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
+                    label = { Text("Dashboard", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
                 )
                 NavigationBarItem(
                     selected = selectedTab == 1,
                     onClick = { selectedTab = 1 },
                     icon = { Icon(Icons.Default.Add, contentDescription = "Apps") },
-                    label = { Text("ऐप्स जोड़ें", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
+                    label = { Text("Add Apps", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
                 )
                 NavigationBarItem(
                     selected = selectedTab == 2,
                     onClick = { selectedTab = 2 },
                     icon = { Icon(Icons.Default.Info, contentDescription = "Help") },
-                    label = { Text("मदद", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
+                    label = { Text("Help", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
                 )
             }
         }
@@ -290,7 +291,7 @@ fun MainContainerScreen(
             onDismissRequest = { showBreakPopup = false },
             title = {
                 Text(
-                    text = "इमरजेंसी ब्रेक समय चुनें (Choose Break Time)",
+                    text = "Choose Break Duration",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
@@ -298,14 +299,14 @@ fun MainContainerScreen(
             text = {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "चयनित समय के दौरान सभी मोबाइल ऐप्स और गेम्स चालू हो जाएंगे। 1 से 60 मिनट की अवधि चुनें:",
+                        text = "During your emergency break, all mobile apps will be unlocked. Select a break duration from 5 to 60 minutes:",
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = 12.dp)
                     )
                     
                     Text(
-                        text = "${tempBreakMinutes.toInt()} मिनट (Minutes)",
+                        text = "${tempBreakMinutes.toInt()} Minutes",
                         fontWeight = FontWeight.Black,
                         fontSize = 24.sp,
                         color = MaterialTheme.colorScheme.primary,
@@ -333,12 +334,12 @@ fun MainContainerScreen(
                         adKey = (0..2).random()
                     )
                 }) {
-                    Text("ओके (OK)")
+                    Text("OK")
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showBreakPopup = false }) {
-                    Text("रद्द करें (Cancel)")
+                    Text("Cancel")
                 }
             }
         )
@@ -349,19 +350,22 @@ fun MainContainerScreen(
             onDismissRequest = { showPermissionsDialog = false },
             title = {
                 Text(
-                    text = "ऐप अनुमतियाँ (App Permissions)",
+                    text = "App Permissions Needed",
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     color = MaterialTheme.colorScheme.primary
                 )
             },
             text = {
+                val scrollState = rememberScrollState()
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(scrollState),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = "ऐप की सुचारू कार्यप्रणाली के लिए कृपया निम्नलिखित अनुमतियाँ प्रदान करें। ये अनुमतियाँ केवल ऐप्स को ब्लॉक करने के लिए आवश्यक हैं:",
+                        text = "Please grant the following permissions for the app to function properly. These are only used local-on-device to block distracting apps according to your rules:",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -424,7 +428,7 @@ fun MainContainerScreen(
                         colors = CardDefaults.cardColors(
                             containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)
                         ),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant)
                     ) {
                         Column(modifier = Modifier.padding(10.dp)) {
                             Row(
@@ -433,21 +437,20 @@ fun MainContainerScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "0. ऐप जानकारी (App details Settings)",
+                                    text = "App Information Details",
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 13.sp,
-                                    color = MaterialTheme.colorScheme.primary
+                                    fontSize = 13.sp
                                 )
                                 Text(
-                                    text = "आवश्यक (Action Required)",
+                                    text = "Recommended Setup",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.ExtraBold,
-                                    color = MaterialTheme.colorScheme.error
+                                    color = Color(0xFFEF4444)
                                 )
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "यदि Accessibilty चालू करते समय 'Restricted settings' की समस्या आये, तो नीचे बटन दबाकर ऐप इन्फो (App Info) खोलें, फिर सबसे ऊपर 3-dots (⋮) पर क्लिक करके 'Allow restricted settings' विकल्प को चालू करें।",
+                                text = "If you encounter a 'Restricted Settings' error when enabling the Accessibility Service, configure it via the three-dot menu in App Info.",
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -471,7 +474,7 @@ fun MainContainerScreen(
                                 )
                             ) {
                                 Text(
-                                    text = "ऐप जानकारी (App Info) खोलें",
+                                    text = "Open App Info Settings",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
@@ -496,12 +499,12 @@ fun MainContainerScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "एक्सेसिबिलिटी सर्विस (Accessibility)",
+                                    text = "Accessibility Service Permit",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 13.sp
                                 )
                                 Text(
-                                    text = if (isAccessibilityOn) "चालू (ON)" else "बंद (OFF)",
+                                    text = if (isAccessibilityOn) "Enabled (ON)" else "Disabled (OFF)",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.ExtraBold,
                                     color = if (isAccessibilityOn) Color(0xFF10B981) else Color(0xFFEF4444)
@@ -509,7 +512,7 @@ fun MainContainerScreen(
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "मॉनिटर करने के लिए कि आपने कौन सा स्टडी या ब्लॉक ऐप खोला है, ताकि ब्लॉक किया जा सके।",
+                                text = "Required to identify when a blacklisted app or non-study app is opened so the lock interface can overlay.",
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -527,7 +530,7 @@ fun MainContainerScreen(
                                 )
                             ) {
                                 Text(
-                                    text = if (isAccessibilityOn) "सेटिंग्स देखें (View Settings)" else "अनुमति चालू करें (Enable)",
+                                    text = if (isAccessibilityOn) "View Settings" else "Enable Service",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
@@ -552,12 +555,12 @@ fun MainContainerScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "डिस्प्ले ओवर ऐप्स (Overlay)",
+                                    text = "Display Over Other Apps (Overlay)",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 13.sp
                                 )
                                 Text(
-                                    text = if (isOverlayOn) "मंजूर (ON)" else "अस्वीकृत (OFF)",
+                                    text = if (isOverlayOn) "Granted (ON)" else "Denied (OFF)",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.ExtraBold,
                                     color = if (isOverlayOn) Color(0xFF10B981) else Color(0xFFEF4444)
@@ -565,7 +568,7 @@ fun MainContainerScreen(
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "ब्लॉक किए गए ऐप्स को तुरंत कवर करने के लिए ब्लॉक स्क्रीन दिखाने के लिए।",
+                                text = "Required to display the blocking screen and prevent access to distracting apps instantly.",
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -593,7 +596,7 @@ fun MainContainerScreen(
                                 )
                             ) {
                                 Text(
-                                    text = if (isOverlayOn) "सेटिंग्स देखें (View Settings)" else "अनुमति चालू करें (Enable)",
+                                    text = if (isOverlayOn) "View Settings" else "Enable Permission",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
@@ -618,12 +621,12 @@ fun MainContainerScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "बैटरी ऑप्टिमाइजेशन (Battery Saver)",
+                                    text = "Battery Optimization (Battery Saver)",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 13.sp
                                 )
                                 Text(
-                                    text = if (isBatteryOn) "अनुकूलित (Ignored)" else "सक्रिय (Optimizing)",
+                                    text = if (isBatteryOn) "Ignored (ON)" else "Optimizing (OFF)",
                                     fontSize = 11.sp,
                                     fontWeight = FontWeight.ExtraBold,
                                     color = if (isBatteryOn) Color(0xFF10B981) else Color(0xFFEAB308)
@@ -631,7 +634,7 @@ fun MainContainerScreen(
                             }
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "सिस्टम द्वारा पृष्ठभूमि में आपकी ब्लॉक सेवा को बंद होने से बचाने के लिए। (प्ले स्टोर सुरक्षा नियम कंपैटिबल)",
+                                text = "Prevents Android from stopping your study blocker background service to save power (Google Play policy compliant).",
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -655,7 +658,7 @@ fun MainContainerScreen(
                                 )
                             ) {
                                 Text(
-                                    text = if (isBatteryOn) "सेटिंग्स देखें (View Settings)" else "अनुकूलन बंद करें (Ignore)",
+                                    text = if (isBatteryOn) "View Settings" else "Ignore Optimization",
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
@@ -681,12 +684,12 @@ fun MainContainerScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = "नोटिफिकेशन अनुमति (Notification)",
+                                        text = "Notification Permission",
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 13.sp
                                     )
                                     Text(
-                                        text = if (isNotificationOn) "मंजूर (ON)" else "अस्वीकृत (OFF)",
+                                        text = if (isNotificationOn) "Granted (ON)" else "Denied (OFF)",
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.ExtraBold,
                                         color = if (isNotificationOn) Color(0xFF10B981) else Color(0xFFEF4444)
@@ -694,7 +697,7 @@ fun MainContainerScreen(
                                 }
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "बैकग्राउंड में टाइमर और शेड्यूल के सही संचालन की जानकारी स्टेटस बार में दिखाने के लिए।",
+                                    text = "Required to show live blocking timers and persistent schedule status in your drawer.",
                                     fontSize = 11.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -718,7 +721,7 @@ fun MainContainerScreen(
                                     )
                                 ) {
                                     Text(
-                                        text = if (isNotificationOn) "सेटिंग्स देखें (View Settings)" else "अनुमति चालू करें (Enable)",
+                                        text = if (isNotificationOn) "View Settings" else "Enable Notifications",
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = Color.White
@@ -733,7 +736,7 @@ fun MainContainerScreen(
                 Button(
                     onClick = { showPermissionsDialog = false }
                 ) {
-                    Text("ओके (OK)")
+                    Text("OK")
                 }
             }
         )
@@ -796,14 +799,14 @@ fun DashboardTab(
                             Icon(Icons.Default.Warning, contentDescription = "Error", tint = Color(0xFFEF4444))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "सर्विस बंद है! (Service Disabled)",
+                                text = "Accessibility Service is Disabled",
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFFFCA5A5)
                             )
                         }
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "सच्चे लॉक फीचर के लिए Accessibility सर्विस चालू करना बेहद ज़रूरी है। नीचे बटन दबाकर इसे ओन करें।",
+                            text = "Enabling the Accessibility Service is absolutely required to block non-study apps. Please click the button below to turn it on.",
                             fontSize = 13.sp,
                             color = Color(0xFFFCA5A5),
                             lineHeight = 18.sp
@@ -814,7 +817,7 @@ fun DashboardTab(
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444)),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("सर्विस चालू करें (Enable Service)", fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                            Text("Enable Accessibility Service", fontSize = 13.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -841,7 +844,7 @@ fun DashboardTab(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = if (isBlockActive) "सुरक्षित पढ़ाई लोक चालू है" else "फ्री मोड (Unlocked)",
+                        text = if (isBlockActive) "Strict Study Lock is Active" else "Sandbox Mode (Unlocked)",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Black,
                         color = if (isBlockActive) Color(0xFF38BDF8) else Color(0xFF10B981)
@@ -859,17 +862,17 @@ fun DashboardTab(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(text = "$studyAppsCount", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                            Text(text = "स्टडी ऐप्स", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(text = "Allowed Study Apps", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             val activeSlotsCount = slots.filter { it.isEnabled }.size
                             val scheduleText = if (isScheduleEnabled) {
-                                "$activeSlotsCount एक्टिव"
+                                "$activeSlotsCount Active"
                             } else {
-                                "बंद"
+                                "Disabled"
                             }
                             Text(text = scheduleText, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                            Text(text = "शेड्यूल समय", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text(text = "Active Schedules", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
                     }
                 }
@@ -896,7 +899,7 @@ fun DashboardTab(
                             Icon(Icons.Default.Refresh, contentDescription = "Break Active", tint = Color(0xFF10B981))
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                "इमरजेंसी ब्रेक: $breakRemainingMinutes मिनट बाकी",
+                                "Emergency Break: $breakRemainingMinutes mins left",
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFF10B981),
                                 fontSize = 13.sp
@@ -912,7 +915,7 @@ fun DashboardTab(
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red),
                             shape = RoundedCornerShape(8.dp)
                         ) {
-                            Text("खत्म करें (Lock Now)", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                            Text("Lock Now", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -935,7 +938,7 @@ fun DashboardTab(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Column {
-                        Text(text = "शेड्यूल लॉक सक्रिय करें", fontSize = 16.sp, fontWeight = FontWeight.Black)
+                        Text(text = "Enable Schedule Lock", fontSize = 16.sp, fontWeight = FontWeight.Black)
                         Text(text = "Enable scheduled blocking mode", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     Switch(
@@ -953,7 +956,7 @@ fun DashboardTab(
         // Table Header
         item {
             Text(
-                text = "7 पढ़ाई शेड्यूल की तालिका (7 Time Slots Table)",
+                text = "7-Slot Study Schedule Table",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Black,
                 color = MaterialTheme.colorScheme.primary,
@@ -979,7 +982,7 @@ fun DashboardTab(
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "शेड्यूल #${slot.id}",
+                                text = "Schedule #${slot.id}",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp,
                                 color = if (slot.isEnabled && isScheduleEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
@@ -991,7 +994,7 @@ fun DashboardTab(
                                     shape = RoundedCornerShape(4.dp)
                                 ) {
                                     Text(
-                                        text = "एक्टिव",
+                                        text = "Active",
                                         fontSize = 9.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = Color(0xFF10B981),
@@ -1022,7 +1025,7 @@ fun DashboardTab(
                         val startStr = formatSlotTime12H(slot.startHour, slot.startMinute)
                         val endStr = formatSlotTime12H(slot.endHour, slot.endMinute)
                         Text(
-                            text = "समय: $startStr से $endStr",
+                            text = "Duration: $startStr - $endStr",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = if (slot.isEnabled && isScheduleEnabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
@@ -1048,14 +1051,14 @@ fun DashboardTab(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "आपातकालीन ब्रेक (Emergency Break)",
+                        text = "Emergency Break Control",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Black,
                         color = MaterialTheme.colorScheme.primary
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "इमरजेंसी होने पर तुरंत 1 से 60 मिनट तक का ब्रेक लें, जिसमें सभी ऐप्स चालू रहेंगे।",
+                        text = "Instantly take a 5-60 minute temporary break during which all personal non-study apps are allowed.",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 16.sp
@@ -1089,7 +1092,7 @@ fun DashboardTab(
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.onPrimaryContainer
                                     )
-                                    Text(text = "ब्रेक", fontSize = 9.sp, color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f))
+                                    Text(text = "Break", fontSize = 9.sp, color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f))
                                 }
                             }
                         }
@@ -1103,7 +1106,7 @@ fun DashboardTab(
                     ) {
                         Icon(Icons.Default.Refresh, contentDescription = "Break Icon", modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("5 से 60 मिनट में चुनें (Custom Break)", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                        Text("Custom Break Duration", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -1113,13 +1116,13 @@ fun DashboardTab(
     if (showBreakPopupAtDashboard) {
         AlertDialog(
             onDismissRequest = { showBreakPopupAtDashboard = false },
-            title = { Text("कस्टम ब्रेक समय (Custom Break Duration)", fontWeight = FontWeight.Bold, fontSize = 16.sp) },
+            title = { Text("Custom Break Duration", fontWeight = FontWeight.Bold, fontSize = 16.sp) },
             text = {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("सभी मोबाइल ऐप्स अनलॉक करने के लिए समय (5 से 60 मिनट) चुनें:")
+                    Text("Select the duration (5 to 60 minutes) to temporarily unlock all mobile apps:")
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "${dashboardBreakMinutes.toInt()} मिनट (Minutes)",
+                        text = "${dashboardBreakMinutes.toInt()} Minutes",
                         fontWeight = FontWeight.Black,
                         fontSize = 24.sp,
                         color = MaterialTheme.colorScheme.primary
@@ -1137,12 +1140,12 @@ fun DashboardTab(
                     onTriggerAd(dashboardBreakMinutes.toInt())
                     showBreakPopupAtDashboard = false
                 }) {
-                    Text("ब्रेक लें")
+                    Text("Take Break")
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showBreakPopupAtDashboard = false }) {
-                    Text("रद्द करें")
+                    Text("Cancel")
                 }
             }
         )
@@ -1206,7 +1209,7 @@ fun InfoTab() {
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "यह कैसे काम करता है? (Instructions)",
+                            text = "How It Works (Instructions)",
                             fontWeight = FontWeight.Black,
                             fontSize = 15.sp,
                             color = MaterialTheme.colorScheme.primary
@@ -1216,10 +1219,10 @@ fun InfoTab() {
                     Spacer(modifier = Modifier.height(12.dp))
                     
                     val bulletPoints = listOf(
-                        "1. **ऐप्स चयन**: 'ऐप्स जोड़ें' टैब में जाकर अपनी पढ़ाई की जरूरत वाली ऐप्स को सिलेक्ट करें (जैसे NCERT, YouTube)।",
-                        "2. **7 टाइम शेड्यूल**: स्टूडेंट अपनी सुविधा के अनुसार 7 टाइम पीरियड सेट कर सकता है।",
-                        "3. **लॉक एक्टिवेशन**: शेड्यूल के समय के दौरान मोबाइल में सिर्फ स्टडी ऐप्स ही खुलेंगी और बाकी सब ब्लॉक रहेंगी।",
-                        "4. **इमरजेंसी ब्रेक**: पढ़ाई के बीच अगर ज़रूरत पड़े, तो ऊपर दाहिने कोने (Top Right) से 1 से 60 मिनट का ब्रेक लेकर सभी सामान्य ऐप्स को इस्तेमाल कर सकते हैं।"
+                        "1. **Select Apps**: Go to the 'Add Apps' tab and select the apps you need for studying (e.g., NCERT, YouTube, etc.).",
+                        "2. **7 Time slots**: Configure up to 7 persistent time slots based on your study habits and daily routines.",
+                        "3. **Lock Activation**: During scheduled times, only your allowed study apps are accessible, while distracting apps are blocked automatically.",
+                        "4. **Emergency Breaks**: If you need to access other apps urgently, take a 5-60 minute ad-supported break from the top right menu to unlock all apps temporarily."
                     )
                     
                     bulletPoints.forEach { point ->
@@ -1266,7 +1269,7 @@ fun InfoTab() {
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "🔒 सुरक्षा एवं गोपनीयता नीति",
+                            text = "🔒 Security & Data Privacy Policy",
                             fontWeight = FontWeight.Bold,
                             fontSize = 13.sp,
                             color = MaterialTheme.colorScheme.primary
@@ -1282,7 +1285,7 @@ fun InfoTab() {
                     
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "यह ऐप पूरी तरह से ऑफलाइन और सुरक्षित है। हम आपका कोई भी पर्सनल या ब्राउज़िंग डेटा किसी बाहरी सर्वर पर नहीं भेजते हैं।",
+                        text = "This app is 100% offline and secure. We do not transmit, collect, or store any of your personal or browsing data on external servers.",
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 16.sp
@@ -1294,7 +1297,7 @@ fun InfoTab() {
                         Spacer(modifier = Modifier.height(8.dp))
                         
                         Text(
-                            text = "1. अभिगम्यता सेवा (Accessibility Service):\nयह अनुमति केवल स्क्रीन पर चल रहे ऐप के पैकेज नाम की जाँच करने के लिए ली जाती है। इसका उद्देश्य सिर्फ आपके चुने हुए समय अंतराल पर विचलित करने वाले ऐप्स को ब्लॉक करना है।",
+                            text = "1. Accessibility Service API:\nThis permission is used solely to identify the package names of active on-screen apps in real-time, allowing us to block distracting apps during study hours.",
                             fontSize = 10.sp,
                             color = MaterialTheme.colorScheme.onSurface,
                             lineHeight = 15.sp,
@@ -1302,7 +1305,7 @@ fun InfoTab() {
                         )
                         Spacer(modifier = Modifier.height(6.dp))
                         Text(
-                            text = "2. 100% ऑफलाइन गोपनीयता (Data Privacy):\nआपके डिवाइस से कोई पर्सनल डेटा एकत्रित, शेयर या क्लाउड पर स्टोर नहीं किया जाता है। सभी शेड्यूल्स और सेटिंग्स आपके फ़ोन में लोकल तौर पर सुरक्षित रहती हैं।",
+                            text = "2. 100% Offline Integrity:\nAll layouts, schedules, and settings are fully persisted on-device. No telemetry, statistics, or logs are shared or synced with the cloud.",
                             fontSize = 10.sp,
                             color = MaterialTheme.colorScheme.onSurface,
                             lineHeight = 15.sp
@@ -1317,7 +1320,7 @@ fun InfoTab() {
                     } else {
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "विस्तृत प्रकटीकरण पढ़ने के लिए टैप करें...",
+                            text = "Tap to view full disclosures...",
                             fontSize = 9.sp,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.SemiBold
@@ -1382,7 +1385,7 @@ fun AppSelectorTab(
         TextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            placeholder = { Text("ऐप्स खोजें (Search installed apps...)", color = MaterialTheme.colorScheme.onSurfaceVariant) },
+            placeholder = { Text("Search installed apps...", color = MaterialTheme.colorScheme.onSurfaceVariant) },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search", tint = MaterialTheme.colorScheme.onSurfaceVariant) },
             modifier = Modifier
                 .fillMaxWidth()
@@ -1418,7 +1421,7 @@ fun AppSelectorTab(
             ) {
                 Icon(Icons.Default.Check, contentDescription = "Select All", modifier = Modifier.size(13.dp), tint = MaterialTheme.colorScheme.onPrimaryContainer)
                 Spacer(modifier = Modifier.width(3.dp))
-                Text("सभी सिलेक्ट", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                Text("Select All", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimaryContainer)
             }
             OutlinedButton(
                 onClick = {
@@ -1434,7 +1437,7 @@ fun AppSelectorTab(
             ) {
                 Icon(Icons.Default.Clear, contentDescription = "Deselect All", modifier = Modifier.size(13.dp), tint = MaterialTheme.colorScheme.primary)
                 Spacer(modifier = Modifier.width(3.3.dp))
-                Text("सभी हटाएँ", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                Text("Deselect All", fontSize = 10.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             }
             Button(
                 onClick = {
@@ -1455,7 +1458,7 @@ fun AppSelectorTab(
                 )
                 Spacer(modifier = Modifier.width(3.dp))
                 Text(
-                    text = "स्टडी ऐप्स",
+                    text = "Study Apps Only",
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                     color = if (showOnlySelected) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSecondaryContainer,
@@ -1479,9 +1482,9 @@ fun AppSelectorTab(
                 ) {
                     Text(
                         text = if (showOnlySelected) {
-                            "कोई स्टडी ऐप नहीं चुना गया है!\nऊपर से ऐप सिलेक्ट करें।"
+                            "No study apps selected yet!\nPlease select apps above."
                         } else {
-                            "कोई ऐप नहीं मिला।"
+                            "No apps found matching search query."
                         },
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                         fontSize = 14.sp,
@@ -1657,11 +1660,11 @@ fun TimeSlotEditDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("टाइम शेड्यूल #${slot.id} संपादित करें", fontWeight = FontWeight.Bold) },
+        title = { Text("Edit Study Schedule #${slot.id}", fontWeight = FontWeight.Bold) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Column {
-                    Text("स्टार्ट समय (Start Time):", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
+                    Text("Start Time:", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -1671,7 +1674,7 @@ fun TimeSlotEditDialog(
                         TimePartDropdown(
                             value = String.format("%02d", startH12),
                             options = hoursList,
-                            label = "घंटा",
+                            label = "Hour",
                             onValueChange = { startH12 = it.toInt() },
                             modifier = Modifier.weight(1.2f)
                         )
@@ -1679,7 +1682,7 @@ fun TimeSlotEditDialog(
                         TimePartDropdown(
                             value = String.format("%02d", startMin),
                             options = minutesList,
-                            label = "मिनट",
+                            label = "Minute",
                             onValueChange = { startMin = it.toInt() },
                             modifier = Modifier.weight(1.2f)
                         )
@@ -1695,7 +1698,7 @@ fun TimeSlotEditDialog(
                 }
 
                 Column {
-                    Text("एंड समय (End Time):", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
+                    Text("End Time:", fontWeight = FontWeight.Bold, fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -1705,7 +1708,7 @@ fun TimeSlotEditDialog(
                         TimePartDropdown(
                             value = String.format("%02d", endH12),
                             options = hoursList,
-                            label = "घंटा",
+                            label = "Hour",
                             onValueChange = { endH12 = it.toInt() },
                             modifier = Modifier.weight(1.2f)
                         )
@@ -1713,7 +1716,7 @@ fun TimeSlotEditDialog(
                         TimePartDropdown(
                             value = String.format("%02d", endMin),
                             options = minutesList,
-                            label = "मिनट",
+                            label = "Minute",
                             onValueChange = { endMin = it.toInt() },
                             modifier = Modifier.weight(1.2f)
                         )
@@ -1750,12 +1753,12 @@ fun TimeSlotEditDialog(
                     endMinute = endMin
                 ))
             }) {
-                Text("सुरक्षित करें")
+                Text("Save")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("रद्द करें")
+                Text("Cancel")
             }
         }
     )

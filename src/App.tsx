@@ -205,15 +205,15 @@ export default function App() {
   const [editEndMin, setEditEndMin] = useState(0);
   const [editEndAmPm, setEditEndAmPm] = useState<'AM' | 'PM'>('AM');
 
-  // Days mapping in Hindi and English
+  // Days mapping in English
   const daysOfWeek = [
-    { eng: 'Sunday', hin: 'रविवार' },
-    { eng: 'Monday', hin: 'सोमवार' },
-    { eng: 'Tuesday', hin: 'मंगलवार' },
-    { eng: 'Wednesday', hin: 'बुधवार' },
-    { eng: 'Thursday', hin: 'गुरुवार' },
-    { eng: 'Friday', hin: 'शुक्रवार' },
-    { eng: 'Saturday', hin: 'शनिवार' }
+    { eng: 'Sunday', hin: 'Sunday' },
+    { eng: 'Monday', hin: 'Monday' },
+    { eng: 'Tuesday', hin: 'Tuesday' },
+    { eng: 'Wednesday', hin: 'Wednesday' },
+    { eng: 'Thursday', hin: 'Thursday' },
+    { eng: 'Friday', hin: 'Friday' },
+    { eng: 'Saturday', hin: 'Saturday' }
   ];
 
   // Real live clock ticking in actual real-time
@@ -487,7 +487,7 @@ export default function App() {
             <div>
               <h1 className="text-xl md:text-2xl font-black tracking-tight text-white flex items-center gap-2">
                 <ShieldCheck className="text-indigo-500" size={24} />
-                गोपनीयता नीति (Privacy Policy) — Study Mode App Lock & Timer
+                Privacy Policy — Study Mode App Lock & Timer
               </h1>
               <p className="text-xs text-slate-400 font-mono mt-1">Last Updated: June 02, 2026 • com.studyshield.studyfocus</p>
             </div>
@@ -499,13 +499,13 @@ export default function App() {
               }}
               className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-extrabold text-xs rounded-xl shadow transition duration-150 shrink-0"
             >
-              ← Back to App (ऐप खोलें)
+              ← Back to App
             </button>
           </div>
 
           <div className="bg-indigo-950/20 border border-indigo-500/10 rounded-xl p-4 text-xs text-slate-300 leading-relaxed">
             <span className="font-bold text-indigo-400 block text-xs mb-1 uppercase tracking-wider">🔒 Google Play Developer Content Compliance Disclosure</span>
-            'Study Mode App Lock & Timer' ऐप उपयोगकर्ता की गोपनीयता और डेटा सुरक्षा के प्रति पूरी तरह प्रतिबद्ध है। यह गोपनीयता नीति स्पष्ट करती है कि हमारा ऐप किस प्रकार काम करता है, कौन सी अनुमतियाँ लेता है और आपके डेटा को कैसे सुरक्षित रखता है। हम उपयोगकर्ता का कोई भी व्यक्तिगत, संवेदनशील या ब्राउज़िंग डेटा बाहरी सर्वर पर संग्रहीत या साझा <strong>नहीं</strong> करते हैं। ऐप का सारा कार्य पूरी तरह से आपके डिवाइस पर स्थानीय (Offline Local Processing) रूप से होता है।
+            'Study Mode App Lock & Timer' is fully committed to user privacy and data security. This privacy policy describes how our app operates, which permissions it requests, and how we keep your data secure. We NEVER collect or share any personal, sensitive, or browsing data on external servers. All operations occur strictly locally (Offline Local Processing) on your device.
           </div>
 
           <div className="space-y-4 text-xs leading-relaxed text-slate-350">
@@ -513,54 +513,54 @@ export default function App() {
             {/* Section 1 */}
             <div className="space-y-1.5">
               <h2 className="text-sm font-extrabold text-white tracking-wide border-l-2 border-indigo-500 pl-2">
-                1. संवेदनशील अनुमतियाँ और उपयोग (Sensitive Permissions & Their Use)
+                1. Sensitive Permissions & Their Use
               </h2>
               
               <div className="bg-[#11192e] border border-slate-850 p-3 rounded-xl space-y-2 mt-1">
-                <h3 className="font-bold text-slate-200 text-xs">A. एक्सीसिबिलिटी सर्विस (Accessibility Service API)</h3>
-                <p>हमारा ऐप विचलित करने वाले ऐप्स को ब्लॉक करने के लिए <strong className="text-indigo-400 font-extrabold font-mono">Accessibility Service API</strong> का उपयोग करता है।</p>
+                <h3 className="font-bold text-slate-200 text-xs">A. Accessibility Service API</h3>
+                <p>Our app utilizes the <strong className="text-indigo-400 font-extrabold font-mono">Accessibility Service API</strong> to block distracting apps.</p>
                 <ul className="list-disc list-inside space-y-1 pl-1 text-slate-400">
-                  <li><strong>उद्देश्य (Purpose):</strong> यह केवल यह पता लगाने के लिए उपयोग की जाती है कि वर्तमान में आपके स्क्रीन पर कौन सा ऐप खुला हुआ है। यदि वह ऐप आपकी ब्लॉक्ड लिस्ट में शामिल है, तो यह ऐप उसे रोक कर आपको ध्यान केंद्रित (Study Shield Block Screen) करने के लिए प्रेरित करता है।</li>
-                  <li><strong>डेटा संग्रह सीमा (No Data Harvesting):</strong> यह सर्विस किसी भी प्रकार का व्यक्तिगत डेटा, बटन क्लिक, इनपुट टेक्स्ट, पासवर्ड, या व्यक्तिगत जानकारी एकत्र <strong>नहीं</strong> करती है और न ही इसे इंटरनेट पर भेजती है।</li>
-                  <li>यह सेवा उपयोगकर्ता की पूर्ण स्पष्ट सहमति से ही सक्रिय की जाती है और इसे डिवाइस सेटिंग्स से कभी भी आसानी से बंद किया जा सकता है।</li>
+                  <li><strong>Purpose:</strong> This is used strictly to identify which application is currently active on your screen. If the launched application matches your blocked list, the app displays a full-screen block overlay to help you stay focused.</li>
+                  <li><strong>No Data Harvesting:</strong> This service does NOT collect, capture, or transmit personal data, keypresses, input text, passwords, or sensitive details to any server.</li>
+                  <li>This service is only activated with explicit user consent and can be disabled at any time through system settings.</li>
                 </ul>
               </div>
 
               <div className="bg-[#11192e] border border-slate-850 p-3 rounded-xl space-y-1 mt-2">
-                <h3 className="font-bold text-slate-200 text-xs">B. स्क्रीन ओवरले अनुमति (System Alert Window)</h3>
-                <p>जब आप पढ़ाई के समय कोई ब्लॉक किया गया ऐप (जैसे सोशल मीडिया या गेम्स) खोलने की कोशिश करते हैं, तो यह अनुमति ऐप को उसके ऊपर सुरक्षा स्क्रीन दिखाने में मदद करती है।</p>
+                <h3 className="font-bold text-slate-200 text-xs">B. System Alert Window (Screen Overlay)</h3>
+                <p>When you attempt to launch an app on your block list during a study period, this permission allows our app to draw the Study Shield block screen directly on top of it.</p>
               </div>
             </div>
 
             {/* Section 2 */}
             <div className="space-y-1.5">
               <h2 className="text-sm font-extrabold text-white tracking-wide border-l-2 border-indigo-500 pl-2">
-                2. डेटा सुरक्षा और गोपनीयता (Data Safety & Privacy)
+                2. Data Safety & Privacy
               </h2>
               <ul className="list-disc list-inside space-y-1 pl-2 text-slate-400">
-                <li><strong className="text-slate-200">स्थानीय भंडारण (Local Storage):</strong> आपका समय सारणी (Time Table Schedule) और ब्लॉक्ड ऐप्स की सूची केवल आपके डिवाइस के स्थानीय स्टोरेज में संग्रहीत की जाती है।</li>
-                <li><strong className="text-slate-200">कोई बाहरी सर्वर नहीं (No Cloud Server):</strong> हम किसी भी प्रकार का बैकएंड डेटाबेस या क्लाउड एनालिटिक्स टूल उपयोग नहीं करते जो आपका डेटा एकत्र करे।</li>
-                <li><strong className="text-slate-200">विज्ञापन नीतियां (AdSense Interstitial Ads):</strong> ऐप में ब्रेक अवधि के दौरान Google AdSense इंटरस्टिशियल विज्ञापन प्रदर्शित किए जाते हैं। ये विज्ञापन Google की निर्धारित डेवलपर नीतियों के अनुसार पूरी तरह सुरक्षित हैं और उपयोगकर्ता डेटा लीक नहीं करते हैं।</li>
+                <li><strong className="text-slate-200">Local Storage:</strong> Your focus schedules and blocked apps list are saved locally on your device storage.</li>
+                <li><strong className="text-slate-200">No Cloud Server:</strong> We do not operate backend servers or cloud databases to harvest your data.</li>
+                <li><strong className="text-slate-200">Ad Advertising Policies (AdSense Interstitial Ads):</strong> We display safe, standard Google ads when an emergency study break is triggered. These are fully compliant with Google Play Policies and do not leak user information.</li>
               </ul>
             </div>
 
             {/* Section 3 */}
             <div className="space-y-1.5">
               <h2 className="text-sm font-extrabold text-white tracking-wide border-l-2 border-indigo-500 pl-2">
-                3. बच्चों की गोपनीयता (Children's Privacy Protection)
+                3. Children's Privacy Protection
               </h2>
               <p className="text-slate-400">
-                यह ऐप शिक्षा और ध्यान केंद्रित करने के उद्देश्य से बनाया गया है। यह किसी भी बच्चे से संबंधित संवेदनशील जानकारी एकत्र नहीं करता है और COPPA (Children's Online Privacy Protection Act) जैसी नीतियों का पूर्ण रूप से पालन करता है।
+                This application is built for study and focus enhancement. We do not collect any children's personal information, in strict compliance with the Children's Online Privacy Protection Act (COPPA).
               </p>
             </div>
 
             {/* Section 4 */}
             <div className="space-y-1.5">
               <h2 className="text-sm font-extrabold text-white tracking-wide border-l-2 border-indigo-500 pl-2">
-                4. डेवलपर संपर्क जानकारी (Developer Contact Info)
+                4. Developer Contact Info
               </h2>
               <p className="text-slate-400">
-                यदि इस गोपनीयता नीति या ऐप के अधिकारों के बारे में आपका कोई प्रश्न या सुझाव है, तो आप हमें सीधे ईमेल कर सकते हैं:
+                If you have any questions, feedback, or concerns regarding this privacy policy or permissions, please feel free to email us directly:
               </p>
               <div className="bg-[#11192e] border border-slate-850 p-2.5 rounded-lg text-slate-200 font-mono mt-1">
                 Developer Support: <a href="mailto:jitu1199pal@gmail.com" className="text-indigo-400 font-bold hover:underline">jitu1199pal@gmail.com</a>
@@ -726,7 +726,7 @@ export default function App() {
                       className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 active:scale-95 text-slate-950 font-black text-[10.5px] uppercase tracking-wider rounded-xl shadow-lg border border-emerald-400/30 transition flex items-center justify-center gap-1 animate-pulse"
                     >
                       <Timer size={12} />
-                      ब्रेक शुरू करें (Start Break)
+                      Start Break
                     </button>
                   ) : (
                     <div className="w-full py-1.5 bg-slate-900 border border-slate-800 text-[10px] font-extrabold text-slate-500 rounded-xl text-center">
@@ -748,7 +748,7 @@ export default function App() {
                     {formatSlotTime(simulatedHour, simulatedMinute)}
                   </h3>
                   <p className="text-xs text-blue-300 font-semibold">
-                    {daysOfWeek[simulatedDayIndex].hin} ({daysOfWeek[simulatedDayIndex].eng})
+                    {daysOfWeek[simulatedDayIndex].eng}
                   </p>
                   <p className="text-[10px] text-slate-400">
                     {simulatedDate} {simulatedMonth} {simulatedYear}
@@ -759,12 +759,12 @@ export default function App() {
                     {isBlockerActive() ? (
                       <div className="inline-flex items-center gap-1.5 bg-rose-950/60 border border-rose-800/80 px-3 py-1 rounded-full text-[10px] text-rose-300 font-extrabold animate-pulse">
                         <Lock size={10} />
-                        पढ़ाई समय सक्रिय: नॉन-स्टडी ऐप्स बंद हैं
+                        Study Mode Active: Non-Study Apps are Blocked
                       </div>
                     ) : (
                       <div className="inline-flex items-center gap-1.5 bg-emerald-950/60 border border-emerald-800/80 px-3 py-1 rounded-full text-[10px] text-emerald-400 font-extrabold">
                         <Unlock size={10} />
-                        मुक्त मोड: सभी ऐप्स खुली हैं
+                        Free Mode: All Apps are Unlocked
                       </div>
                     )}
                   </div>
@@ -772,7 +772,7 @@ export default function App() {
 
                 {/* Simulated App Icon Grid */}
                 <div className="space-y-3">
-                  <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">APPLICATIONS GRID (लॉन्च करें):</p>
+                  <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-1">APPLICATIONS GRID (TAP TO LAUNCH):</p>
                   <div className="grid grid-cols-4 gap-y-4 gap-x-2">
                     
                     {/* Core Study Mode App Lock & Timer Icon */}
@@ -819,7 +819,7 @@ export default function App() {
 
                 {/* Launcher Guide */}
                 <div className="bg-white/5 p-2 rounded-xl border border-white/5 text-center text-[9px] text-slate-400">
-                  ⚠️ Instagram या सोशल ऐप्स दबाकर लॉक चेतावनी स्क्रीन टेस्ट करें।
+                  ⚠️ Tap Instagram or other social apps to test the lock screen warning.
                 </div>
 
               </div>
@@ -837,21 +837,21 @@ export default function App() {
                   {/* Top line with Date-Day and Time */}
                   <div className="flex justify-between items-start">
                     <div className="flex flex-col">
-                      {/* Time and week day (war in Hindi and English) */}
+                      {/* Time and week day */}
                       <span className="text-md font-black text-blue-400 flex items-center gap-1.5 leading-none">
                         <Clock size={13} className="text-blue-400" />
                         {formatSlotTime(simulatedHour, simulatedMinute)}
                       </span>
                       <span className="text-[10.5px] text-emerald-400 font-bold mt-1">
-                        वार: {daysOfWeek[simulatedDayIndex].hin} ({daysOfWeek[simulatedDayIndex].eng})
+                        Day: {daysOfWeek[simulatedDayIndex].eng}
                       </span>
-                      {/* Tarikh, month and year */}
+                      {/* Date, month and year */}
                       <span className="text-[10px] text-slate-400 font-medium">
-                        तारीख: {String(simulatedDate).padStart(2, '0')} {simulatedMonth} {simulatedYear}
+                        Date: {String(simulatedDate).padStart(2, '0')} {simulatedMonth} {simulatedYear}
                       </span>
                     </div>
 
-                    {/* Requirement: TOP RIGHT corner: Break کا option likha hua */}
+                    {/* Requirement: TOP RIGHT corner: Break option written */}
                     <div className="flex gap-1.5">
                       <button
                         onClick={() => setShowShareModal(true)}
@@ -866,7 +866,7 @@ export default function App() {
                         className="px-2 py-1 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-slate-950 font-extrabold text-[10px] rounded-lg shadow-md flex items-center gap-1 transition"
                       >
                         <Timer size={10} />
-                        Break लें
+                        Take Break
                       </button>
                     </div>
                   </div>
@@ -877,15 +877,15 @@ export default function App() {
                   {showCustomBreakSelector && (
                     <div className="absolute inset-x-2 top-2 bg-slate-900 border-2 border-emerald-500 rounded-xl p-3.5 z-40 shadow-2xl">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-[11px] font-bold text-white uppercase tracking-wider">इमरजेंसी ब्रेक समय सेट करें:</span>
+                        <span className="text-[11px] font-bold text-white uppercase tracking-wider">Set Emergency Break Time:</span>
                         <XCircle size={14} className="text-rose-500 cursor-pointer" onClick={() => setShowCustomBreakSelector(false)} />
                       </div>
                       
                       {/* Slide Range from 1 to 60 Minutes */}
                       <div className="space-y-3 pt-1">
                         <div className="flex items-center justify-between text-xs font-bold text-emerald-400 bg-emerald-950/50 py-1 px-2 rounded">
-                          <span>सिलेक्टेड ब्रेक समय:</span>
-                          <span className="text-sm font-black">{customBreakDuration} मिनट (Minutes)</span>
+                          <span>Selected Break Duration:</span>
+                          <span className="text-sm font-black">{customBreakDuration} Minutes</span>
                         </div>
                         
                         <input 
@@ -915,7 +915,7 @@ export default function App() {
                           onClick={() => requestBreakWithAd(customBreakDuration)}
                           className="w-full py-2 bg-emerald-500 text-slate-950 hover:bg-emerald-400 text-[11px] font-extrabold rounded-lg shadow-lg"
                         >
-                          ब्रेक चालू करें (Start Break)
+                          Start Break
                         </button>
                       </div>
                     </div>
@@ -928,7 +928,7 @@ export default function App() {
                   <div className="bg-emerald-950 border-y border-emerald-800 px-3 py-2 flex items-center justify-between text-[11px]">
                     <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
                       <Timer className="animate-spin" size={13} />
-                      <span>ब्रेक जारी है: सभी ऐप्स अनलॉक रहेंगी</span>
+                      <span>Break Active: All apps are unlocked</span>
                     </div>
                     <span className="text-emerald-300 font-black block bg-slate-900 border border-emerald-800/50 rounded px-1.5 py-0.5">
                       {Math.floor(breakRemainingSecs / 60)}m {breakRemainingSecs % 60}s
@@ -950,8 +950,8 @@ export default function App() {
                           <div className="flex items-center gap-2">
                             <ShieldCheck className="text-indigo-400" size={17} />
                             <div className="leading-none">
-                              <h4 className="text-xs font-black text-slate-100 uppercase tracking-wide">स्टडी मोड लॉक सर्विस (Study Lock Service)</h4>
-                              <p className="text-[9px] text-slate-400 mt-1">सुरक्षा गार्ड एवं विचलित ऐप्स अवरोधक इंजन</p>
+                              <h4 className="text-xs font-black text-slate-100 uppercase tracking-wide">Study Mode Lock Service</h4>
+                              <p className="text-[9px] text-slate-400 mt-1">Security Guard & Distracting App Blocker Engine</p>
                             </div>
                           </div>
                           
@@ -965,14 +965,14 @@ export default function App() {
                                   ? 'bg-emerald-950/80 text-emerald-400 border-emerald-800/60' 
                                   : 'bg-rose-950/80 text-rose-400 border-rose-800/60 animate-pulse'
                               }`}>
-                                {allActive ? 'सक्रिय (Service ON)' : 'बंद (Service OFF)'}
+                                {allActive ? 'Active (Service ON)' : 'Inactive (Service OFF)'}
                               </span>
                             );
                           })()}
                         </div>
 
                         <p className="text-[10px] text-slate-300 leading-relaxed font-sans">
-                          ऐप लॉक सर्विस और विचलित ऐप्स को स्क्रीन पर ब्लॉक करने के लिए एक्सीसिबिलिटी, ओवरले और बैकग्राउंड अनुमतियाँ अनिवार्य हैं।
+                          Accessibility, overlay, and background permissions are required to block distracting apps and run the app lock service properly.
                         </p>
 
                         <button
@@ -985,8 +985,8 @@ export default function App() {
                         >
                           <Power size={13} className="stroke-[3.5]" />
                           {((isSimulatedAccessibilityOn ? 1 : 0) + (isSimulatedOverlayOn ? 1 : 0) + (isSimulatedBatteryOn ? 1 : 0)) === 3
-                            ? 'सर्विस चालू है (Service is ON - Settings)'
-                            : 'सर्विस चालू करें (Start Study Service)'}
+                            ? 'Service is On (Accessibility Settings)'
+                            : 'Start Study Service'}
                         </button>
                       </div>
 
@@ -996,7 +996,7 @@ export default function App() {
                         <div className="flex items-center justify-between px-1">
                           <span className="text-[11px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-1">
                             <Calendar size={12} className="text-blue-400" />
-                            7 पढ़ाई शेड्यूलों की तालिका (7 Time Slots)
+                            7 Study Schedules Table (7 Time Slots)
                           </span>
                           <span className="text-[9px] text-indigo-400 font-bold">12H Time AM/PM</span>
                         </div>
@@ -1016,15 +1016,15 @@ export default function App() {
                               <div>
                                 <div className="flex items-center gap-1.5">
                                   <span className={`w-2 h-2 rounded-full ${slot.isEnabled ? 'bg-indigo-400 animate-pulse' : 'bg-slate-500'}`}></span>
-                                  <span className="text-xs font-black text-slate-200">शेड्यूल #{slot.id}</span>
+                                  <span className="text-xs font-black text-slate-200">Schedule #{slot.id}</span>
                                   {slot.isEnabled && (
                                     <span className="text-[8px] bg-indigo-900 border border-indigo-700 text-indigo-300 px-1 rounded font-black">
-                                      सक्रिय (ON)
+                                      ACTIVE (ON)
                                     </span>
                                   )}
                                 </div>
                                 <div className="text-xs font-semibold text-indigo-300 mt-1">
-                                  {formatSlotTime(slot.startHour, slot.startMinute)} से {formatSlotTime(slot.endHour, slot.endMinute)}
+                                  {formatSlotTime(slot.startHour, slot.startMinute)} to {formatSlotTime(slot.endHour, slot.endMinute)}
                                 </div>
                               </div>
 
@@ -1034,7 +1034,7 @@ export default function App() {
                                   onClick={() => startEditingSlot(slot)}
                                   className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-[10px] text-slate-200 font-bold rounded-md border border-slate-700 transition"
                                 >
-                                  समय बदलें (Edit)
+                                  Change Time (Edit)
                                 </button>
                                 
                                 {/* Slot Master enable switch toggles */}
@@ -1070,7 +1070,7 @@ export default function App() {
                         <Search size={12} className="text-slate-400" />
                         <input
                           type="text"
-                          placeholder="खोजें (Search App)..."
+                          placeholder="Search App..."
                           value={searchQuery}
                           onChange={e => setSearchQuery(e.target.value)}
                           className="bg-transparent border-none text-[11px] w-full text-white outline-none placeholder:text-slate-500"
@@ -1116,11 +1116,11 @@ export default function App() {
                                 {/* Visual Pill indicator */}
                                 {app.isStudy ? (
                                   <span className="text-[8.5px] font-black bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full">
-                                    स्टडी ऐप (Study App)
+                                    Study App (Allowed)
                                   </span>
                                 ) : (
-                                  <span className="text-[8.5px] font-bold bg-slate-950 text-slate-500 border border-slate-850 px-2 py-0.5 rounded-full">
-                                    नॉर्मल ऐप (Block)
+                                  <span className="text-[8.5px] font-bold bg-slate-950 text-slate-500 border border-[#slate-850] px-2 py-0.5 rounded-full">
+                                    Blocked App
                                   </span>
                                 )}
 
@@ -1136,11 +1136,11 @@ export default function App() {
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     setVirtualApps(prev => prev.filter(a => a.id !== app.id));
-                                    setLaunchNotification(`"${app.name}" को ऐप स्क्रीन से हटा दिया गया है।`);
+                                    setLaunchNotification(`"${app.name}" removed from App Checklist.`);
                                     setTimeout(() => setLaunchNotification(null), 2500);
                                   }}
                                   className="p-1.5 hover:bg-rose-950/40 text-rose-500 hover:text-rose-400 rounded-md transition-colors ml-1.5"
-                                  title="ऐप स्क्रीन से हटाएं"
+                                  title="Remove from App Checklist"
                                 >
                                   <XCircle size={15} />
                                 </button>
@@ -1159,20 +1159,20 @@ export default function App() {
                       <div className="bg-[#0c1424] border border-indigo-900 rounded-xl p-3 text-xs leading-normal space-y-2 text-slate-350">
                         <h4 className="font-extrabold text-indigo-400 text-xs text-center border-b border-indigo-950 pb-1.5 uppercase flex justify-center items-center gap-1">
                           <Info size={12} />
-                          यह कैसे काम करता है? (Instructions)
+                          How does it work? (Instructions)
                         </h4>
                         <ol className="space-y-2 list-decimal list-inside text-[11px]">
                           <li>
-                            <strong className="text-white">ऐप्स चयन:</strong> 'ऐप्स जोडें' टैब में जाकर अपनी पढ़ाई की जरूरत वाली ऐप्स को सिलेक्ट करें (जैसे NCERT, YouTube)।
+                            <strong className="text-white">App Selection:</strong> Go to the 'App Checklist' tab to select study-enhancing apps (e.g., NCERT, YouTube) that you want to allow.
                           </li>
                           <li>
-                            <strong className="text-white">7 टाइम शेड्यूल:</strong> स्टूडेंट अपनी सुविधा के अनुसार 7 टाइम पीरियड सेट कर सकता है।
+                            <strong className="text-white">7 Time Schedules:</strong> Students can configure up to 7 custom daily locked study slots to build healthy focus routines.
                           </li>
                           <li>
-                            <strong className="text-white">लॉक एक्टिवेशन:</strong> शेड्यूल के समय के दौरान मोबाइल में सिर्फ स्टडी ऐप्स ही खुलेंगी और बाकी सब ब्लॉक रहेंगी।
+                            <strong className="text-white">Lock Activation:</strong> During scheduled hours, only selected study apps will launch successfully; other distracting apps will be blocked.
                           </li>
                           <li>
-                            <strong className="text-white">इमरजेंसी ब्रेक:</strong> पढ़ाई के बीच अगर ज़रूरत पड़े, तो ऊपर दाहिने कोने (Top Right) से 1 से 60 मिनट का ब्रेक लेकर सभी सामान्य ऐप्स को इस्तेमाल कर सकते हैं।
+                            <strong className="text-white">Emergency Break:</strong> Need a quick break? Tap the break icon in the top right corner to set a 1 to 60-minute interval to use normal apps.
                           </li>
                         </ol>
                       </div>
@@ -1181,17 +1181,17 @@ export default function App() {
                       <div className="bg-gradient-to-r from-indigo-950 to-[#0d1425] border border-indigo-500/20 rounded-xl p-3 space-y-2 text-slate-200 shadow-md">
                         <div className="flex items-center gap-1.5 text-indigo-400">
                           <Share2 size={12} className="animate-pulse" />
-                          <h4 className="font-extrabold text-[11px] uppercase tracking-wider">दोस्तों के साथ शेयर करें (Share App)</h4>
+                          <h4 className="font-extrabold text-[11px] uppercase tracking-wider">Share with Friends</h4>
                         </div>
                         <p className="text-[10px] text-slate-400 leading-tight">
-                          Study Mode App Lock & Timer ऐप को अपने दोस्तों और सहपाठियों के साथ शेयर करें ताकि वे भी अपनी पढ़ाई के दौरान ध्यान लगा सकें!
+                          Share Study Shield with your friends and classmates to help them build focus and lock away distractions!
                         </p>
                         <button
                           onClick={() => setShowShareModal(true)}
                           className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-[10.5px] rounded-lg shadow transition flex items-center justify-center gap-1 active:scale-95 border border-indigo-400/20 animate-pulse"
                         >
                           <Share2 size={11} />
-                          शेयर लिंक प्राप्त करें (Share App Link)
+                          Get Share App Link
                         </button>
                       </div>
 
@@ -1209,32 +1209,32 @@ export default function App() {
                           </span>
                         </div>
                         <p className="text-[10px] text-slate-300 mt-1.5 leading-normal">
-                          यह ऐप पूर्णतः <strong>सुरक्षित और ऑफलाइन</strong> है। हम Google Play नीतियों का पालन करने के लिए बाध्य हैं।
+                          This app is completely <strong>secure and offline</strong>. We strictly comply with all Google Play Policies.
                         </p>
                         {isPolicyExpanded && (
                           <div className="mt-2 pt-2.5 border-t border-indigo-950/80 space-y-2 text-[9.5px] text-slate-400 leading-relaxed">
                             <div>
-                              <strong className="text-white block uppercase text-[9px] tracking-wide text-indigo-300">1. Prominent Disclosure (एक्सीसिबिलिटी सर्विस):</strong>
+                              <strong className="text-white block uppercase text-[9px] tracking-wide text-indigo-300">1. Prominent Disclosure (Accessibility Service):</strong>
                               <p className="mt-0.5">
-                                Study Mode App Lock & Timer, विचलित करने वाले ऐप्स (Blocked Apps List) को स्क्रीन पर ब्लॉक करने के लिए <strong>Accessibility Service API</strong> का उपयोग करता है। यह सेवा केवल इस पहचान के लिए उपयोग होती है कि वर्तमान में स्क्रीन पर कौन सा ऐप खुला हुआ है।
+                                Study Shield uses the <strong>Accessibility Service API</strong> to block distracting apps. This service detects when distracting apps are opened to overlay the Study lockscreen.
                               </p>
                             </div>
                             <div>
-                              <strong className="text-white block uppercase text-[9px] tracking-wide text-indigo-300">2. zero data collection:</strong>
+                              <strong className="text-white block uppercase text-[9px] tracking-wide text-indigo-300">2. Zero Data Collection:</strong>
                               <p className="mt-0.5">
-                                एक्सीसिबिलिटी सर्विस द्वारा किसी भी प्रकार का व्यक्तिगत डेटा, इनपुट टेक्स्ट, पासवर्ड, या व्यक्तिगत जानकारी को <strong>कभी भी न तो रिकॉर्ड किया जाता है और न ही कहीं भेजा जाता है।</strong> यह पूरी तरह ऑफलाइन और डिवाइस की सीमा में काम करता है।
+                                Accessibility service works entirely offline. We <strong>never collect, store, or transmit</strong> any keystrokes, personal details, or inputs outside of your device.
                               </p>
                             </div>
                             <div>
-                              <strong className="text-white block uppercase text-[9px] tracking-wide text-indigo-300">3. ad & adsense compliance:</strong>
+                              <strong className="text-white block uppercase text-[9px] tracking-wide text-indigo-300">3. Ad & AdSense Compliance:</strong>
                               <p className="mt-0.5">
-                                ऐप में दिए गए ब्रेक समय पर Google AdSense के नियमानुसार सुरक्षित विज्ञापन दिखाए जाते हैं, जो विज्ञापनदाताओं के नियमों और Play Store विज्ञापन नीतियों का 100% अनुपालन करते हैं।
+                                Safe Ads compliant with Google AdSense rules are displayed only during study break slots, abiding fully by Play Store publisher standards.
                               </p>
                             </div>
                             <div>
-                              <strong className="text-white block uppercase text-[9px] tracking-wide text-indigo-300">4. developer contact:</strong>
+                              <strong className="text-white block uppercase text-[9px] tracking-wide text-indigo-300">4. Support Contact:</strong>
                               <p className="mt-0.5 font-mono">
-                                queries/support: <span className="text-indigo-400 font-bold underline">jitu1199pal@gmail.com</span>
+                                Inquiries / Support: <span className="text-indigo-400 font-bold underline">jitu1199pal@gmail.com</span>
                               </p>
                             </div>
                           </div>
@@ -1243,104 +1243,104 @@ export default function App() {
                     </div>
                   )}
 
-                </div>
-
-                {/* Inline Editing Dialog / Form when active */}
-                {editingSlotId !== null && (
-                  <div className="absolute inset-x-2 bottom-12 bg-slate-900 border-2 border-indigo-500 rounded-2xl p-4 z-40 shadow-2xl">
-                    <h5 className="text-[12px] font-black text-white text-center pb-2 border-b border-indigo-950 uppercase">
-                      टाइम शेड्यूल #{editingSlotId} संपादित करें
-                    </h5>
-                    
-                    <div className="space-y-3 pt-3">
+                  {/* Inline Editing Dialog / Form when active */}
+                  {editingSlotId !== null && (
+                    <div className="absolute inset-x-2 bottom-12 bg-slate-900 border-2 border-indigo-500 rounded-2xl p-4 z-40 shadow-2xl">
+                      <h5 className="text-[12px] font-black text-white text-center pb-2 border-b border-indigo-950 uppercase">
+                        Edit Time Schedule #{editingSlotId}
+                      </h5>
                       
-                      {/* Start Time Selectors 12Hour */}
-                      <div>
-                        <span className="text-[10px] font-bold text-indigo-400 block mb-1">स्टार्ट समय (Start Time):</span>
-                        <div className="flex gap-2 items-center">
-                          <select 
-                            value={editStartHour12}
-                            onChange={e => setEditStartHour12(parseInt(e.target.value))}
-                            className="bg-slate-950 border border-slate-800 text-white p-1 rounded font-bold text-xs w-full text-center"
-                          >
-                            {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
-                              <option key={h} value={h}>{String(h).padStart(2, '0')}</option>
-                            ))}
-                          </select>
-                          <span className="text-slate-500 font-black">:</span>
-                          <select 
-                            value={editStartMin}
-                            onChange={e => setEditStartMin(parseInt(e.target.value))}
-                            className="bg-slate-950 border border-slate-800 text-white p-1 rounded font-bold text-xs w-full text-center"
-                          >
-                            {[0, 15, 30, 45].map(m => (
-                              <option key={m} value={m}>{String(m).padStart(2, '0')}</option>
-                            ))}
-                          </select>
-                          <select 
-                            value={editStartAmPm}
-                            onChange={e => setEditStartAmPm(e.target.value as 'AM' | 'PM')}
-                            className="bg-slate-950 border border-slate-800 text-white p-1 rounded font-bold text-xs w-full text-center"
-                          >
-                            <option value="AM">AM</option>
-                            <option value="PM">PM</option>
-                          </select>
+                      <div className="space-y-3 pt-3">
+                        
+                        {/* Start Time Selectors 12Hour */}
+                        <div>
+                          <span className="text-[10px] font-bold text-indigo-400 block mb-1">Start Time:</span>
+                          <div className="flex gap-2 items-center">
+                            <select 
+                              value={editStartHour12}
+                              onChange={e => setEditStartHour12(parseInt(e.target.value))}
+                              className="bg-slate-950 border border-slate-800 text-white p-1 rounded font-bold text-xs w-full text-center"
+                            >
+                              {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
+                                <option key={h} value={h}>{String(h).padStart(2, '0')}</option>
+                              ))}
+                            </select>
+                            <span className="text-slate-500 font-black">:</span>
+                            <select 
+                              value={editStartMin}
+                              onChange={e => setEditStartMin(parseInt(e.target.value))}
+                              className="bg-slate-950 border border-slate-800 text-white p-1 rounded font-bold text-xs w-full text-center"
+                            >
+                              {[0, 15, 30, 45].map(m => (
+                                <option key={m} value={m}>{String(m).padStart(2, '0')}</option>
+                              ))}
+                            </select>
+                            <select 
+                              value={editStartAmPm}
+                              onChange={e => setEditStartAmPm(e.target.value as 'AM' | 'PM')}
+                              className="bg-slate-950 border border-slate-800 text-white p-1 rounded font-bold text-xs w-full text-center"
+                            >
+                              <option value="AM">AM</option>
+                              <option value="PM">PM</option>
+                            </select>
+                          </div>
                         </div>
-                      </div>
 
-                      {/* End Time Selectors 12Hour */}
-                      <div>
-                        <span className="text-[10px] font-bold text-indigo-400 block mb-1">एंड समय (End Time):</span>
-                        <div className="flex gap-2 items-center">
-                          <select 
-                            value={editEndHour12}
-                            onChange={e => setEditEndHour12(parseInt(e.target.value))}
-                            className="bg-slate-950 border border-[#1e293b] text-white p-1 rounded font-bold text-xs w-full text-center"
-                          >
-                            {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
-                              <option key={h} value={h}>{String(h).padStart(2, '0')}</option>
-                            ))}
-                          </select>
-                          <span className="text-slate-500 font-black">:</span>
-                          <select 
-                            value={editEndMin}
-                            onChange={e => setEditEndMin(parseInt(e.target.value))}
-                            className="bg-slate-950 border border-[#1e293b] text-white p-1 rounded font-bold text-xs w-full text-center"
-                          >
-                            {[0, 15, 30, 45].map(m => (
-                              <option key={m} value={m}>{String(m).padStart(2, '0')}</option>
-                            ))}
-                          </select>
-                          <select 
-                            value={editEndAmPm}
-                            onChange={e => setEditEndAmPm(e.target.value as 'AM' | 'PM')}
-                            className="bg-slate-950 border border-[#1e293b] text-white p-1 rounded font-bold text-xs w-full text-center"
-                          >
-                            <option value="AM">AM</option>
-                            <option value="PM">PM</option>
-                          </select>
+                        {/* End Time Selectors 12Hour */}
+                        <div>
+                          <span className="text-[10px] font-bold text-indigo-400 block mb-1">End Time:</span>
+                          <div className="flex gap-2 items-center">
+                            <select 
+                              value={editEndHour12}
+                              onChange={e => setEditEndHour12(parseInt(e.target.value))}
+                              className="bg-slate-950 border border-[#1e293b] text-white p-1 rounded font-bold text-xs w-full text-center"
+                            >
+                              {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
+                                <option key={h} value={h}>{String(h).padStart(2, '0')}</option>
+                              ))}
+                            </select>
+                            <span className="text-slate-500 font-black">:</span>
+                            <select 
+                              value={editEndMin}
+                              onChange={e => setEditEndMin(parseInt(e.target.value))}
+                              className="bg-slate-950 border border-[#1e293b] text-white p-1 rounded font-bold text-xs w-full text-center"
+                            >
+                              {[0, 15, 30, 45].map(m => (
+                                <option key={m} value={m}>{String(m).padStart(2, '0')}</option>
+                              ))}
+                            </select>
+                            <select 
+                              value={editEndAmPm}
+                              onChange={e => setEditEndAmPm(e.target.value as 'AM' | 'PM')}
+                              className="bg-slate-950 border border-[#1e293b] text-white p-1 rounded font-bold text-xs w-full text-center"
+                            >
+                              <option value="AM">AM</option>
+                              <option value="PM">PM</option>
+                            </select>
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Actions */}
-                      <div className="grid grid-cols-2 gap-2 pt-2">
-                        <button
-                          onClick={() => setEditingSlotId(null)}
-                          className="py-1.5 bg-slate-800 text-slate-300 text-[11px] font-bold rounded-lg hover:bg-slate-700"
-                        >
-                          रद्द करें
-                        </button>
-                        <button
-                          onClick={saveEditedSlot}
-                          className="py-1.5 bg-indigo-600 text-white text-[11px] font-black rounded-lg hover:bg-indigo-500"
-                        >
-                          सुरक्षित करें
-                        </button>
-                      </div>
+                        {/* Actions */}
+                        <div className="grid grid-cols-2 gap-2 pt-2">
+                          <button
+                            onClick={() => setEditingSlotId(null)}
+                            className="py-1.5 bg-slate-800 text-slate-300 text-[11px] font-bold rounded-lg hover:bg-slate-700"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={saveEditedSlot}
+                            className="py-1.5 bg-indigo-600 text-white text-[11px] font-black rounded-lg hover:bg-indigo-500"
+                          >
+                            Save
+                          </button>
+                        </div>
 
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+
+                </div>
 
                 {/* Simulated Android App bottom navigation bar inside phone mockup container */}
                 <div className="bg-[#0b101c] border-t border-slate-900 grid grid-cols-3 select-none py-1.5 text-center relative z-10">
@@ -1349,7 +1349,7 @@ export default function App() {
                     className={`flex flex-col items-center cursor-pointer transition ${activeTab === 'home' ? 'text-blue-500 font-extrabold' : 'text-slate-400'}`}
                   >
                     <Smartphone size={14} />
-                    <span className="text-[8px] mt-0.5">डैशबोर्ड (Schedules)</span>
+                    <span className="text-[8px] mt-0.5">Schedules</span>
                   </button>
 
                   <button 
@@ -1357,7 +1357,7 @@ export default function App() {
                     className={`flex flex-col items-center cursor-pointer transition ${activeTab === 'apps' ? 'text-blue-500 font-extrabold' : 'text-slate-400'}`}
                   >
                     <Plus size={14} />
-                    <span className="text-[8px] mt-0.5">ऐप्स जोड़ें (Checklist)</span>
+                    <span className="text-[8px] mt-0.5">App Checklist</span>
                   </button>
 
                   <button 
@@ -1365,9 +1365,10 @@ export default function App() {
                     className={`flex flex-col items-center cursor-pointer transition ${activeTab === 'info' ? 'text-blue-500 font-extrabold' : 'text-slate-400'}`}
                   >
                     <Info size={14} />
-                    <span className="text-[8px] mt-0.5">मदद (Instructions)</span>
+                    <span className="text-[8px] mt-0.5">Instructions</span>
                   </button>
                 </div>
+
                 {/* Simulated Permission Dialog Modal matching Android Activity perfectly */}
                 {showPermissionsDialog && (
                   <div className="absolute inset-0 bg-[#070b13]/98 z-50 p-4 flex flex-col justify-between overflow-y-auto">
@@ -1377,7 +1378,7 @@ export default function App() {
                       <div className="flex justify-between items-center pb-2 border-b border-slate-800">
                         <div className="flex items-center gap-1.5">
                           <ShieldCheck size={16} className="text-indigo-400" />
-                          <span className="text-xs font-black text-indigo-300 uppercase tracking-wider">ऐप अनुमतियाँ (Permissions)</span>
+                          <span className="text-xs font-black text-indigo-300 uppercase tracking-wider">App Permissions</span>
                         </div>
                         <button 
                           onClick={() => setShowPermissionsDialog(false)}
@@ -1388,46 +1389,46 @@ export default function App() {
                       </div>
 
                       <p className="text-[10px] text-slate-400 leading-normal">
-                        ऐप की सुचारू कार्यप्रणाली के लिए निम्नलिखित अनुमतियाँ आवश्यक हैं। लाइव ऐप में ये बटन सीधे सिस्टम सेटिंग्स पर रीडायरेक्ट करते हैं:
+                        The following permissions are required for the application to function correctly. In the actual app, these options redirect directly to system settings:
                       </p>
 
                       {/* Permissions List */}
                       <div className="space-y-3">
 
                         {/* 0. App Info / Allow Restricted Settings Card */}
-                        <div className="bg-[#0f1b35] border border-indigo-500/40 rounded-xl p-3 space-y-2">
+                        <div className="bg-[#0c1424] border border-slate-805 rounded-xl p-3 space-y-2">
                           <div className="flex justify-between items-center">
-                            <span className="text-[11px] font-black text-indigo-300">1. ऐप जानकारी (App Details Settings)</span>
-                            <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${isSimulatedRestrictedOn ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/40' : 'bg-rose-950 text-rose-400 border border-rose-800/40 animate-pulse'}`}>
-                              {isSimulatedRestrictedOn ? 'मंजूर (ON)' : 'आवश्यक (Check)'}
+                            <span className="text-[11px] font-black text-slate-200">App Info</span>
+                            <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${isSimulatedRestrictedOn ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/40' : 'bg-rose-950 text-rose-400 border border-rose-800/40'}`}>
+                              {isSimulatedRestrictedOn ? 'Granted (ON)' : 'Required (Check)'}
                             </span>
                           </div>
-                          <p className="text-[9px] text-slate-300 leading-normal">
-                            यदि एक्सेसिबिलिटी सर्विस (Accessibility) चालू नहीं हो रही है या <strong>'Restricted Settings'</strong> एरर आ रहा है, तो नीचे बटन दबाकर <strong>App Info</strong> खोलें, फिर सबसे ऊपर <strong>3-dots (⋮)</strong> दबाकर <strong>'Allow restricted settings'</strong> को चालू करें।
+                          <p className="text-[9px] text-slate-500 leading-tight">
+                            If you get a 'Restricted Settings' error when enabling Accessibility, tap the 3-dots menu in App Info and choose 'Allow Restricted Settings'.
                           </p>
                           <button
                             onClick={() => {
                               setIsSimulatedRestrictedOn(true);
-                              setLaunchNotification("Redirecting to System: App Info (Details) Settings");
+                              setLaunchNotification("Redirecting to System: App Info Settings");
                               setTimeout(() => setLaunchNotification(null), 2500);
                             }}
-                            className="w-full py-1.5 bg-gradient-to-r from-indigo-600 to-blue-600 hover:brightness-110 text-white text-[10px] font-black rounded-lg transition shadow-md shadow-indigo-950/50 flex items-center justify-center gap-1"
+                            className="w-full py-1.5 bg-slate-900 border border-slate-805 hover:bg-slate-850 text-indigo-400 text-[10px] font-bold rounded-lg transition flex items-center justify-center gap-1"
                           >
                             <Info size={11} className="stroke-[3]" />
-                            ऐप जानकारी (App Info) खोलें
+                            Open App Info
                           </button>
                         </div>
                         
                         {/* 1. Accessibility Service Card */}
                         <div className="bg-[#0c1424] border border-slate-805 rounded-xl p-3 space-y-2">
                           <div className="flex justify-between items-center">
-                            <span className="text-[11px] font-black text-slate-200">एक्सेसिबिलिटी (Accessibility)</span>
+                            <span className="text-[11px] font-black text-slate-200">Accessibility Service</span>
                             <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${isSimulatedAccessibilityOn ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/40' : 'bg-rose-950 text-rose-400 border border-rose-800/40'}`}>
-                              {isSimulatedAccessibilityOn ? 'चालू (ON)' : 'बंद (OFF)'}
+                              {isSimulatedAccessibilityOn ? 'Enabled (ON)' : 'Disabled (OFF)'}
                             </span>
                           </div>
                           <p className="text-[9px] text-slate-500 leading-tight">
-                            सिलेक्टेड ऐप्स ओपन होने पर स्टडी लॉक एक्टिव करने के लिए आवश्यक है।
+                            Required to detect and trigger the study screen when distracting apps are opened.
                           </p>
                           <button
                             onClick={() => {
@@ -1437,20 +1438,20 @@ export default function App() {
                             }}
                             className="w-full py-1.5 bg-slate-900 border border-slate-805 hover:bg-slate-850 text-indigo-400 text-[10px] font-bold rounded-lg transition"
                           >
-                            {isSimulatedAccessibilityOn ? 'सेट देखें (View Settings)' : 'अनुमति दें (Enable)'}
+                            {isSimulatedAccessibilityOn ? 'View Settings' : 'Enable'}
                           </button>
                         </div>
 
                         {/* 2. Display Over Other Apps Card */}
                         <div className="bg-[#0c1424] border border-slate-805 rounded-xl p-3 space-y-2">
                           <div className="flex justify-between items-center">
-                            <span className="text-[11px] font-black text-slate-200">डिस्प्ले ओवर ऐप्स (Overlay)</span>
+                            <span className="text-[11px] font-black text-slate-200">Display Over Other Apps</span>
                             <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${isSimulatedOverlayOn ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/40' : 'bg-rose-950 text-rose-400 border border-rose-800/40'}`}>
-                              {isSimulatedOverlayOn ? 'मंजूर (ON)' : 'अस्वीकृत (OFF)'}
+                              {isSimulatedOverlayOn ? 'Granted (ON)' : 'Denied (OFF)'}
                             </span>
                           </div>
                           <p className="text-[9px] text-slate-500 leading-tight">
-                            ब्लॉक ऐप्स ओपन होने पर उनके ऊपर ब्लॉक स्क्रीन दिखाने के लिए आवश्यक है।
+                            Required to display the high-contrast overlay screen on top of blocked apps.
                           </p>
                           <button
                             onClick={() => {
@@ -1460,20 +1461,20 @@ export default function App() {
                             }}
                             className="w-full py-1.5 bg-slate-900 border border-slate-805 hover:bg-slate-850 text-indigo-400 text-[10px] font-bold rounded-lg transition"
                           >
-                            {isSimulatedOverlayOn ? 'सेट देखें (View Settings)' : 'अनुमति दें (Enable)'}
+                            {isSimulatedOverlayOn ? 'View Settings' : 'Enable'}
                           </button>
                         </div>
 
                         {/* 3. Ignore Battery Restriction Card */}
                         <div className="bg-[#0c1424] border border-slate-805 rounded-xl p-3 space-y-2">
                           <div className="flex justify-between items-center">
-                            <span className="text-[11px] font-black text-slate-200">बैटरी रिस्ट्रिक्शन (Battery Restriction)</span>
-                            <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${isSimulatedBatteryOn ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/40' : 'bg-amber-950 text-amber-400 border border-amber-800/40'}`}>
-                              {isSimulatedBatteryOn ? 'अप्रतिबंधित (Unrestricted)' : 'प्रतिबंधित (Restricted)'}
+                            <span className="text-[11px] font-black text-slate-200">Ignore Battery Restriction</span>
+                            <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${isSimulatedBatteryOn ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/40' : 'bg-[#fff7ed]/20 text-[#f97316] border border-[#f97316]/45'}`}>
+                              {isSimulatedBatteryOn ? 'Unrestricted' : 'Restricted'}
                             </span>
                           </div>
                           <p className="text-[9px] text-slate-500 leading-tight">
-                            सिस्टम द्वारा बैकग्राउंड सेवा को बंद होने से बचाने के लिए ऐप को 'अप्रतिबंधित' (No Restriction) पर सेट करें।
+                            Set to 'Unrestricted' (No Restriction) to prevent the OS from killing the background monitoring service.
                           </p>
                           <button
                             onClick={() => {
@@ -1483,7 +1484,7 @@ export default function App() {
                             }}
                             className="w-full py-1.5 bg-slate-900 border border-slate-805 hover:bg-slate-850 text-indigo-400 text-[10px] font-bold rounded-lg transition"
                           >
-                            {isSimulatedBatteryOn ? 'सेट देखें (View Settings)' : 'प्रतिबंध हटाएं (Remove Restriction)'}
+                            {isSimulatedBatteryOn ? 'View Settings' : 'Remove Restriction'}
                           </button>
                         </div>
 
@@ -1496,13 +1497,12 @@ export default function App() {
                         onClick={() => setShowPermissionsDialog(false)}
                         className="w-full py-2 bg-indigo-600 hover:bg-indigo-505 text-white text-xs font-black rounded-xl transition"
                       >
-                        ओके (OK)
+                        OK
                       </button>
                     </div>
 
                   </div>
-                )}
-
+                )}�
                 {/* Simulated Share App / APK Link Modal */}
                 {showShareModal && (
                   <div className="absolute inset-0 bg-[#070b13]/98 z-50 p-4 flex flex-col justify-between overflow-y-auto">
@@ -1512,7 +1512,7 @@ export default function App() {
                       <div className="flex justify-between items-center pb-2 border-b border-slate-800">
                         <div className="flex items-center gap-1.5">
                           <Share2 size={16} className="text-indigo-400 animate-pulse" />
-                          <span className="text-xs font-black text-indigo-300 uppercase tracking-wider">ऐप शेयर करें (Share APK Link)</span>
+                          <span className="text-xs font-black text-indigo-300 uppercase tracking-wider">Share APK Link</span>
                         </div>
                         <button 
                           onClick={() => setShowShareModal(false)}
@@ -1524,7 +1524,7 @@ export default function App() {
 
                       {/* Information text */}
                       <p className="text-[10px] text-slate-400 leading-normal">
-                        अपने दोस्तों को Study Mode App Lock & Timer ऐप की डाउनलोड लिंक भेजें और उन्हें एक साथ बिना किसी डिस्ट्रेक्शन के ध्यान केंद्रित करने में मदद करें!
+                        Send the download link of the Study Mode App Lock & Timer app to your friends and classmates to help them focus together without any distractions!
                       </p>
 
                       {/* Cool App Info Box inside popup */}
@@ -1544,7 +1544,7 @@ export default function App() {
 
                       {/* Copy Link Section */}
                       <div className="space-y-1.5">
-                        <label className="text-[9.5px] font-black text-slate-400 block">APK डाउनलोड लिंक (Download Link):</label>
+                        <label className="text-[9.5px] font-black text-slate-400 block">APK Download Link:</label>
                         <div className="flex gap-1.5">
                           <input 
                             type="text" 
@@ -1567,7 +1567,7 @@ export default function App() {
 
                       {/* Real / Simulated Share Channels list with quick share text */}
                       <div className="space-y-2">
-                        <span className="text-[9.5px] font-black text-slate-400 block">सोशल चैनल्स पर शेयर करें (Share via Social):</span>
+                        <span className="text-[9.5px] font-black text-slate-400 block">Share via Social Channels:</span>
                         
                         <div className="grid grid-cols-2 gap-2">
                           {/* WhatsApp */}
@@ -1599,7 +1599,7 @@ export default function App() {
                           </button>
                         </div>
 
-                        {/* System Native Share Button fallback */}
+                         {/* System Native Share Button fallback */}
                         <button 
                           onClick={async () => {
                             const shareData = {
@@ -1623,7 +1623,7 @@ export default function App() {
                           className="w-full bg-slate-900 hover:bg-slate-850 text-indigo-400 font-bold text-[10.5px] py-2 rounded-xl flex items-center justify-center gap-1.5 border border-slate-800 active:scale-95 transition mt-1"
                         >
                           <Share2 size={12} />
-                          सिस्टम शेयर करें (System Native Share)
+                          System Native Share
                         </button>
                       </div>
 
@@ -1635,7 +1635,7 @@ export default function App() {
                         onClick={() => setShowShareModal(false)}
                         className="w-full py-2 bg-slate-800 hover:bg-slate-750 text-slate-300 text-xs font-black rounded-xl transition"
                       >
-                        वापस जाएँ (Back)
+                        Back
                       </button>
                     </div>
 
@@ -1655,12 +1655,12 @@ export default function App() {
                     <Lock size={34} className="text-rose-500" />
                   </div>
                   <h4 className="text-[17px] font-black text-rose-400 leading-snug">
-                    पढ़ाई का सख्त समय सक्रिय है!
+                    Strict Study Mode is Active!
                   </h4>
                   <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-wider">Focus Study Hours Locked</p>
 
                   <div className="mt-6 w-full bg-slate-900 border border-slate-800 rounded-xl p-4">
-                    <p className="text-[10.5px] text-slate-400">यह ऐप प्रतिबंधित है क्योंकि यह 'स्टडी ऐप्स' की सूची में नहीं है:</p>
+                    <p className="text-[10.5px] text-slate-400">This app is restricted because it is not in your 'Allowed Study Apps' list:</p>
                     <p className="text-md font-black text-blue-400 mt-2 truncate">"{selectedBlockedAppName}"</p>
                   </div>
                 </div>
@@ -1677,7 +1677,7 @@ export default function App() {
                     className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black text-[11px] rounded-xl transition flex items-center justify-center gap-1.5"
                   >
                     <Timer size={12} />
-                    15 मिनट का ब्रेक लें (Emergency Break)
+                    Take a 15-Minute Break
                   </button>
 
                   <button
@@ -1688,7 +1688,7 @@ export default function App() {
                     className="w-full py-2 bg-indigo-950 hover:bg-indigo-900 border border-indigo-800 text-indigo-300 font-extrabold text-[10px] rounded-xl transition flex items-center justify-center gap-1"
                   >
                     <CheckSquare size={10} />
-                    स्टडी ऐप्स सेटिंग्स बदलें (Toggle lists)
+                    Change study app settings (Toggle list)
                   </button>
 
                   <button
@@ -1697,7 +1697,7 @@ export default function App() {
                     }}
                     className="w-full text-slate-500 hover:text-slate-450 text-[10px] pt-1.5 transition cursor-pointer"
                   >
-                    होम स्क्रीन पर जाएँ (Home Screen)
+                    Go to Home Screen
                   </button>
 
                 </div>
@@ -1736,7 +1736,7 @@ export default function App() {
           {/* Dynamic Link Generation for Play Console Privacy URL field */}
           <div className="space-y-1.5">
             <div className="flex justify-between items-center">
-              <label className="text-[10px] font-black text-slate-400">प्ले स्टोर प्राइवेसी पालिसी लिंक (Privacy Policy URL):</label>
+              <label className="text-[10px] font-black text-slate-400">Play Store Privacy Policy URL:</label>
               <span className="text-[8.5px] text-indigo-400 font-bold bg-indigo-950/40 px-1.5 py-0.5 rounded border border-indigo-900/35">100% Google Compliant</span>
             </div>
             <div className="flex gap-2">
@@ -1752,49 +1752,49 @@ export default function App() {
                   setLaunchNotification("Copied Privacy Policy Link to Clipboard!");
                   setTimeout(() => setLaunchNotification(null), 2500);
                 }}
-                className="bg-indigo-600 hover:bg-indigo-550 active:scale-95 text-white text-[10px] font-black px-4 py-1.5 rounded-lg shadow-md transition"
+                className="bg-indigo-600 hover:bg-indigo-555 active:scale-95 text-white text-[10px] font-black px-4 py-1.5 rounded-lg shadow-md transition"
               >
                 Copy URL
               </button>
             </div>
             <p className="text-[8.5px] text-slate-500 leading-tight">
-              * अपनी Google Play Console में <strong>"App Content &gt; Privacy Policy"</strong> वाले विकल्प में ऊपर दिए गए लिंक को पेस्ट करें। यह पेज रीयल-टाइम में उपलब्ध है।
+              * Paste the URL above in your Google Play Console under "App Content &gt; Privacy Policy". This page is live and fully accessible.
             </p>
           </div>
 
           {/* Guidelines Section organized with visual hierarchy */}
           <div className="space-y-3 pt-1">
-            <h4 className="text-[10px] font-black text-slate-300 uppercase tracking-wider">प्ले स्टोर पर पब्लिश करने की रणनीति (Publishing Tips):</h4>
+            <h4 className="text-[10px] font-black text-slate-300 uppercase tracking-wider">Play Store Publishing Strategy:</h4>
             
             <div className="space-y-2 text-[10px] text-slate-400 leading-normal">
               
               <div className="bg-[#0e172a] border border-blue-950 p-2.5 rounded-xl space-y-1">
-                <span className="font-bold text-blue-400 block text-[9.5px]">⚠️ एक्सीसिबिलिटी डिक्लेरेशन (Accessibility Disclosures):</span>
-                <p className="text-[9px] leading-relaxed">
-                  जब प्ले स्टोर आपसे एक्सीसिबिलिटी सर्विस के उद्देश्य के बारे में पूछे, तो घोषित करें कि:
-                  "यह ऐप केवल पढ़ाई के दौरान विचलित करने वाली ऐप्स के पैकेज नामों को पहचानने के लिए Accessibility Service API की अनुमति मांगता है। यह पूरी प्रक्रिया ऑफलाइन होती है और ऐप किसी भी प्रकार का उपयोगकर्ता डेटा एकत्र या लीक नहीं करता है।"
+                <span className="font-bold text-blue-400 block text-[9.5px]">⚠️ Accessibility Declaration & Disclosure:</span>
+                <p className="text-[9px] leading-relaxed text-slate-350">
+                  When the Play Store queries your implementation of the Accessibility Service API, declare:
+                  "This app requests the Accessibility Service API permission solely to detect the package names of distracting apps during study hours. This process runs completely offline, and no user data is collected, shared, or transmitted outside the device."
                 </p>
               </div>
 
               <div className="bg-[#0e172a] border border-emerald-950 p-2.5 rounded-xl space-y-1">
-                <span className="font-bold text-emerald-400 block text-[9.5px]">🛡️ डेटा सुरक्षा फार्म (Data Safety Declaration):</span>
-                <p className="text-[9px] leading-relaxed">
-                  Google Play Console में डेटा सेफ्टी फ़ॉर्म भरते समय चुनें:
-                  <strong>"No user data is collected or shared with third parties"</strong>। यह ऐप शून्य डेटा संग्रह नीति का पालन करता है क्योंकि इसका उपयोग पूरी तरह ऑफलाइन है।
+                <span className="font-bold text-emerald-400 block text-[9.5px]">🛡️ Data Safety Form & Declaration:</span>
+                <p className="text-[9px] leading-relaxed text-slate-350">
+                  When completing the Play Store Data Safety form, select:
+                  <strong>"No user data is collected or shared with third parties"</strong>. The app complies with a strict zero-data collection policy as all storage is client-side offline.
                 </p>
               </div>
 
               <div className="bg-[#0e172a] border border-amber-950 p-2.5 rounded-xl space-y-1">
-                <span className="font-bold text-amber-405 block text-[9.5px]">👥 लक्षित दर्शक (Target Audience Rating):</span>
-                <p className="text-[9px] leading-relaxed">
-                  हम सुझाव देते हैं की आप अपनी ऐप के लिए लक्षित दर्शक आयु <strong>13+ ya 18+ (Teens and Above)</strong> चुनें। इससे बच्चों से संबंधित कड़े प्रतिबंधों और कॉप्टा (COPPA Notification) नियमों की वजह से ऐप रिजेक्ट होने का जोखिम खत्म हो जाएगा।
+                <span className="font-bold text-amber-405 block text-[9.5px]">👥 Target Audience & Age Rating:</span>
+                <p className="text-[9px] leading-relaxed text-slate-350">
+                  We recommend selecting a target audience age of <strong>13+ or 18+ (Teens and Above)</strong>. This completely bypasses complicated COPPA regulations, child safety requirements, or target-audience metadata rejections.
                 </p>
               </div>
 
               <div className="bg-[#0e172a] border border-indigo-950 p-2.5 rounded-xl space-y-1">
-                <span className="font-bold text-indigo-400 block text-[9.5px]">📢 विज्ञापनों का सेटअप (Google AdSense Setup):</span>
-                <p className="text-[9px] leading-relaxed">
-                  चूंकि ऐप में ब्रेक के समय फुल-स्क्रीन एड आते हैं, इसी प्रकार के इंटरस्टिशियल विज्ञापनों को प्ले स्टोर की <strong>"Ads &gt; App Contains Ads"</strong> सेटिंग्स में हां (Yes) पर सेट करें।
+                <span className="font-bold text-indigo-400 block text-[9.5px]">📢 Ad Settings & Monetization Setup:</span>
+                <p className="text-[9px] leading-relaxed text-slate-350">
+                  Since the app displays interstitial placeholder ads when requesting a break, configure the <strong>"Ads &gt; App Contains Ads"</strong> setting in your Play Store Console to <strong>Yes</strong>.
                 </p>
               </div>
 

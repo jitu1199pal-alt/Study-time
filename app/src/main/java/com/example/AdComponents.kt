@@ -324,7 +324,7 @@ fun SimulatedAdOverlay(
                             .height(50.dp)
                     ) {
                         Text(
-                            text = "ब्रेक शुरू करें (Start Break)",
+                            text = "Start Break",
                             color = Color.White,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Black

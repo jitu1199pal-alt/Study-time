@@ -1,70 +1,70 @@
-# Study Mode App Lock & Timer Release & Sign Guide (रिलीज और साइन निर्देश)
+# Study Mode App Lock & Timer Release & Sign Guide
 
-आपके Android ऐप को Google Play Store पर अपलोड करने के लिए आवश्यक सभी रिलीज सेटिंग्स और एक सुरक्षित **परमानेंट सिग्नेचर की (Signing Key)** को पूरी तरह से ऐप में इंटीग्रेट कर दिया गया है। 
+All release configurations and a permanent, secure **Signing Key** have been successfully integrated into your Android application to allow direct uploading to the Google Play Store.
 
-यह गाइड आपको बताती है कि आप **GitHub Secrets** और मैनुअल कीस्टोर (Manual Keystore) सेटअप का उपयोग करके अपने मोबाइल या कंप्यूटर से ऐप को कैसे कंपाइल कर सकते हैं।
+This guide details how to compile the application from your computer or mobile device using **GitHub Secrets** and a manual Keystore setup.
 
 ---
 
-## 🔑 1. सुरक्षा कुंजी विवरण (Manual & GitHub Sign Setup)
+## 🔑 1. Security Signing Key Setup (Manual & GitHub Sign Setup)
 
-अब हमने साइनिंग प्रोसेस को अत्यंत लचीला बनाया है। यदि आपके पास अपनी पुरानी कीस्टोर फाइल नहीं है, तो आप एक बिल्कुल नई कीस्टोर फाइल जनरेट कर सकते हैं और उसे GitHub पर कॉन्फ़िगर कर सकते हैं।
+The signing process is highly flexible. If you do not have your old Keystore file, you can easily generate a new Keystore and configure it on GitHub.
 
-### कीस्टोर जनरेट करने के लिए कमांड (Run on PC or Mobile Termux):
-अपने मोबाइल (Termux) या कंप्यूटर के टर्मिनल में नीचे दी गई कमांड चलाएं:
+### Keystore Generation Command (Run on PC or Mobile Termux):
+Run the following command in your terminal or command prompt:
 ```bash
 keytool -genkeypair -v -keystore my-release-key.p12 -alias studyshield -keyalg RSA -keysize 2048 -validity 10000 -storetype PKCS12 -storepass studyshieldpass -keypass studyshieldpass -dname "CN=Study Mode App Lock & Timer, O=Study Mode App Lock & Timer, C=IN"
 ```
 
-### 📂 कीस्टोर को प्रोजेक्ट में कहाँ रखें?
-आप `my-release-key.p12` फाइल को अपने प्रोजेक्ट के **रूट फोल्डर** (Root Directory) के अंदर कॉपी करके रखें (या GitHub रिपॉजिटरी में डायरेक्ट कमिट करें)।
+### 📂 Where to place the Keystore?
+Copy the generated `my-release-key.p12` file directly into the **root folder** of your project (or commit it to your GitHub repository root).
 
-### 🔐 2. GitHub Secrets Setup (GitHub पर क्रेडेंशियल्स जोड़ें)
-अपने GitHub रिपॉजिटरी के **Settings -> Secrets and variables -> Actions** लिंक पर जाएं और **New repository secret** बटन दबाकर निम्नलिखित सीक्रेट्स जोड़ें:
+### 🔐 2. GitHub Secrets Setup
+Navigate to your GitHub repository -> **Settings -> Secrets and variables -> Actions**, click on **New repository secret**, and add the following keys:
 
-1.  **STORE_PASSWORD**: `studyshieldpass` (या आपका अपना कीस्टोर पासवर्ड)
-2.  **KEY_ALIAS**: `studyshield` (या आपका अपना की एलियास)
-3.  **KEY_PASSWORD**: `studyshieldpass` (या आपका अपना की पासवर्ड)
+1.  **STORE_PASSWORD**: `studyshieldpass` (or your custom keystore password)
+2.  **KEY_ALIAS**: `studyshield` (or your custom key alias)
+3.  **KEY_PASSWORD**: `studyshieldpass` (or your custom key password)
 
-> 💡 **स्मार्ट कम्पैटिबल फॉलबैक (Fail-safe Fallback):** यदि किसी कारणवश `my-release-key.p12` फाइल प्रोजेक्ट रूट में नहीं मिलती है, तो ऐप की कम्पाइलेशन फेल होने के बजाय ऑटोमैटिक रूप से सुरक्षित **Debug Keystore** का उपयोग कर लेगी। इससे आपका GitHub Actions बिल्ड कभी भी फेल नहीं होगा और हमेशा 100% सक्सेसफुल एपीके (Success APK) बनाकर डाउनलोड के लिए देगा!
+> 💡 **Smart Compatible Fallback:** If your `my-release-key.p12` file is missing from the project root, the build process will automatically fall back to a secure **Debug Keystore** instead of failing. This guarantees that your GitHub Actions builds always succeed and produce clean, downloadable APKs!
 
 ---
 
-## 🛠️ 2. अपने कंप्यूटर पर APK और AAB फाइल कैसे जनरेट करें?
+## 🛠️ 2. How to Generate APK and AAB on Your Computer
 
-आप अपने लोकल सिस्टम (Local Machine) पर एक सिंगल टर्मिनल कमांड की मदद से दोनों रिलीज फाइलें आसानी से जनरेट कर सकते हैं:
+You can build both release formats locally with single-line terminal commands:
 
-1.  **ज़िप एक्सपोर्ट (ZIP Export) डाउनलोड करें** या प्रोजेक्ट को **GitHub** पर एक्सपोर्ट करें।
-2.  प्रोजेक्ट फोल्डर को अपने कंप्यूटर पर खोलें।
-3.  कमांड प्रॉम्प्ट (CMD) या टर्मिनल खोलें और निम्नलिखित कमांड्स रन करें:
+1.  **Download the ZIP Export** or export the project to **GitHub**.
+2.  Open the project folder on your computer.
+3.  Open a terminal (or active command prompt) and run:
 
-### A. गूगल प्ले स्टोर बंडल (AAB) जनरेट करने के लिए:
+### A. For Play Store Release Bundle (AAB):
 ```bash
 ./gradlew bundleRelease
 ```
-यह कमांड आपके लिए **AAB (Android App Bundle)** फाइल जनरेट करेगी जो प्ले स्टोर अपलोड के लिए आवश्यक प्रारूप है। यह फाइल आपको निम्नलिखित लोकेशन पर मिलेगी:
+This generates the **AAB (Android App Bundle)** required for Play Store uploading. It can be found at:
 📂 `app/build/outputs/bundle/release/app-release.aab`
 
-### B. रिलीज एपीके (APK) जनरेट करने के लिए (डायरेक्ट इंस्टॉल के लिए):
+### B. For Standalone Release Installer (APK):
 ```bash
 ./gradlew assembleRelease
 ```
-यह कमांड आपके लिए **साइन की हुई रिलीज एपीके (Release Signed APK)** तैयार करेगी। यह फाइल आपको निम्नलिखित लोकेशन पर मिलेगी:
+This compiles a **Signed Release APK** for direct manual installs, which can be found at:
 📂 `app/build/outputs/apk/release/app-release.apk`
 
 ---
 
-## 🌐 3. गूगल प्ले स्टोर पर कैसे अपलोड करें?
+## 🌐 3. Steps to Upload to Google Play Store
 
-1.  **Google Play Console** पर जाएं और लॉग इन करें।
-2.  **Create App** बटन पर क्लिक करें।
-3.  **Production** ट्रैक पर जाकर **Create New Release** चुनें।
-4.  वहाँ अपनी `app-release.aab` फ़ाइल को ड्रैग-एंड-ड्रॉप करें।
-5.  अपनी नई **Privacy Policy (गोपनीयता नीति)** को सबमिट करें जो हमने ऐप के **Help / Info Tab** के अंदर सुंदर और अनुपालक रूप से पूरी तरह जोड़ दी है।
+1.  Log in to your **Google Play Console**.
+2.  Click **Create App** and configure basic fields.
+3.  Navigate to **Production** and select **Create New Release**.
+4.  Drag and drop your `app-release.aab` bundle.
+5.  Submit your compliant **Privacy Policy URL**. An elegant, interactive privacy policy card containing your Accessibility Service Disclosure has been added under the **Help / Info** tab in-app for play store reviews.
 
 ---
 
-### ✅ क्या-क्या बदलाव किए गए हैं:
-1.  **ऑटो-कीस्टोर जनरेशन (Auto Keystore Builder):** आपके प्रोजेक्ट के Gradle स्क्रिप्ट (`build.gradle.kts`) में कोड जोड़ दिया गया है जो अपने आप लोकल मशीन पर रिलीज कीस्टोर फाइल तैयार कर लेगा।
-2.  **यूनिवर्सल कंपाइल हुक्स (Universal Gradle Finalizers):** जब भी प्रोजेक्ट कंपाइल होगा, ऑटोमैटिकली प्ले-स्टोर फ्रेंडली साइनिंग क्रेडेंशियल्स लागू होंगे।
-3.  **गोपनीयता नीति (In-App Privacy Policy Card):** ऐप के अंदर उपयोगकर्ता और गूगल रिव्यु टीम की सुविधा के लिए पूरी गाइड के साथ एक्सेसिबिलिटी सर्विस डिस्क्लोजर (Accessibility Permission Disclosure) नीति जोड़ दी गई है।
+### ✅ Implemented Upgrades:
+1.  **Auto Keystore Builder:** Code is integrated into `build.gradle.kts` to automate local release key building and detection.
+2.  **Universal Gradle Hooks:** Automatic signing fallback prevents errors while ensuring clean Play Store compliance.
+3.  **In-App Privacy Policy:** Beautiful English policy layouts featuring precise compliance disclosures for reviews and active users.

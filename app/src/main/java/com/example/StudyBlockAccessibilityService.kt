@@ -94,15 +94,15 @@ class StudyBlockAccessibilityService : AccessibilityService() {
         val text: String
 
         if (active) {
-            title = "स्टडी मोड ऐप लॉक सक्रिय है (Study Mode Lock Active) 🔒"
-            text = "आपकी पढ़ाई का समय चल रहा है। आवश्यक ऐप्स को छोड़कर बाकी बंद हैं।"
+            title = "Study Mode App Lock is Active 🔒"
+            text = "Study mode is currently active. Essential apps are allowed, others are blocked."
         } else if (isBreak) {
             val minsLeft = prefs.getBreakRemainingMinutes()
-            title = "स्टडी मोड: ब्रेक समय सक्रीय (On Emergency Break) ☕"
-            text = "आपातकालीन ब्रेक: $minsLeft मिनट बाकी। सभी ऐप्स चलाने की अनुमति है।"
+            title = "Study Mode: On Emergency Break ☕"
+            text = "Emergency Break: $minsLeft minutes remaining. All apps are temporarily unlocked."
         } else {
-            title = "स्टडी मोड ऐप लॉक बैकग्राउंड में सक्रिय है (Study Mode Ready) 🛡️"
-            text = "शेड्यूल शुरू होते ही ऐप्स को ब्लॉक किया जाएगा।"
+            title = "Study Mode App Lock is running in background 🛡️"
+            text = "Your distracting apps will be blocked as soon as study hours begin."
         }
 
         val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
