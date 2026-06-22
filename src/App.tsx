@@ -871,6 +871,33 @@ export default function App() {
                     </div>
                   </div>
 
+                  {/* Simulated Android App navigation bar moved here to the TOP */}
+                  <div className="mt-1 bg-[#0b101c] border-t border-b border-slate-800 grid grid-cols-3 select-none py-2 text-center rounded-lg shadow-inner">
+                    <button 
+                      onClick={() => setActiveTab('home')}
+                      className={`flex flex-col items-center cursor-pointer transition ${activeTab === 'home' ? 'text-blue-500 font-black' : 'text-slate-400'}`}
+                    >
+                      <Smartphone size={13} />
+                      <span className="text-[9px] mt-0.5 font-bold">Schedules</span>
+                    </button>
+
+                    <button 
+                      onClick={() => setActiveTab('apps')}
+                      className={`flex flex-col items-center cursor-pointer transition ${activeTab === 'apps' ? 'text-blue-500 font-black' : 'text-slate-400'}`}
+                    >
+                      <Plus size={13} />
+                      <span className="text-[9px] mt-0.5 font-bold">App Checklist</span>
+                    </button>
+
+                    <button 
+                      onClick={() => setActiveTab('info')}
+                      className={`flex flex-col items-center cursor-pointer transition ${activeTab === 'info' ? 'text-blue-500 font-black' : 'text-slate-400'}`}
+                    >
+                      <Info size={13} />
+                      <span className="text-[9px] mt-0.5 font-bold">Instructions</span>
+                    </button>
+                  </div>
+
 
 
                   {/* Custom Break Selector Popup/Overlay inside header space */}
@@ -1342,33 +1369,6 @@ export default function App() {
 
                 </div>
 
-                {/* Simulated Android App bottom navigation bar inside phone mockup container */}
-                <div className="bg-[#0b101c] border-t border-slate-900 grid grid-cols-3 select-none py-1.5 text-center relative z-10">
-                  <button 
-                    onClick={() => setActiveTab('home')}
-                    className={`flex flex-col items-center cursor-pointer transition ${activeTab === 'home' ? 'text-blue-500 font-extrabold' : 'text-slate-400'}`}
-                  >
-                    <Smartphone size={14} />
-                    <span className="text-[8px] mt-0.5">Schedules</span>
-                  </button>
-
-                  <button 
-                    onClick={() => setActiveTab('apps')}
-                    className={`flex flex-col items-center cursor-pointer transition ${activeTab === 'apps' ? 'text-blue-500 font-extrabold' : 'text-slate-400'}`}
-                  >
-                    <Plus size={14} />
-                    <span className="text-[8px] mt-0.5">App Checklist</span>
-                  </button>
-
-                  <button 
-                    onClick={() => setActiveTab('info')}
-                    className={`flex flex-col items-center cursor-pointer transition ${activeTab === 'info' ? 'text-blue-500 font-extrabold' : 'text-slate-400'}`}
-                  >
-                    <Info size={14} />
-                    <span className="text-[8px] mt-0.5">Instructions</span>
-                  </button>
-                </div>
-
                 {/* Simulated Permission Dialog Modal matching Android Activity perfectly */}
                 {showPermissionsDialog && (
                   <div className="absolute inset-0 bg-[#070b13]/98 z-50 p-4 flex flex-col justify-between overflow-y-auto">
@@ -1642,64 +1642,117 @@ export default function App() {
                   </div>
                 )}
 
+                {/* Simulated Google AdMob Banner Ad in the Bottom Center of all APK pages */}
+                <div className="w-full bg-[#0d1527] border-t border-slate-800/80 px-2.5 py-1.5 text-center flex flex-col items-center select-none shrink-0 z-30">
+                  <p className="text-[6.5px] text-slate-500 font-extrabold tracking-widest uppercase">Google AdMob Banner Ad</p>
+                  <div className="w-full bg-slate-950/80 px-2 py-1.5 rounded-lg border border-slate-900 mt-1 flex items-center justify-between">
+                    <div className="text-left flex items-center gap-1.5">
+                      <span className="bg-emerald-600/30 text-emerald-400 border border-emerald-600/40 text-[6.5px] font-black px-1.5 py-0.2 rounded uppercase">Ad</span>
+                      <div>
+                        <p className="text-[8.5px] text-white font-extrabold leading-none">Cozy Study Session Pro</p>
+                        <p className="text-[6.5px] text-slate-400">Sponsored • ca-app-pub-2585981026340393/9149642997</p>
+                      </div>
+                    </div>
+                    <span onClick={() => {
+                        alert("Simulating AdMob click! Redirecting to Google AdMob sample URL.");
+                      }} className="text-[7.5px] bg-emerald-600 hover:bg-emerald-550 font-black text-white px-2.5 py-1 rounded cursor-pointer uppercase">Install</span>
+                  </div>
+                </div>
+
               </div>
             )}
 
             {/* SCREEN 3: HIGH CONTRAST BLOCK SCREEN REDIRECT SIMULATION (BlockActivity.kt) */}
             {phoneScreen === 'blocked_screen' && (
-              <div className="flex-1 p-5 flex flex-col justify-between text-center bg-gradient-to-b from-[#1c0f1c] via-[#090d16] to-[#05070a]">
+              <div className="flex-1 p-4 flex flex-col justify-start text-center bg-gradient-to-b from-[#1c0f1c] via-[#090d16] to-[#05070a] gap-3.5 overflow-y-auto overflow-x-hidden scrollbar-none">
                 
                 {/* Visual Lock Representation */}
-                <div className="flex flex-col items-center pt-10">
-                  <div className="bg-rose-500/10 p-3.5 rounded-full border border-rose-500/20 mb-4 animate-bounce">
-                    <Lock size={34} className="text-rose-500" />
+                <div className="flex flex-col items-center pt-2">
+                  <div className="bg-rose-500/10 p-2 rounded-full border border-rose-500/25 mb-1 animate-pulse">
+                    <Lock size={16} className="text-rose-500" />
                   </div>
-                  <h4 className="text-[17px] font-black text-rose-400 leading-snug">
+                  <h4 className="text-[13px] font-black text-rose-400 leading-snug">
                     Strict Study Mode is Active!
                   </h4>
-                  <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-wider">Focus Study Hours Locked</p>
-
-                  <div className="mt-6 w-full bg-slate-900 border border-slate-800 rounded-xl p-4">
-                    <p className="text-[10.5px] text-slate-400">This app is restricted because it is not in your 'Allowed Study Apps' list:</p>
-                    <p className="text-md font-black text-blue-400 mt-2 truncate">"{selectedBlockedAppName}"</p>
+                  <div className="mt-2 w-full bg-slate-950/60 border border-slate-900 rounded-xl p-2">
+                    <p className="text-[9px] text-slate-450">Restricted application package:</p>
+                    <p className="text-xs font-black text-blue-400 truncate">"{selectedBlockedAppName}"</p>
                   </div>
                 </div>
 
-                {/* Instant Remedial Action links for simulation scope */}
-                <div className="space-y-2 pb-6">
-                  
-                  {/* Option to trigger breakthrough */}
-                  <button
-                    onClick={() => {
-                      // Trigger emergency break directly from blocked window
-                      requestBreakWithAd(15);
-                    }}
-                    className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black text-[11px] rounded-xl transition flex items-center justify-center gap-1.5"
-                  >
-                    <Timer size={12} />
-                    Take a 15-Minute Break
-                  </button>
+                {/* Simulated Ad Banner placed at the top/middle below the app info card */}
+                <div className="w-full bg-slate-900/40 p-2 border border-slate-800/65 rounded-xl text-center">
+                  <p className="text-[7.5px] text-slate-500 font-black tracking-wider uppercase">Sponsor Advertisement</p>
+                  <div className="bg-slate-950/90 px-2 py-1.5 rounded-lg border border-slate-900 mt-1 flex items-center justify-between">
+                    <div className="text-left">
+                      <span className="bg-amber-600/30 text-amber-400 border border-amber-600/45 text-[7px] font-black px-1 py-0.2 rounded uppercase">Ad</span>
+                      <p className="text-[9px] text-white font-black mt-0.5 leading-none">StudySphere Premium</p>
+                      <p className="text-[7px] text-slate-450">Distraction Blocker Active</p>
+                    </div>
+                    <span className="text-[7.5px] bg-blue-600 hover:bg-blue-550 font-black text-white px-2.5 py-1 rounded cursor-pointer">INSTALL</span>
+                  </div>
+                </div>
 
+                {/* Shifted Active Action Buttons now placed elegantly just above the percentage circle */}
+                <div className="space-y-2">
+                  
                   <button
                     onClick={() => {
                       setPhoneScreen('study_shield_app');
                       setActiveTab('apps');
                     }}
-                    className="w-full py-2 bg-indigo-950 hover:bg-indigo-900 border border-indigo-800 text-indigo-300 font-extrabold text-[10px] rounded-xl transition flex items-center justify-center gap-1"
+                    className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white font-black text-[10.5px] rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer shadow-lg active:scale-95"
                   >
-                    <CheckSquare size={10} />
-                    Change study app settings (Toggle list)
+                    <Play size={11} className="fill-current" />
+                    Open Study Apps
                   </button>
 
+                  {/* Option to trigger breakthrough */}
                   <button
                     onClick={() => {
-                      setPhoneScreen('launcher');
+                      requestBreakWithAd(15);
                     }}
-                    className="w-full text-slate-500 hover:text-slate-450 text-[10px] pt-1.5 transition cursor-pointer"
+                    className="w-full py-2 bg-transparent hover:bg-emerald-950/20 border-2 border-emerald-500 text-emerald-400 font-extrabold text-[10px] rounded-xl transition flex items-center justify-center gap-1.5 cursor-pointer shadow active:scale-95"
                   >
-                    Go to Home Screen
+                    <Timer size={11} />
+                    Take Emergency Break (15 Min)
                   </button>
 
+                </div>
+
+                {/* Beautiful 100% Focus Lock Percentage Ring as requested, now positioned at the bottom of the actions */}
+                <div className="flex flex-col items-center">
+                  <div className="w-16 h-16 rounded-full border-2 border-dashed border-blue-500/50 flex flex-col items-center justify-center bg-blue-950/20 shadow-inner">
+                    <span className="text-md font-black text-blue-400">100%</span>
+                    <span className="text-[7.5px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-0.5">Locked</span>
+                  </div>
+                </div>
+
+                {/* Footer home button */}
+                <button
+                  onClick={() => {
+                    setPhoneScreen('launcher');
+                  }}
+                  className="w-full text-slate-500 hover:text-slate-450 text-[9px] pt-1 transition cursor-pointer"
+                >
+                  Go to Home Screen
+                </button>
+
+                {/* Simulated Google AdMob Banner Ad in the Bottom Center of Block Screen page representing BlockActivity */}
+                <div className="w-full bg-[#0d1527] border-t border-slate-800/80 px-2.5 py-1.5 text-center flex flex-col items-center select-none shrink-0 z-30 rounded-xl mt-auto">
+                  <p className="text-[6.5px] text-slate-500 font-extrabold tracking-widest uppercase">Google AdMob Banner Ad</p>
+                  <div className="w-full bg-slate-950/80 px-2 py-1.5 rounded-lg border border-slate-900 mt-1 flex items-center justify-between">
+                    <div className="text-left flex items-center gap-1.5">
+                      <span className="bg-emerald-600/30 text-emerald-400 border border-emerald-600/40 text-[6.5px] font-black px-1.5 py-0.2 rounded uppercase">Ad</span>
+                      <div>
+                        <p className="text-[8.5px] text-white font-extrabold leading-none">Relaxing White Noise Pro</p>
+                        <p className="text-[6.5px] text-slate-400">Sponsored • ca-app-pub-2585981026340393/9149642997</p>
+                      </div>
+                    </div>
+                    <span onClick={() => {
+                        alert("Simulating AdMob click! Redirecting to Google AdMob sample URL.");
+                      }} className="text-[7.5px] bg-emerald-600 hover:bg-emerald-550 font-black text-white px-2.5 py-1 rounded cursor-pointer uppercase">Install</span>
+                  </div>
                 </div>
 
               </div>

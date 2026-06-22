@@ -29,11 +29,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         
+        <!-- Google Mobile Ads SDK Application ID -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-2585981026340393~9327377010" />
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.MyApplication">
+            android:theme="@style/Theme.MyApplication"
+            android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -45,7 +51,8 @@
             android:name=".BlockActivity"
             android:theme="@style/Theme.MyApplication"
             android:exported="false"
-            android:launchMode="singleInstance" />
+            android:launchMode="singleInstance"
+            android:excludeFromRecents="true" />
 
         <!-- Accessibility Service to monitor of launched apps during focus hours -->
         <service

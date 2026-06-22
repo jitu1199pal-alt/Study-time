@@ -25,8 +25,11 @@ class StudyBlockAccessibilityService : AccessibilityService() {
     private val updateRunnable = object : Runnable {
         override fun run() {
             updateNotification()
-            // Periodic update every 10 seconds to keep live state synced in notification drawer
-            handler.postDelayed(this, 10000)
+            // Optimize background runs:
+            // - If emergency break is active, update every 30 seconds to refresh countdown minutes
+            // - Otherwise, state is completely static; only check/refresh every 5 minutes (300,000ms) to conserve battery and eliminate noise
+            val delay = if (prefs.isBreakActive()) 30000L else 300000L
+            handler.postDelayed(this, delay)
         }
     }
 
@@ -62,9 +65,12 @@ class StudyBlockAccessibilityService : AccessibilityService() {
             val channel = NotificationChannel(
                 CHANNEL_ID,
                 "Study Mode App Lock & Timer Guard Service",
-                NotificationManager.IMPORTANCE_LOW
+                NotificationManager.IMPORTANCE_MIN
             ).apply {
-                description = "Keeps the blocker resilient and active in the background"
+                description = "Keeps the blocker resilient and active in the background silently"
+                enableLights(false)
+                enableVibration(false)
+                setShowBadge(false)
             }
             manager.createNotificationChannel(channel)
         }
@@ -120,7 +126,7 @@ class StudyBlockAccessibilityService : AccessibilityService() {
             .setContentTitle(title)
             .setContentText(text)
             .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setPriority(NotificationCompat.PRIORITY_MIN)
             .setContentIntent(pendingIntent)
             .setStyle(NotificationCompat.BigTextStyle().bigText(text))
             .build()

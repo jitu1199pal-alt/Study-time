@@ -1,5 +1,6 @@
 package com.example
 
+import android.app.Activity
 import android.accessibilityservice.AccessibilityService
 import android.content.Context
 import android.content.Intent
@@ -54,6 +55,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         prefs = StudyBlockPreferences(applicationContext)
 
+        // Initialize Google Mobile Ads SDK (AdMob)
+        AdmobManager.initialize(applicationContext)
+
         // Ask for runtime notification permissions on Android 13+ (required for stable foreground services)
         if (android.os.Build.VERSION.SDK_INT >= 33) {
             if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -100,7 +104,46 @@ fun MainContainerScreen(
     var showBreakPopup by remember { mutableStateOf(false) }
     var tempBreakMinutes by remember { mutableStateOf(15f) }
     var showPermissionsDialog by remember { mutableStateOf(false) }
+    var showAccessibilityConsentDialog by remember { mutableStateOf(false) }
     var activeAdState by remember { mutableStateOf<ActiveAdData?>(null) }
+    var isAdLoading by remember { mutableStateOf(false) }
+
+    val activity = context as? Activity
+    val triggerAdFlow: (Int) -> Unit = { minutes ->
+        if (activity != null) {
+            isAdLoading = true
+            AdmobManager.loadInterstitial(
+                context = context,
+                adUnitId = null,
+                onLoaded = { interstitialAd ->
+                    isAdLoading = false
+                    AdmobManager.showInterstitial(activity, interstitialAd) {
+                        prefs.startEmergencyBreak(minutes)
+                        isBlockActive = prefs.isBlockerActiveRightNow()
+                        breakRemainingMinutes = prefs.getBreakRemainingMinutes()
+                    }
+                },
+                onFailed = { loadError ->
+                    isAdLoading = false
+                    val adSec = if (minutes <= 20) 10 else if (minutes <= 30) 15 else 45
+                    activeAdState = ActiveAdData(
+                        adDuration = adSec,
+                        adSecsRemaining = adSec,
+                        pendingBreakMinutes = minutes,
+                        adKey = (0..2).random()
+                    )
+                }
+            )
+        } else {
+            val adSec = if (minutes <= 20) 10 else if (minutes <= 30) 15 else 45
+            activeAdState = ActiveAdData(
+                adDuration = adSec,
+                adSecsRemaining = adSec,
+                pendingBreakMinutes = minutes,
+                adKey = (0..2).random()
+            )
+        }
+    }
     
     // Live states
     var isServiceEnabled by remember { mutableStateOf(isAccessibilityServiceEnabled(context, StudyBlockAccessibilityService::class.java)) }
@@ -159,91 +202,111 @@ fun MainContainerScreen(
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
                 modifier = Modifier.fillMaxWidth().statusBarsPadding()
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.Lock,
-                                contentDescription = "Lock",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(15.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = currentTimeString,
-                                fontWeight = FontWeight.Black,
-                                fontSize = 16.sp,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "Day: $currentDayOfWeekString",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF10B981) // Matching preview emerald green color
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "Date: $currentDateString",
-                            fontSize = 10.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-
-                    Button(
-                        onClick = { showBreakPopup = true },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF10B981) // Emerald Green to match the preview Exactly
-                        ),
-                        shape = RoundedCornerShape(8.dp),
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                        modifier = Modifier.height(36.dp)
+                Column {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 10.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = "Break",
-                                tint = Color.White,
-                                modifier = Modifier.size(14.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.Lock,
+                                    contentDescription = "Lock",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(15.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = currentTimeString,
+                                    fontWeight = FontWeight.Black,
+                                    fontSize = 16.sp,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Take Break",
+                                text = "Day: $currentDayOfWeekString",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = Color(0xFF10B981) // Matching preview emerald green color
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "Date: $currentDateString",
+                                fontSize = 10.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
+
+                        Button(
+                            onClick = { showBreakPopup = true },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF10B981) // Emerald Green to match the preview Exactly
+                            ),
+                            shape = RoundedCornerShape(8.dp),
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                            modifier = Modifier.height(36.dp)
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = "Break",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "Take Break",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+
+                    // Moved from bottom to TOP of the APK
+                    NavigationBar(
+                        tonalElevation = 0.dp,
+                        modifier = Modifier.height(56.dp)
+                    ) {
+                        NavigationBarItem(
+                            selected = selectedTab == 0,
+                            onClick = { selectedTab = 0 },
+                            icon = { Icon(Icons.Default.Home, contentDescription = "Dashboard") },
+                            label = { Text("Dashboard", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
+                        )
+                        NavigationBarItem(
+                            selected = selectedTab == 1,
+                            onClick = { selectedTab = 1 },
+                            icon = { Icon(Icons.Default.Add, contentDescription = "Apps") },
+                            label = { Text("Add Apps", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
+                        )
+                        NavigationBarItem(
+                            selected = selectedTab == 2,
+                            onClick = { selectedTab = 2 },
+                            icon = { Icon(Icons.Default.Info, contentDescription = "Help") },
+                            label = { Text("Help", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
+                        )
                     }
                 }
             }
         },
         bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 },
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Dashboard") },
-                    label = { Text("Dashboard", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
-                )
-                NavigationBarItem(
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
-                    icon = { Icon(Icons.Default.Add, contentDescription = "Apps") },
-                    label = { Text("Add Apps", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
-                )
-                NavigationBarItem(
-                    selected = selectedTab == 2,
-                    onClick = { selectedTab = 2 },
-                    icon = { Icon(Icons.Default.Info, contentDescription = "Help") },
-                    label = { Text("Help", fontSize = 11.sp, fontWeight = FontWeight.Bold) }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .navigationBarsPadding(),
+                contentAlignment = Alignment.Center
+            ) {
+                AdmobBanner(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
                 )
             }
         }
@@ -266,16 +329,7 @@ fun MainContainerScreen(
                         isBlockActive = prefs.isBlockerActiveRightNow()
                         breakRemainingMinutes = prefs.getBreakRemainingMinutes()
                     },
-                    onTriggerAd = { minutes ->
-                        // 5 to 20 mins -> 10 sec, 21 to 30 mins -> 15 sec, 31 to 60 mins -> 45 sec
-                        val adSecs = if (minutes <= 20) 10 else if (minutes <= 30) 15 else 45
-                        activeAdState = ActiveAdData(
-                            adDuration = adSecs,
-                            adSecsRemaining = adSecs,
-                            pendingBreakMinutes = minutes,
-                            adKey = (0..2).random()
-                        )
-                    }
+                    onTriggerAd = triggerAdFlow
                 )
                 1 -> AppSelectorTab(
                     prefs = prefs,
@@ -324,15 +378,7 @@ fun MainContainerScreen(
             confirmButton = {
                 Button(onClick = {
                     showBreakPopup = false
-                    val minutes = tempBreakMinutes.toInt()
-                    // 5 to 20 mins -> 10 sec, 21 to 30 mins -> 15 sec, 31 to 60 mins -> 45 sec
-                    val adSecs = if (minutes <= 20) 10 else if (minutes <= 30) 15 else 45
-                    activeAdState = ActiveAdData(
-                        adDuration = adSecs,
-                        adSecsRemaining = adSecs,
-                        pendingBreakMinutes = minutes,
-                        adKey = (0..2).random()
-                    )
+                    triggerAdFlow(tempBreakMinutes.toInt())
                 }) {
                     Text("OK")
                 }
@@ -519,8 +565,12 @@ fun MainContainerScreen(
                             Spacer(modifier = Modifier.height(8.dp))
                             Button(
                                 onClick = {
-                                    val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                                    context.startActivity(intent)
+                                    if (isAccessibilityOn) {
+                                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                                        context.startActivity(intent)
+                                    } else {
+                                        showAccessibilityConsentDialog = true
+                                    }
                                 },
                                 modifier = Modifier.fillMaxWidth().height(36.dp),
                                 contentPadding = PaddingValues(0.dp),
@@ -739,6 +789,119 @@ fun MainContainerScreen(
                     Text("OK")
                 }
             }
+        )
+    }
+
+    if (showAccessibilityConsentDialog) {
+        AlertDialog(
+            onDismissRequest = { showAccessibilityConsentDialog = false },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = "Consent Info",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Prominent Disclosure (निजता घोषणा)",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
+            },
+            text = {
+                val scrollState = rememberScrollState()
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .maxHeight(300.dp)
+                        .verticalScroll(scrollState),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "English Required Disclosure:",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "This application uses the Accessibility Service API purely to detect on-device when distracting or block-listed applications are launched or brought to the foreground during your Scheduled Study Focus Times.\n\n" +
+                               "Why do we need this permit?\n" +
+                               "1. To identify the active package name on your screen.\n" +
+                               "2. To immediately minimize distracting apps and display the focus/study lock screen layout to protect your learning schedule.\n\n" +
+                               "Data Collection & Privacy Policy Pledge:\n" +
+                               "• We never collect, monitor, store, or transmit any of your personal data, web browser history, or usage records online or offline. Every check occurs strictly locally on your device for functional blocking only. No background telemetry or logs are ever uploaded.",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Box(modifier = Modifier.fillMaxWidth().height(1.dp).background(MaterialTheme.colorScheme.outlineVariant))
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = "हिंदी महत्वपूर्ण निजता घोषणा:",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "यह ऐप आपके निर्धारित अध्ययन के समय विचलित करने वाले ऐप्स को ब्लॉक करने के लिए Accessibility Service API (पहुंच सेवा) का उपयोग करता है।\n\n" +
+                               "हमें इसकी आवश्यकता क्यों है?\n" +
+                               "1. स्क्रीन पर सक्रिय ऐप के नाम (package name) की पहचान करने के लिए।\n" +
+                               "2. ताकि जब आप कोई ध्यान भटकाने वाला ऐप खोलें, यह उसे तुरंत बंद करके स्टडी लॉक स्क्रीन दिखा सके।\n\n" +
+                               "डेटा निजता और सुरक्षा प्रतिज्ञा:\n" +
+                               "• हम आपका कोई भी निजी डेटा, इतिहास, या सर्च रिकॉर्ड न तो संग्रहित करते हैं और न ही किसी सर्वर पर भेजते हैं। सब कुछ सुरक्षित रूप से आपके फोन के अंदर ही संचालित होता है।",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showAccessibilityConsentDialog = false
+                        try {
+                            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            // Handler
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF10B981) // Emerald Consent Green
+                    )
+                ) {
+                    Text("I Agree (सहमत हूँ)", fontWeight = FontWeight.Bold, color = Color.White)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showAccessibilityConsentDialog = false }
+                ) {
+                    Text("No, Thanks (असहमत हूँ)")
+                }
+            }
+        )
+    }
+
+    if (isAdLoading) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text("Loading Secure Ad...", fontWeight = FontWeight.Bold, fontSize = 16.sp) },
+            text = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                    Text("Connecting to AdMob servers to launch your break options...")
+                }
+            },
+            confirmButton = {}
         )
     }
 
@@ -1108,6 +1271,30 @@ fun DashboardTab(
                         Spacer(modifier = Modifier.width(6.dp))
                         Text("Custom Break Duration", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
+                }
+            }
+        }
+
+        // Premium Real AdMob Banner Ad
+        item {
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceVariant),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "Sponsor Advertisement",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 6.dp)
+                    )
+                    AdmobBanner(modifier = Modifier.fillMaxWidth())
                 }
             }
         }

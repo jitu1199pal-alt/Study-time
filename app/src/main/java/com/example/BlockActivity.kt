@@ -1,5 +1,6 @@
 package com.example
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -42,7 +43,23 @@ class BlockActivity : ComponentActivity() {
 
         setContent {
             MyApplicationTheme {
-                Scaffold { innerPadding ->
+                Scaffold(
+                    bottomBar = {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Color(0xFF0F172A))
+                                .navigationBarsPadding(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            AdmobBanner(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(50.dp)
+                            )
+                        }
+                    }
+                ) { innerPadding ->
                     BlockScreen(
                         modifier = Modifier.padding(innerPadding),
                         blockedPackage = blockedPackage,
@@ -88,6 +105,42 @@ fun BlockScreen(
     val context = LocalContext.current
     var showBreakDialog by remember { mutableStateOf(false) }
     var activeAdState by remember { mutableStateOf<ActiveAdData?>(null) }
+    var isAdLoading by remember { mutableStateOf(false) }
+
+    val activity = context as? Activity
+    val triggerAdFlow: (Int) -> Unit = { minutes ->
+        if (activity != null) {
+            isAdLoading = true
+            AdmobManager.loadInterstitial(
+                context = context,
+                adUnitId = null,
+                onLoaded = { interstitialAd ->
+                    isAdLoading = false
+                    AdmobManager.showInterstitial(activity, interstitialAd) {
+                        onBreakSelected(minutes)
+                    }
+                },
+                onFailed = { loadError ->
+                    isAdLoading = false
+                    val adSec = if (minutes <= 20) 10 else if (minutes <= 30) 15 else 45
+                    activeAdState = ActiveAdData(
+                        adDuration = adSec,
+                        adSecsRemaining = adSec,
+                        pendingBreakMinutes = minutes,
+                        adKey = (0..2).random()
+                    )
+                }
+            )
+        } else {
+            val adSec = if (minutes <= 20) 10 else if (minutes <= 30) 15 else 45
+            activeAdState = ActiveAdData(
+                adDuration = adSec,
+                adSecsRemaining = adSec,
+                pendingBreakMinutes = minutes,
+                adKey = (0..2).random()
+            )
+        }
+    }
 
     LaunchedEffect(activeAdState != null) {
         if (activeAdState != null) {
@@ -156,19 +209,19 @@ fun BlockScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = "This app is currently blocked because it is not in your study list:",
-                    fontSize = 14.sp,
+                    fontSize = 12.sp,
                     color = Color(0xFFCBD5E1),
                     textAlign = TextAlign.Center
                 )
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = blockedPackage.substringAfterLast("."),
-                    fontSize = 18.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF38BDF8), // Light blue app indicator
                     textAlign = TextAlign.Center
@@ -176,59 +229,108 @@ fun BlockScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Launch helper with direct buttons
+        // Sponsor Advertisement now placed at the top/middle below the app info card
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0x0AFFFFFF), RoundedCornerShape(12.dp))
+                .border(BorderStroke(1.dp, Color(0xFF38BDF8).copy(alpha = 0.2f)), RoundedCornerShape(12.dp))
+                .padding(6.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "Sponsor Advertisement",
+                    fontSize = 10.sp,
+                    color = Color(0xFF94A3B8).copy(alpha = 0.6f),
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
+                AdmobBanner(modifier = Modifier.fillMaxWidth().height(45.dp))
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Shifted Action Buttons placed elegantly just above the 100% focus lock percentage ring
         Button(
             onClick = onOpenStudyLaunchpad,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp),
+                .height(48.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3B82F6)),
-            shape = RoundedCornerShape(14.dp)
+            shape = RoundedCornerShape(12.dp)
         ) {
-            Icon(Icons.Default.PlayArrow, contentDescription = "Play")
-            Spacer(modifier = Modifier.width(8.dp))
+            Icon(Icons.Default.PlayArrow, contentDescription = "Play", modifier = Modifier.size(16.dp))
+            Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = "Open Study Apps",
-                fontSize = 16.sp,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // Take Break Button - Meets critical "Emergency 5/10/60 mins break" requirement
         OutlinedButton(
             onClick = { showBreakDialog = true },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp),
+                .height(48.dp),
             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF10B981)),
             border = BorderStroke(1.5.dp, Color(0xFF10B981)),
-            shape = RoundedCornerShape(14.dp)
+            shape = RoundedCornerShape(12.dp)
         ) {
-            Icon(Icons.Default.Refresh, contentDescription = "Break")
-            Spacer(modifier = Modifier.width(8.dp))
+            Icon(Icons.Default.Refresh, contentDescription = "Break", modifier = Modifier.size(16.dp))
+            Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = "Take Emergency Break",
-                fontSize = 16.sp,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF10B981)
             )
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Beautiful 100% Focus Lock Percentage Ring as requested, now with actions directly above it
+        Box(
+            modifier = Modifier
+                .size(85.dp)
+                .background(Color(0x1F38BDF8), RoundedCornerShape(100.dp))
+                .border(BorderStroke(2.dp, Color(0xFF38BDF8).copy(alpha = 0.5f)), RoundedCornerShape(100.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "100%",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Black,
+                    color = Color(0xFF38BDF8)
+                )
+                Text(
+                    text = "LOCKED",
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF94A3B8)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Motivational Quote
         Text(
             text = "“Education is the most powerful weapon which you can use to change the world.”",
-            fontSize = 13.sp,
+            fontSize = 11.sp,
             color = Color(0xFF64748B),
             textAlign = TextAlign.Center,
-            lineHeight = 18.sp,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            lineHeight = 16.sp,
+            modifier = Modifier.padding(horizontal = 12.dp)
         )
     }
 
@@ -266,15 +368,8 @@ fun BlockScreen(
                                         .weight(1f)
                                         .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(10.dp))
                                         .clickable {
-                                            // 5 to 20 mins -> 10 sec, 21 to 30 mins -> 15 sec, 31 to 60 mins -> 45 sec
-                                            val adSecs = if (minutes <= 20) 10 else if (minutes <= 30) 15 else 45
-                                            activeAdState = ActiveAdData(
-                                                adDuration = adSecs,
-                                                adSecsRemaining = adSecs,
-                                                pendingBreakMinutes = minutes,
-                                                adKey = (0..2).random()
-                                            )
                                             showBreakDialog = false
+                                            triggerAdFlow(minutes)
                                         }
                                         .padding(vertical = 12.dp),
                                     contentAlignment = Alignment.Center
@@ -296,6 +391,24 @@ fun BlockScreen(
                     Text(text = "Cancel")
                 }
             }
+        )
+    }
+
+    if (isAdLoading) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text("Loading Secure Ad...", fontWeight = FontWeight.Bold, fontSize = 16.sp) },
+            text = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.padding(12.dp)
+                ) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                    Text("Connecting to AdMob servers to launch your break options...")
+                }
+            },
+            confirmButton = {}
         )
     }
 
